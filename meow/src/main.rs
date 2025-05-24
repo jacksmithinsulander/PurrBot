@@ -110,7 +110,7 @@ async fn message_handler(
             Ok(Command::Start) => {
                 // Create a list of buttons and send them.
                 let keyboard = logged_out_operations();
-                bot.send_message(msg.chat.id, "Debian versions:")
+                bot.send_message(msg.chat.id, "💻 gm anon, whatchu wanna do? 🐈")
                     .reply_markup(keyboard)
                     .await?;
             }
@@ -130,8 +130,10 @@ async fn inline_query_handler(
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
     let choose_debian_version = InlineQueryResultArticle::new(
         "0",
-        "Chose debian version",
-        InputMessageContent::Text(InputMessageContentText::new("Debian versions:")),
+        "💻 gm anon, whatchu wanna do? 🐈",
+        InputMessageContent::Text(InputMessageContentText::new(
+            "💻 gm anon, whatchu wanna do? 🐈",
+        )),
     )
     .reply_markup(logged_out_operations());
 
@@ -142,16 +144,11 @@ async fn inline_query_handler(
 }
 
 async fn callback_handler(bot: Bot, q: CallbackQuery) -> Result<(), Box<dyn Error + Send + Sync>> {
-    // 1. Do we have callback-data?
     if let Some(data) = q.data.as_deref() {
-        // 2. Map it to the enum and obtain the reply text.
         let reply_text = LoggedOutButtons::from_str(data).perform();
 
-        // 3. Acknowledge the callback so the hour-glass disappears.
         bot.answer_callback_query(&q.id).await?;
 
-        // 4. Deliver the reply: edit the original message if it exists,
-        //    otherwise edit the inline-message.
         if let Some(message) = q.regular_message() {
             bot.edit_text(message, reply_text).await?;
         } else if let Some(inline_id) = q.inline_message_id {
