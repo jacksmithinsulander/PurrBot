@@ -1,5 +1,8 @@
 use crate::v1::constants::MAN_PAGE;
+use crate::v1::models::log_in_state;
 use nine_sdk::password_handler;
+use teloxide::prelude::ResponseResult;
+use teloxide::prelude::*;
 
 pub enum LoggedOutButtons {
     LogIn,
@@ -18,11 +21,28 @@ impl LoggedOutButtons {
         }
     }
 
-    pub fn execute(&self) -> &'static str {
+    pub async fn execute(&self, bot: Bot, chat_id: ChatId) -> ResponseResult<()> {
         match self {
-            LoggedOutButtons::Faq => MAN_PAGE,
-            LoggedOutButtons::LogIn => password_handler(),
-            _ => "Not sure?",
+            LoggedOutButtons::Faq => {
+                bot.send_message(chat_id, MAN_PAGE).await?;
+            }
+            LoggedOutButtons::LogIn => {
+                bot.send_message(chat_id, "Please enter your password:")
+                    .await?;
+            }
+            LoggedOutButtons::SignUp => {
+                bot.send_message(chat_id, "Choose your password:").await?;
+                let mut states = log_in_state::USER_STATES.lock().unwrap();
+                states.insert(
+                    chat_id.0,
+                    log_in_state::AwaitingState::AwaitingSignUpPassword,
+                );
+            }
+            _ => {
+                bot.send_message(chat_id, "Not a valid command").await?;
+            }
         }
+
+        Ok(())
     }
 }
