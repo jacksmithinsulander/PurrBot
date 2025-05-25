@@ -6,7 +6,7 @@ use teloxide::types::{Me, Message};
 pub async fn message_handler(
     bot: Bot,
     msg: Message,
-    me: Me,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
+    let me = bot.get_me().await?;
     process_message(bot, msg, me).await
 }

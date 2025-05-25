@@ -26,7 +26,7 @@ pub async fn process_message(
             }
             Ok(CommandLoggedOut::LogIn { password }) => todo!(),
             Err(_) => {
-                let states = log_in_state::USER_STATES.lock().unwrap();
+                let states = log_in_state::USER_STATES.lock().await;
                 match states
                     .get(&msg.chat.id.0)
                     .copied()

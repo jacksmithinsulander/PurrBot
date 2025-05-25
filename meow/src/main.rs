@@ -13,9 +13,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let bot = Bot::from_env();
 
     let handler = dptree::entry()
-        .branch(Update::filter_message().endpoint(message_handler))
-        .branch(Update::filter_callback_query().endpoint(callback_handler));
-    //.branch(Update::filter_inline_query().endpoint(inline_query_handler));
+        .branch(Update::filter_message().branch(dptree::endpoint(|bot, msg| async move {
+            message_handler(bot, msg).await
+        })))
+        .branch(Update::filter_callback_query().branch(dptree::endpoint(|bot, q| async move {
+            callback_handler(bot, q).await
+        })));
+    //.branch(Update::filter_inline_query().branch(dptree::endpoint(inline_query_handler)));
 
     Dispatcher::builder(bot, handler)
         .enable_ctrlc_handler()

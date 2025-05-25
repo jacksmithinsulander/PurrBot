@@ -32,7 +32,7 @@ impl LoggedOutButtons {
             }
             LoggedOutButtons::SignUp => {
                 bot.send_message(chat_id, "Choose your password:").await?;
-                let mut states = log_in_state::USER_STATES.lock().unwrap();
+                let mut states = log_in_state::USER_STATES.lock().await;
                 states.insert(
                     chat_id.0,
                     log_in_state::AwaitingState::AwaitingSignUpPassword,
