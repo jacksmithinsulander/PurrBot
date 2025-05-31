@@ -35,6 +35,9 @@ FROM debian:bullseye-slim
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     libssl1.1 \
+    procps \
+    net-tools \
+    lsof \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the built binaries from the builder stage

@@ -1,11 +1,12 @@
-use argon2::{Argon2, PasswordHasher, PasswordVerifier};
-use password_hash::{PasswordHash, PasswordHasher as _, PasswordVerifier as _, SaltString};
+use argon2::{Argon2, password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString}};
 use rand::Rng;
 use rand_core::RngCore;
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 use std::net::TcpListener;
 use thiserror::Error;
+use log;
+use env_logger;
 
 #[derive(Error, Debug)]
 pub enum EnclaveError {
@@ -51,7 +52,7 @@ pub struct EnclaveManager {
 impl EnclaveManager {
     /// Creates a new instance of the enclave manager
     pub fn new() -> Result<Self, EnclaveError> {
-        let listener = TcpListener::bind("127.0.0.1:8000")
+        let listener = TcpListener::bind("0.0.0.0:8080")
             .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
 
         Ok(Self {
@@ -67,24 +68,49 @@ impl EnclaveManager {
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?
                 .0;
 
-            // Read request
-            let mut buffer = Vec::new();
-            stream
-                .read_to_end(&mut buffer)
-                .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+            log::info!("Accepted connection from {:?}", stream.peer_addr());
 
-            let request: EnclaveRequest = serde_json::from_slice(&buffer)
-                .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+            // Read request length first
+            let mut length_buf = [0u8; 4];
+            if let Err(e) = stream.read_exact(&mut length_buf) {
+                log::warn!("Error reading message length: {}", e);
+                continue; // Connection closed or error, try next connection
+            }
+            let length = u32::from_be_bytes(length_buf) as usize;
+
+            // Then read the exact amount of bytes
+            let mut buffer = vec![0u8; length];
+            if let Err(e) = stream.read_exact(&mut buffer) {
+                log::warn!("Error reading message body: {}", e);
+                continue; // Error reading request
+            }
+
+            let request: EnclaveRequest = match serde_json::from_slice(&buffer) {
+                Ok(req) => req,
+                Err(e) => {
+                    log::error!("Error deserializing request: {}", e);
+                    continue;
+                }
+            };
+
+            log::info!("Received request: {:?}", request);
 
             // Process request
             let response = self.handle_request(request)?;
 
-            // Send response
+            // Send response with length prefix
             let response_bytes = serde_json::to_vec(&response)
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
-            stream
-                .write_all(&response_bytes)
+            let length = (response_bytes.len() as u32).to_be_bytes();
+            
+            // Write length prefix first
+            stream.write_all(&length)
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+            // Then write the actual response
+            stream.write_all(&response_bytes)
+                .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+            stream.flush().ok();
+            drop(stream); // Explicitly close the stream after response
         }
     }
 
@@ -192,6 +218,7 @@ fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], EnclaveError> {
 }
 
 fn main() -> Result<(), EnclaveError> {
+    env_logger::init(); // Initialize logger for log macros
     let mut manager = EnclaveManager::new()?;
     manager.run()
 }

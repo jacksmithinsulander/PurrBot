@@ -1,5 +1,3 @@
-mod enclave;
-
 use chacha20poly1305::{
     aead::{Aead, AeadCore},
     ChaCha20Poly1305, Key, KeyInit, Nonce,
@@ -12,6 +10,7 @@ use std::io::{Read, Write};
 use std::net::TcpStream;
 use std::sync::{Arc, Mutex};
 use thiserror::Error;
+use std::{thread, time::Duration};
 
 #[derive(Error, Debug)]
 pub enum KeyManagerError {
@@ -54,19 +53,14 @@ pub enum EnclaveResponse {
 pub struct PrivateKeyManager {
     decrypted_private_key: Mutex<Option<[u8; 32]>>,
     config: Option<EncryptedKeyConfig>,
-    stream: Arc<Mutex<TcpStream>>,
 }
 
 impl PrivateKeyManager {
     /// Creates a new instance of the manager
     pub fn new() -> Result<Self, KeyManagerError> {
-        let stream = TcpStream::connect("127.0.0.1:8000")
-            .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
-
         Ok(Self {
             decrypted_private_key: Mutex::new(None),
             config: None,
-            stream: Arc::new(Mutex::new(stream)),
         })
     }
 
@@ -75,14 +69,32 @@ impl PrivateKeyManager {
         let request_bytes = serde_json::to_vec(&request)
             .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
 
-        let mut stream = self.stream.lock().unwrap();
+        // Add length prefix to the message
+        let length = (request_bytes.len() as u32).to_be_bytes();
+        
+        let mut stream = TcpStream::connect("meow-enclave:8080")
+            .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
+        // Write length prefix first
+        stream
+            .write_all(&length)
+            .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
+        // Then write the actual message
         stream
             .write_all(&request_bytes)
             .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
+        stream.flush().map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
 
-        let mut buffer = Vec::new();
+        // Read response length first
+        let mut length_buf = [0u8; 4];
         stream
-            .read_to_end(&mut buffer)
+            .read_exact(&mut length_buf)
+            .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
+        let length = u32::from_be_bytes(length_buf) as usize;
+
+        // Then read the exact amount of bytes
+        let mut buffer = vec![0u8; length];
+        stream
+            .read_exact(&mut buffer)
             .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
 
         serde_json::from_slice(&buffer).map_err(|e| KeyManagerError::SocketError(e.to_string()))

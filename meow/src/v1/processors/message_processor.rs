@@ -26,9 +26,10 @@ pub async fn process_message(
                 let handler = PasswordHandler::new()?;
                 match handler.sign_up(&password).await {
                     Ok(config) => {
-                        bot.send_message(msg.chat.id, "Account created successfully! 🎉")
-                            .await?;
+                        bot.send_message(msg.chat.id, "Account created successfully! 🎉\nNow enter your password again to log in.").await?;
                         log::info!("User {} created account with config: {}", msg.chat.id.0, config);
+                        let mut states = log_in_state::USER_STATES.lock().await;
+                        states.insert(msg.chat.id.0, log_in_state::AwaitingState::AwaitingLoginPassword);
                     }
                     Err(e) => {
                         bot.send_message(msg.chat.id, format!("Failed to create account: {}", e))
@@ -68,9 +69,10 @@ pub async fn process_message(
                         let handler = PasswordHandler::new()?;
                         match handler.sign_up(text).await {
                             Ok(config) => {
-                                bot.send_message(msg.chat.id, "Account created successfully! 🎉")
-                                    .await?;
+                                bot.send_message(msg.chat.id, "Account created successfully! 🎉\nNow enter your password again to log in.").await?;
                                 log::info!("User {} created account with config: {}", msg.chat.id.0, config);
+                                let mut states = log_in_state::USER_STATES.lock().await;
+                                states.insert(msg.chat.id.0, log_in_state::AwaitingState::AwaitingLoginPassword);
                             }
                             Err(e) => {
                                 bot.send_message(msg.chat.id, format!("Failed to create account: {}", e))
@@ -78,8 +80,6 @@ pub async fn process_message(
                                 log::error!("Failed to create account for user {}: {}", msg.chat.id.0, e);
                             }
                         }
-                        let mut states = log_in_state::USER_STATES.lock().await;
-                        states.insert(msg.chat.id.0, log_in_state::AwaitingState::None);
                     }
                     log_in_state::AwaitingState::AwaitingLoginPassword => {
                         let handler = PasswordHandler::new()?;
