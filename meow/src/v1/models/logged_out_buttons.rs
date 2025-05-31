@@ -1,6 +1,5 @@
 use crate::v1::constants::MAN_PAGE;
-use crate::v1::models::log_in_state;
-use nine_sdk::password_handler;
+use crate::v1::models::{log_in_state, password_handler::PasswordHandler};
 use teloxide::prelude::ResponseResult;
 use teloxide::prelude::*;
 
@@ -32,8 +31,11 @@ impl LoggedOutButtons {
             }
             LoggedOutButtons::SignUp => {
                 bot.send_message(chat_id, "Choose your password:").await?;
-                let t = password_handler();
-                log::info!("t: {:?}", t);
+                if let Err(e) = PasswordHandler::new() {
+                    log::error!("Failed to create password handler: {}", e);
+                    bot.send_message(chat_id, "Failed to initialize password handler").await?;
+                    return Ok(());
+                }
                 let mut states = log_in_state::USER_STATES.lock().await;
                 states.insert(
                     chat_id.0,

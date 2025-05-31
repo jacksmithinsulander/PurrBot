@@ -62,8 +62,10 @@ impl EnclaveManager {
 
     /// Starts the enclave server
     pub fn run(&mut self) -> Result<(), EnclaveError> {
-        for stream in self.listener.incoming() {
-            let mut stream = stream.map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+        loop {
+            let mut stream = self.listener.accept()
+                .map_err(|e| EnclaveError::SocketError(e.to_string()))?
+                .0;
 
             // Read request
             let mut buffer = Vec::new();
@@ -84,8 +86,6 @@ impl EnclaveManager {
                 .write_all(&response_bytes)
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
         }
-
-        Ok(())
     }
 
     /// Handles an incoming request

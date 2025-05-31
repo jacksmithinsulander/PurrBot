@@ -1,0 +1,10 @@
+{
+    "memory_mib": 512,
+    "cpu_count": 2,
+    "allowed_ports": [
+        {
+            "port": 8080,
+            "protocol": "tcp"
+        }
+    ]
+} 
