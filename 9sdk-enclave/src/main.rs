@@ -1,12 +1,14 @@
-use argon2::{Argon2, password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString}};
-use rand::Rng;
+use argon2::{
+    password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
+    Argon2,
+};
+use env_logger;
+use log;
 use rand_core::RngCore;
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 use std::net::TcpListener;
 use thiserror::Error;
-use log;
-use env_logger;
 
 #[derive(Error, Debug)]
 pub enum EnclaveError {
@@ -64,7 +66,9 @@ impl EnclaveManager {
     /// Starts the enclave server
     pub fn run(&mut self) -> Result<(), EnclaveError> {
         loop {
-            let mut stream = self.listener.accept()
+            let mut stream = self
+                .listener
+                .accept()
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?
                 .0;
 
@@ -102,12 +106,14 @@ impl EnclaveManager {
             let response_bytes = serde_json::to_vec(&response)
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
             let length = (response_bytes.len() as u32).to_be_bytes();
-            
+
             // Write length prefix first
-            stream.write_all(&length)
+            stream
+                .write_all(&length)
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
             // Then write the actual response
-            stream.write_all(&response_bytes)
+            stream
+                .write_all(&response_bytes)
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
             stream.flush().ok();
             drop(stream); // Explicitly close the stream after response

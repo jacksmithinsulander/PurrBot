@@ -1,16 +1,14 @@
 use chacha20poly1305::{
     aead::{Aead, AeadCore},
-    ChaCha20Poly1305, Key, KeyInit, Nonce,
+    ChaCha20Poly1305, KeyInit, Nonce,
 };
-use rand::Rng;
-use rand_core::{OsRng, RngCore};
+use rand_core::RngCore;
 use serde::{Deserialize, Serialize};
 use std::convert::TryInto;
 use std::io::{Read, Write};
 use std::net::TcpStream;
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 use thiserror::Error;
-use std::{thread, time::Duration};
 
 #[derive(Error, Debug)]
 pub enum KeyManagerError {
@@ -71,7 +69,7 @@ impl PrivateKeyManager {
 
         // Add length prefix to the message
         let length = (request_bytes.len() as u32).to_be_bytes();
-        
+
         let mut stream = TcpStream::connect("meow-enclave:8080")
             .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
         // Write length prefix first
@@ -82,7 +80,9 @@ impl PrivateKeyManager {
         stream
             .write_all(&request_bytes)
             .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
-        stream.flush().map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
+        stream
+            .flush()
+            .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
 
         // Read response length first
         let mut length_buf = [0u8; 4];
@@ -135,7 +135,7 @@ impl PrivateKeyManager {
             password: password.to_string(),
         })?;
 
-        let config = match response {
+        match response {
             EnclaveResponse::ConfigSetup { config } => config,
             EnclaveResponse::Error { message } => {
                 return Err(KeyManagerError::KeyGenerationError(message))

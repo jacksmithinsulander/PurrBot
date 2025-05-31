@@ -33,7 +33,8 @@ impl LoggedOutButtons {
                 bot.send_message(chat_id, "Choose your password:").await?;
                 if let Err(e) = PasswordHandler::new() {
                     log::error!("Failed to create password handler: {}", e);
-                    bot.send_message(chat_id, "Failed to initialize password handler").await?;
+                    bot.send_message(chat_id, "Failed to initialize password handler")
+                        .await?;
                     return Ok(());
                 }
                 let mut states = log_in_state::USER_STATES.lock().await;

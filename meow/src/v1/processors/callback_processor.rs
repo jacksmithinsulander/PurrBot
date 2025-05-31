@@ -1,6 +1,6 @@
 use crate::v1::models::logged_out_buttons::LoggedOutButtons;
 use std::error::Error;
-use teloxide::{prelude::*, sugar::bot::BotMessagesExt};
+use teloxide::prelude::*;
 
 pub async fn process_callback(
     bot: Bot,

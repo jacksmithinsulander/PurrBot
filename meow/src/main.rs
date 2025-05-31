@@ -3,7 +3,7 @@ use teloxide::prelude::*;
 mod keyboard;
 mod v1;
 
-use v1::handlers::{callback_handler, inline_query_handler, message_handler};
+use v1::handlers::{callback_handler, message_handler};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

@@ -1,8 +1,7 @@
 use crate::keyboard::logged_out_operations;
-use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
+use crate::v1::commands::CommandLoggedOut;
 use crate::v1::models::{log_in_state, password_handler::PasswordHandler};
 use std::error::Error;
-use std::sync::Arc;
 use teloxide::{payloads::SendMessageSetters, prelude::*, types::Me, utils::command::BotCommands};
 
 pub async fn process_message(
@@ -27,9 +26,16 @@ pub async fn process_message(
                 match handler.sign_up(&password).await {
                     Ok(config) => {
                         bot.send_message(msg.chat.id, "Account created successfully! 🎉\nNow enter your password again to log in.").await?;
-                        log::info!("User {} created account with config: {}", msg.chat.id.0, config);
+                        log::info!(
+                            "User {} created account with config: {}",
+                            msg.chat.id.0,
+                            config
+                        );
                         let mut states = log_in_state::USER_STATES.lock().await;
-                        states.insert(msg.chat.id.0, log_in_state::AwaitingState::AwaitingLoginPassword);
+                        states.insert(
+                            msg.chat.id.0,
+                            log_in_state::AwaitingState::AwaitingLoginPassword,
+                        );
                     }
                     Err(e) => {
                         bot.send_message(msg.chat.id, format!("Failed to create account: {}", e))
@@ -70,14 +76,28 @@ pub async fn process_message(
                         match handler.sign_up(text).await {
                             Ok(config) => {
                                 bot.send_message(msg.chat.id, "Account created successfully! 🎉\nNow enter your password again to log in.").await?;
-                                log::info!("User {} created account with config: {}", msg.chat.id.0, config);
+                                log::info!(
+                                    "User {} created account with config: {}",
+                                    msg.chat.id.0,
+                                    config
+                                );
                                 let mut states = log_in_state::USER_STATES.lock().await;
-                                states.insert(msg.chat.id.0, log_in_state::AwaitingState::AwaitingLoginPassword);
+                                states.insert(
+                                    msg.chat.id.0,
+                                    log_in_state::AwaitingState::AwaitingLoginPassword,
+                                );
                             }
                             Err(e) => {
-                                bot.send_message(msg.chat.id, format!("Failed to create account: {}", e))
-                                    .await?;
-                                log::error!("Failed to create account for user {}: {}", msg.chat.id.0, e);
+                                bot.send_message(
+                                    msg.chat.id,
+                                    format!("Failed to create account: {}", e),
+                                )
+                                .await?;
+                                log::error!(
+                                    "Failed to create account for user {}: {}",
+                                    msg.chat.id.0,
+                                    e
+                                );
                             }
                         }
                     }
