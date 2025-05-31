@@ -1,7 +1,7 @@
-use teloxide::prelude::*;
-use teloxide::types::InlineQuery;
 use crate::v1::processors::inline_processor::process_inline;
 use std::error::Error;
+use teloxide::prelude::*;
+use teloxide::types::InlineQuery;
 
 pub async fn inline_query_handler(
     bot: Bot,

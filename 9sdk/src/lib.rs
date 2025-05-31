@@ -1,13 +1,17 @@
-use rand_core::{OsRng, RngCore};
-use argon2::{Argon2, PasswordHasher, PasswordVerifier};
-use password_hash::{PasswordHash, PasswordHasher as _, PasswordVerifier as _, SaltString};
-use chacha20poly1305::{ChaCha20Poly1305, KeyInit, Key, Nonce};
-use chacha20poly1305::aead::Aead;
-use serde::{Serialize, Deserialize};
-use std::convert::TryInto;
-use thiserror::Error;
+mod enclave;
+
+use chacha20poly1305::{
+    aead::{Aead, AeadCore},
+    ChaCha20Poly1305, Key, KeyInit, Nonce,
+};
 use rand::Rng;
-use std::sync::Mutex;
+use rand_core::{OsRng, RngCore};
+use serde::{Deserialize, Serialize};
+use std::convert::TryInto;
+use std::io::{Read, Write};
+use std::net::TcpStream;
+use std::sync::{Arc, Mutex};
+use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum KeyManagerError {
@@ -21,104 +25,136 @@ pub enum KeyManagerError {
     DecryptionError(String),
     #[error("Key generation error: {0}")]
     KeyGenerationError(String),
+    #[error("Socket error: {0}")]
+    SocketError(String),
 }
 
 /// Configuration structure to store encrypted key data
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EncryptedKeyConfig {
-    password_hash: String,
-    salt1: String,
-    salt2: String,
     nonce1: String,
     nonce2: String,
     double_encrypted_private_key: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum EnclaveRequest {
+    SetupConfig { password: String },
+    VerifyAndDeriveKeys { password: String },
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum EnclaveResponse {
+    ConfigSetup { config: String },
+    Keys { key1: Vec<u8>, key2: Vec<u8> },
+    Error { message: String },
 }
 
 /// Manager for handling private key operations
 pub struct PrivateKeyManager {
     decrypted_private_key: Mutex<Option<[u8; 32]>>,
     config: Option<EncryptedKeyConfig>,
+    stream: Arc<Mutex<TcpStream>>,
 }
 
 impl PrivateKeyManager {
     /// Creates a new instance of the manager
-    pub fn new() -> Self {
-        Self {
+    pub fn new() -> Result<Self, KeyManagerError> {
+        let stream = TcpStream::connect("127.0.0.1:8000")
+            .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
+
+        Ok(Self {
             decrypted_private_key: Mutex::new(None),
             config: None,
+            stream: Arc::new(Mutex::new(stream)),
+        })
+    }
+
+    /// Sends a request to the enclave and receives the response
+    fn send_request(&self, request: EnclaveRequest) -> Result<EnclaveResponse, KeyManagerError> {
+        let request_bytes = serde_json::to_vec(&request)
+            .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
+
+        let mut stream = self.stream.lock().unwrap();
+        stream
+            .write_all(&request_bytes)
+            .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
+
+        let mut buffer = Vec::new();
+        stream
+            .read_to_end(&mut buffer)
+            .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
+
+        serde_json::from_slice(&buffer).map_err(|e| KeyManagerError::SocketError(e.to_string()))
+    }
+
+    /// Derives keys from the enclave using the given password
+    fn derive_keys(&self, password: &str) -> Result<([u8; 32], [u8; 32]), KeyManagerError> {
+        let response = self.send_request(EnclaveRequest::VerifyAndDeriveKeys {
+            password: password.to_string(),
+        })?;
+
+        match response {
+            EnclaveResponse::Keys { key1, key2 } => {
+                if key1.len() != 32 || key2.len() != 32 {
+                    return Err(KeyManagerError::KeyGenerationError(
+                        "Invalid key length".to_string(),
+                    ));
+                }
+                let mut k1 = [0u8; 32];
+                let mut k2 = [0u8; 32];
+                k1.copy_from_slice(&key1);
+                k2.copy_from_slice(&key2);
+                Ok((k1, k2))
+            }
+            EnclaveResponse::Error { message } => Err(KeyManagerError::KeyGenerationError(message)),
+            _ => Err(KeyManagerError::InvalidConfig),
         }
     }
 
-    /// Sets up the configuration with a default password
-    pub fn setup_config(&mut self) -> Result<String, KeyManagerError> {
-        let mut private_key = [0u8; 32];
-        let mut rng = rand::thread_rng();
-        rng.fill_bytes(&mut private_key);
-        let user_password = "double_encryption_pw";
+    /// Signs up a user with a password and optional private key; returns the configuration
+    pub fn sign_up(
+        &mut self,
+        password: &str,
+        private_key: Option<[u8; 32]>,
+    ) -> Result<String, KeyManagerError> {
+        // Setup enclave config with password
+        let response = self.send_request(EnclaveRequest::SetupConfig {
+            password: password.to_string(),
+        })?;
 
-        let password_hash = hash_password(user_password)
-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
-
-        let mut salt1 = [0u8; 16];
-        let mut salt2 = [0u8; 16];
-        rng.fill_bytes(&mut salt1);
-        rng.fill_bytes(&mut salt2);
-
-        let key1 = derive_key(user_password, &salt1)
-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
-        let key2 = derive_key(user_password, &salt2)
-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
-
-        let (ciphertext1, nonce1) = encrypt_chacha20(&key1, &private_key)
-            .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
-        let (ciphertext2, nonce2) = encrypt_chacha20(&key2, &ciphertext1)
-            .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
-
-        let config = EncryptedKeyConfig {
-            password_hash: password_hash.clone(),
-            salt1: hex::encode(&salt1),
-            salt2: hex::encode(&salt2),
-            nonce1: hex::encode(&nonce1),
-            nonce2: hex::encode(&nonce2),
-            double_encrypted_private_key: hex::encode(&ciphertext2),
+        let config = match response {
+            EnclaveResponse::ConfigSetup { config } => config,
+            EnclaveResponse::Error { message } => {
+                return Err(KeyManagerError::KeyGenerationError(message))
+            }
+            _ => return Err(KeyManagerError::InvalidConfig),
         };
 
-        self.config = Some(config.clone());
-        Ok(serde_json::to_string_pretty(&config)
-            .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?)
-    }
+        let private_key = private_key.unwrap_or_else(|| {
+            let mut key = [0u8; 32];
+            let mut rng = rand::thread_rng();
+            rng.fill_bytes(&mut key);
+            key
+        });
 
-    /// Signs up a user with an optional password; returns the password and configuration
-    pub fn sign_up(&mut self, password: Option<String>) -> Result<(String, String), KeyManagerError> {
-        let final_password = password.unwrap_or_else(|| generate_random_password());
-        let mut private_key = [0u8; 32];
+        // Get encryption keys from enclave
+        let (key1, key2) = self.derive_keys(password)?;
+
         let mut rng = rand::thread_rng();
-        rng.fill_bytes(&mut private_key);
+        let mut nonce1_bytes = [0u8; 12];
+        let mut nonce2_bytes = [0u8; 12];
+        rng.fill_bytes(&mut nonce1_bytes);
+        rng.fill_bytes(&mut nonce2_bytes);
 
-        let password_hash = hash_password(&final_password)
-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
-
-        let mut salt1 = [0u8; 16];
-        let mut salt2 = [0u8; 16];
-        rng.fill_bytes(&mut salt1);
-        rng.fill_bytes(&mut salt2);
-
-        let key1 = derive_key(&final_password, &salt1)
-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
-        let key2 = derive_key(&final_password, &salt2)
-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
-
-        let (ciphertext1, nonce1) = encrypt_chacha20(&key1, &private_key)
+        let (ciphertext1, _) = encrypt_chacha20(&key1, &private_key)
             .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
-        let (ciphertext2, nonce2) = encrypt_chacha20(&key2, &ciphertext1)
+        let (ciphertext2, _) = encrypt_chacha20(&key2, &ciphertext1)
             .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
 
         let config = EncryptedKeyConfig {
-            password_hash: password_hash.clone(),
-            salt1: hex::encode(&salt1),
-            salt2: hex::encode(&salt2),
-            nonce1: hex::encode(&nonce1),
-            nonce2: hex::encode(&nonce2),
+            nonce1: hex::encode(&nonce1_bytes),
+            nonce2: hex::encode(&nonce2_bytes),
             double_encrypted_private_key: hex::encode(&ciphertext2),
         };
 
@@ -126,21 +162,16 @@ impl PrivateKeyManager {
         let config_json = serde_json::to_string_pretty(&config)
             .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
 
-        Ok((final_password, config_json))
+        Ok(config_json)
     }
 
     /// Logs in a user by verifying the password and decrypting the private key
     pub fn login(&mut self, password: &str) -> Result<bool, KeyManagerError> {
         let cfg = self.config.as_ref().ok_or(KeyManagerError::InvalidConfig)?;
-        
-        if !verify_password(password, &cfg.password_hash) {
-            return Ok(false);
-        }
 
-        let salt1 = hex::decode(&cfg.salt1)
-            .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
-        let salt2 = hex::decode(&cfg.salt2)
-            .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
+        // Get decryption keys from enclave
+        let (key1, key2) = self.derive_keys(password)?;
+
         let nonce1: [u8; 12] = hex::decode(&cfg.nonce1)
             .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?
             .try_into()
@@ -151,11 +182,6 @@ impl PrivateKeyManager {
             .map_err(|_| KeyManagerError::DecryptionError("Invalid nonce2 length".to_string()))?;
         let ciphertext2 = hex::decode(&cfg.double_encrypted_private_key)
             .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
-
-        let key1 = derive_key(password, &salt1)
-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
-        let key2 = derive_key(password, &salt2)
-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
 
         let decrypted_layer1 = decrypt_chacha20(&key2, &ciphertext2, &nonce2)
             .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
@@ -174,69 +200,29 @@ impl PrivateKeyManager {
     }
 }
 
-/// Generates a random password using a cryptographically secure RNG
-fn generate_random_password() -> String {
-    let mut rng = rand::thread_rng();
-    let charset = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
-    (0..24)  // Increased length for better security
-        .map(|_| charset[rng.gen_range(0..charset.len())] as char)
-        .collect()
-}
-
-/// Hashes a password using Argon2
-fn hash_password(password: &str) -> Result<String, KeyManagerError> {
-    let salt = SaltString::generate(&mut rand::thread_rng());
-    let argon2 = Argon2::default();
-
-    Ok(argon2
-        .hash_password(password.as_bytes(), &salt)
-        .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?
-        .to_string())
-}
-
-/// Verifies a password against a stored hash
-fn verify_password(password: &str, stored_hash: &str) -> bool {
-    let parsed_hash = match PasswordHash::new(stored_hash) {
-        Ok(hash) => hash,
-        Err(_) => return false,
-    };
-    let argon2 = Argon2::default();
-
-    argon2
-        .verify_password(password.as_bytes(), &parsed_hash)
-        .is_ok()
-}
-
-/// Derives a 256-bit key from a password and salt using Argon2
-fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> {
-    let mut key = [0u8; 32];
-    let argon2 = Argon2::default();
-
-    argon2
-        .hash_password_into(password.as_bytes(), salt, &mut key)
-        .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
-
-    Ok(key)
-}
-
 /// Encrypts plaintext using ChaCha20Poly1305
 fn encrypt_chacha20(key: &[u8], plaintext: &[u8]) -> Result<(Vec<u8>, [u8; 12]), KeyManagerError> {
     let cipher = ChaCha20Poly1305::new_from_slice(key)
         .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
-    let mut nonce_bytes = [0u8; 12];
-    let mut rng = rand::thread_rng();
-    rng.fill_bytes(&mut nonce_bytes);
-    let nonce = Nonce::from_slice(&nonce_bytes);
+    let nonce = ChaCha20Poly1305::generate_nonce(&mut rand::thread_rng());
+    let nonce_bytes = nonce
+        .as_slice()
+        .try_into()
+        .map_err(|_| KeyManagerError::EncryptionError("Invalid nonce length".to_string()))?;
 
     let ciphertext = cipher
-        .encrypt(nonce, plaintext)
+        .encrypt(&nonce, plaintext)
         .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
 
     Ok((ciphertext, nonce_bytes))
 }
 
 /// Decrypts ciphertext using ChaCha20Poly1305
-fn decrypt_chacha20(key: &[u8], ciphertext: &[u8], nonce: &[u8; 12]) -> Result<Vec<u8>, KeyManagerError> {
+fn decrypt_chacha20(
+    key: &[u8],
+    ciphertext: &[u8],
+    nonce: &[u8; 12],
+) -> Result<Vec<u8>, KeyManagerError> {
     let cipher = ChaCha20Poly1305::new_from_slice(key)
         .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
     let nonce = Nonce::from_slice(nonce);
