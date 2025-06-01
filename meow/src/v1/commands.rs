@@ -1,6 +1,6 @@
 use teloxide::utils::command::BotCommands;
 
-#[derive(BotCommands, Clone)]
+#[derive(BotCommands, Clone, Debug)]
 #[command(rename_rule = "lowercase")]
 pub enum CommandLoggedOut {
     /// Commands alternatives
@@ -13,7 +13,7 @@ pub enum CommandLoggedOut {
     LogIn { password: String },
 }
 
-#[derive(BotCommands, Clone)]
+#[derive(BotCommands, Clone, Debug)]
 #[command(rename_rule = "lowercase")]
 pub enum CommandLoggedIn {
     /// Commands alternatives
@@ -28,4 +28,6 @@ pub enum CommandLoggedIn {
     Create,
     /// Log Out
     LogOut,
+    /// Print Keys
+    PrintKeys,
 }

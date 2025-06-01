@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 use std::net::TcpListener;
 use thiserror::Error;
+use rusqlite::{params, Connection, OptionalExtension};
 
 #[derive(Error, Debug)]
 pub enum EnclaveError {
@@ -34,8 +35,8 @@ pub struct EnclaveConfig {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum EnclaveRequest {
-    SetupConfig { password: String },
-    VerifyAndDeriveKeys { password: String },
+    SetupConfig { user_id: String, password: String },
+    VerifyAndDeriveKeys { user_id: String, password: String },
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -49,6 +50,7 @@ pub enum EnclaveResponse {
 pub struct EnclaveManager {
     config: Option<EnclaveConfig>,
     listener: TcpListener,
+    db: Connection,
 }
 
 impl EnclaveManager {
@@ -56,10 +58,21 @@ impl EnclaveManager {
     pub fn new() -> Result<Self, EnclaveError> {
         let listener = TcpListener::bind("0.0.0.0:8080")
             .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
-
+        // Open or create the SQLite DB file (in enclave, this should be on an encrypted volume)
+        let db = Connection::open("/data/enclave.sqlite").map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS user_configs (
+                user_id TEXT PRIMARY KEY,
+                password_hash TEXT NOT NULL,
+                salt1 TEXT NOT NULL,
+                salt2 TEXT NOT NULL
+            )",
+            [],
+        ).map_err(|e| EnclaveError::SocketError(e.to_string()))?;
         Ok(Self {
             config: None,
             listener,
+            db,
         })
     }
 
@@ -100,7 +113,7 @@ impl EnclaveManager {
             log::info!("Received request: {:?}", request);
 
             // Process request
-            let response = self.handle_request(request)?;
+            let response = self.handle_request(request);
 
             // Send response with length prefix
             let response_bytes = serde_json::to_vec(&response)
@@ -121,68 +134,73 @@ impl EnclaveManager {
     }
 
     /// Handles an incoming request
-    fn handle_request(&mut self, request: EnclaveRequest) -> Result<EnclaveResponse, EnclaveError> {
+    fn handle_request(&mut self, request: EnclaveRequest) -> EnclaveResponse {
         match request {
-            EnclaveRequest::SetupConfig { password } => {
-                let config = self.setup_config(&password)?;
-                Ok(EnclaveResponse::ConfigSetup { config })
+            EnclaveRequest::SetupConfig { user_id, password } => {
+                match self.setup_config(&user_id, &password) {
+                    Ok(config) => EnclaveResponse::ConfigSetup { config },
+                    Err(e) => EnclaveResponse::Error { message: e.to_string() },
+                }
             }
-            EnclaveRequest::VerifyAndDeriveKeys { password } => {
-                match self.verify_and_derive_keys(&password) {
-                    Ok((key1, key2)) => Ok(EnclaveResponse::Keys {
+            EnclaveRequest::VerifyAndDeriveKeys { user_id, password } => {
+                match self.verify_and_derive_keys(&user_id, &password) {
+                    Ok((key1, key2)) => EnclaveResponse::Keys {
                         key1: key1.to_vec(),
                         key2: key2.to_vec(),
-                    }),
-                    Err(e) => Ok(EnclaveResponse::Error {
+                    },
+                    Err(e) => EnclaveResponse::Error {
                         message: e.to_string(),
-                    }),
+                    },
                 }
             }
         }
     }
 
-    /// Sets up the enclave configuration with a password
-    pub fn setup_config(&mut self, password: &str) -> Result<String, EnclaveError> {
+    /// Sets up the enclave configuration with a password and stores it in the DB
+    pub fn setup_config(&mut self, user_id: &str, password: &str) -> Result<String, EnclaveError> {
         let password_hash = hash_password(password)?;
-
         let mut salt1 = [0u8; 16];
         let mut salt2 = [0u8; 16];
         let mut rng = rand::thread_rng();
         rng.fill_bytes(&mut salt1);
         rng.fill_bytes(&mut salt2);
-
         let config = EnclaveConfig {
-            password_hash,
+            password_hash: password_hash.clone(),
             salt1: hex::encode(&salt1),
             salt2: hex::encode(&salt2),
         };
-
-        self.config = Some(config.clone());
+        // Store in DB
+        self.db.execute(
+            "INSERT OR REPLACE INTO user_configs (user_id, password_hash, salt1, salt2) VALUES (?1, ?2, ?3, ?4)",
+            params![user_id, password_hash, hex::encode(&salt1), hex::encode(&salt2)],
+        ).map_err(|e| EnclaveError::SocketError(e.to_string()))?;
         Ok(serde_json::to_string_pretty(&config)?)
     }
 
-    /// Verifies a password and derives encryption keys
-    pub fn verify_and_derive_keys(
-        &self,
-        password: &str,
-    ) -> Result<([u8; 32], [u8; 32]), EnclaveError> {
-        let cfg = self.config.as_ref().ok_or(EnclaveError::InvalidConfig)?;
-
+    /// Verifies a password and derives encryption keys using the DB
+    pub fn verify_and_derive_keys(&self, user_id: &str, password: &str) -> Result<([u8; 32], [u8; 32]), EnclaveError> {
+        let row = self.db.query_row(
+            "SELECT password_hash, salt1, salt2 FROM user_configs WHERE user_id = ?1",
+            params![user_id],
+            |row| {
+                Ok(EnclaveConfig {
+                    password_hash: row.get(0)?,
+                    salt1: row.get(1)?,
+                    salt2: row.get(2)?,
+                })
+            },
+        ).optional().map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+        let cfg = row.ok_or(EnclaveError::InvalidConfig)?;
         // Verify password
         if !verify_password(password, &cfg.password_hash) {
             return Err(EnclaveError::AuthenticationFailed);
         }
-
         // Decode salts
-        let salt1 =
-            hex::decode(&cfg.salt1).map_err(|e| EnclaveError::KeyGenerationError(e.to_string()))?;
-        let salt2 =
-            hex::decode(&cfg.salt2).map_err(|e| EnclaveError::KeyGenerationError(e.to_string()))?;
-
+        let salt1 = hex::decode(&cfg.salt1).map_err(|e| EnclaveError::KeyGenerationError(e.to_string()))?;
+        let salt2 = hex::decode(&cfg.salt2).map_err(|e| EnclaveError::KeyGenerationError(e.to_string()))?;
         // Derive keys
         let key1 = derive_key(password, &salt1)?;
         let key2 = derive_key(password, &salt2)?;
-
         Ok((key1, key2))
     }
 }

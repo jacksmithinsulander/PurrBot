@@ -25,28 +25,37 @@ impl PasswordHandler {
 
     pub async fn sign_up(
         &self,
+        user_id: &str,
         password: &str,
     ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
         let mut key_manager = self.key_manager.lock().await;
-        key_manager.sign_up(password, None).map_err(|e| {
+        key_manager.sign_up(user_id, password, None).map_err(|e| {
             Box::new(PasswordError::KeyManagerError(e)) as Box<dyn std::error::Error + Send + Sync>
         })
     }
 
     pub async fn login(
         &self,
+        user_id: &str,
         password: &str,
     ) -> Result<bool, Box<dyn std::error::Error + Send + Sync>> {
         let mut key_manager = self.key_manager.lock().await;
-        key_manager.login(password).map_err(|e| {
+        key_manager.login(user_id, password).map_err(|e| {
             Box::new(PasswordError::KeyManagerError(e)) as Box<dyn std::error::Error + Send + Sync>
         })
     }
 
-    // pub async fn get_private_key(
-    // &self,
-    // ) -> Result<Option<[u8; 32]>, Box<dyn std::error::Error + Send + Sync>> {
-    // let key_manager = self.key_manager.lock().await;
-    // Ok(key_manager.get_private_key())
-    // }
+    pub async fn get_private_key(
+        &self,
+    ) -> Result<Option<[u8; 32]>, Box<dyn std::error::Error + Send + Sync>> {
+        let key_manager = self.key_manager.lock().await;
+        Ok(key_manager.get_private_key())
+    }
+
+    pub async fn get_public_key(
+        &self,
+    ) -> Result<Option<[u8; 32]>, Box<dyn std::error::Error + Send + Sync>> {
+        let key_manager = self.key_manager.lock().await;
+        Ok(key_manager.get_public_key())
+    }
 }

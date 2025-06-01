@@ -10,6 +10,7 @@ pretty_env_logger = "0.5"
 tokio = { version =  "1.8", features = ["rt-multi-thread", "macros"] }
 serde = "1.0.219"
 thiserror = "1.0"
+hex = "0.4"
 
 nine_sdk = { path = "./../9sdk" }
 uuid = "1.17.0"

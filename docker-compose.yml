@@ -37,6 +37,8 @@ services:
         limits:
           cpus: '2'
           memory: 512M
+    volumes:
+      - enclave_db_data:/data
 
   # Optional: Add a development database or other services as needed
   # db:
@@ -50,5 +52,8 @@ services:
   #   ports:
   #     - "5432:5432"
 
+volumes:
+  enclave_db_data:
+    driver: local
 # volumes:
 #   postgres_data: 
