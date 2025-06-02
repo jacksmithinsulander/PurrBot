@@ -242,10 +242,10 @@ impl PrivateKeyManager {
         println!("[sign_up] nonce1: {}", hex::encode(nonce1_bytes));
         println!("[sign_up] nonce2: {}", hex::encode(nonce2_bytes));
 
-        let (ciphertext1, _) = encrypt_chacha20(&key1, &private_key)
+        let ciphertext1 = encrypt_chacha20(&key1, &private_key, &nonce1_bytes)
             .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
         println!("[sign_up] ciphertext1: {}", hex::encode(&ciphertext1));
-        let (ciphertext2, _) = encrypt_chacha20(&key2, &ciphertext1)
+        let ciphertext2 = encrypt_chacha20(&key2, &ciphertext1, &nonce2_bytes)
             .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
         println!("[sign_up] ciphertext2: {}", hex::encode(&ciphertext2));
 
@@ -338,20 +338,14 @@ impl PrivateKeyManager {
 }
 
 /// Encrypts plaintext using ChaCha20Poly1305
-fn encrypt_chacha20(key: &[u8], plaintext: &[u8]) -> Result<(Vec<u8>, [u8; 12]), KeyManagerError> {
+fn encrypt_chacha20(key: &[u8], plaintext: &[u8], nonce: &[u8; 12]) -> Result<Vec<u8>, KeyManagerError> {
     let cipher = ChaCha20Poly1305::new_from_slice(key)
         .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
-    let nonce = ChaCha20Poly1305::generate_nonce(&mut rand::thread_rng());
-    let nonce_bytes = nonce
-        .as_slice()
-        .try_into()
-        .map_err(|_| KeyManagerError::EncryptionError("Invalid nonce length".to_string()))?;
-
+    let nonce = Nonce::from_slice(nonce);
     let ciphertext = cipher
-        .encrypt(&nonce, plaintext)
+        .encrypt(nonce, plaintext)
         .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
-
-    Ok((ciphertext, nonce_bytes))
+    Ok(ciphertext)
 }
 
 /// Decrypts ciphertext using ChaCha20Poly1305
