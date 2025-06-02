@@ -36,17 +36,49 @@ pub struct EncryptedKeyConfig {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum EnclaveRequest {
-    SetupConfig { user_id: String, password: String },
-    VerifyAndDeriveKeys { user_id: String, password: String },
-    GetConfig { user_id: String },
+    SetupConfig {
+        user_id: String,
+        password: String,
+    },
+    VerifyAndDeriveKeys {
+        user_id: String,
+        password: String,
+    },
+    LoadConfig {
+        user_id: String,
+    },
+    VerifyUserId {
+        user_id: String,
+    },
+    StoreEncryptedConfig {
+        user_id: String,
+        nonce1: String,
+        nonce2: String,
+        double_encrypted_private_key: String,
+    },
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum EnclaveResponse {
-    ConfigSetup { config: String },
-    Keys { key1: Vec<u8>, key2: Vec<u8> },
-    Config { config: Option<String> },
-    Error { message: String },
+    ConfigSetup {
+        salt1: String,
+        salt2: String,
+        password_hash: String,
+    },
+    ConfigStored,
+    Keys {
+        key1: Vec<u8>,
+        key2: Vec<u8>,
+    },
+    Config {
+        config: Option<String>,
+    },
+    Error {
+        message: String,
+    },
+    UserIdVerified {
+        verified: bool,
+    },
 }
 
 /// Manager for handling private key operations
@@ -64,6 +96,41 @@ impl PrivateKeyManager {
         })
     }
 
+    /// Loads the configuration for a specific user
+    pub fn load_config(&mut self, user_id: &str) -> Result<(), KeyManagerError> {
+        let response = self.send_request(EnclaveRequest::LoadConfig {
+            user_id: user_id.to_string(),
+        })?;
+
+        match response {
+            EnclaveResponse::Config { config } => {
+                if let Some(config_str) = config {
+                    let config: EncryptedKeyConfig = serde_json::from_str(&config_str)
+                        .map_err(|e| KeyManagerError::InvalidConfig)?;
+                    self.config = Some(config);
+                    Ok(())
+                } else {
+                    Err(KeyManagerError::InvalidConfig)
+                }
+            }
+            EnclaveResponse::Error { message } => Err(KeyManagerError::KeyGenerationError(message)),
+            _ => Err(KeyManagerError::InvalidConfig),
+        }
+    }
+
+    /// Verifies if the loaded config matches the given user_id
+    pub fn verify_user_id(&self, user_id: &str) -> Result<bool, KeyManagerError> {
+        let response = self.send_request(EnclaveRequest::VerifyUserId {
+            user_id: user_id.to_string(),
+        })?;
+
+        match response {
+            EnclaveResponse::UserIdVerified { verified } => Ok(verified),
+            EnclaveResponse::Error { message } => Err(KeyManagerError::KeyGenerationError(message)),
+            _ => Err(KeyManagerError::InvalidConfig),
+        }
+    }
+
     /// Sends a request to the enclave and receives the response
     fn send_request(&self, request: EnclaveRequest) -> Result<EnclaveResponse, KeyManagerError> {
         let request_bytes = serde_json::to_vec(&request)
@@ -71,7 +138,7 @@ impl PrivateKeyManager {
 
         // Add length prefix to the message
         let length = (request_bytes.len() as u32).to_be_bytes();
-        
+
         let mut stream = TcpStream::connect("meow-enclave:8080")
             .map_err(|e| KeyManagerError::SocketError(e.to_string()))?;
         // Write length prefix first
@@ -103,7 +170,11 @@ impl PrivateKeyManager {
     }
 
     /// Derives keys from the enclave using the given password
-    fn derive_keys(&self, user_id: &str, password: &str) -> Result<([u8; 32], [u8; 32]), KeyManagerError> {
+    fn derive_keys(
+        &self,
+        user_id: &str,
+        password: &str,
+    ) -> Result<([u8; 32], [u8; 32]), KeyManagerError> {
         let response = self.send_request(EnclaveRequest::VerifyAndDeriveKeys {
             user_id: user_id.to_string(),
             password: password.to_string(),
@@ -134,16 +205,21 @@ impl PrivateKeyManager {
         password: &str,
         private_key: Option<[u8; 32]>,
     ) -> Result<String, KeyManagerError> {
-        // Setup enclave config with password
+        // 1. Call SetupConfig to get salts
         let response = self.send_request(EnclaveRequest::SetupConfig {
             user_id: user_id.to_string(),
             password: password.to_string(),
         })?;
 
-        // We don't actually need the config from the response for now
-        if let EnclaveResponse::Error { message } = response {
-            return Err(KeyManagerError::KeyGenerationError(message));
-        }
+        let (salt1, salt2) = match response {
+            EnclaveResponse::ConfigSetup { salt1, salt2, .. } => (salt1, salt2),
+            EnclaveResponse::Error { message } => {
+                return Err(KeyManagerError::KeyGenerationError(message))
+            }
+            _ => return Err(KeyManagerError::InvalidConfig),
+        };
+        println!("[sign_up] salt1: {}", salt1);
+        println!("[sign_up] salt2: {}", salt2);
 
         let private_key = private_key.unwrap_or_else(|| {
             let mut key = [0u8; 32];
@@ -151,20 +227,27 @@ impl PrivateKeyManager {
             rng.fill_bytes(&mut key);
             key
         });
+        println!("[sign_up] private_key: {}", hex::encode(private_key));
 
         // Get encryption keys from enclave
         let (key1, key2) = self.derive_keys(user_id, password)?;
+        println!("[sign_up] key1: {}", hex::encode(key1));
+        println!("[sign_up] key2: {}", hex::encode(key2));
 
         let mut rng = rand::thread_rng();
         let mut nonce1_bytes = [0u8; 12];
         let mut nonce2_bytes = [0u8; 12];
         rng.fill_bytes(&mut nonce1_bytes);
         rng.fill_bytes(&mut nonce2_bytes);
+        println!("[sign_up] nonce1: {}", hex::encode(nonce1_bytes));
+        println!("[sign_up] nonce2: {}", hex::encode(nonce2_bytes));
 
         let (ciphertext1, _) = encrypt_chacha20(&key1, &private_key)
             .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
+        println!("[sign_up] ciphertext1: {}", hex::encode(&ciphertext1));
         let (ciphertext2, _) = encrypt_chacha20(&key2, &ciphertext1)
             .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
+        println!("[sign_up] ciphertext2: {}", hex::encode(&ciphertext2));
 
         let config = EncryptedKeyConfig {
             nonce1: hex::encode(&nonce1_bytes),
@@ -172,37 +255,34 @@ impl PrivateKeyManager {
             double_encrypted_private_key: hex::encode(&ciphertext2),
         };
 
+        // Store the encrypted config in the enclave DB
+        let _ = self.send_request(EnclaveRequest::StoreEncryptedConfig {
+            user_id: user_id.to_string(),
+            nonce1: config.nonce1.clone(),
+            nonce2: config.nonce2.clone(),
+            double_encrypted_private_key: config.double_encrypted_private_key.clone(),
+        });
+
         self.config = Some(config.clone());
         let config_json = serde_json::to_string_pretty(&config)
             .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
-
         Ok(config_json)
-    }
-
-    /// Loads the configuration for a user
-    pub fn load_config(&mut self, user_id: &str) -> Result<(), KeyManagerError> {
-        let response = self.send_request(EnclaveRequest::GetConfig { user_id: user_id.to_string() })?;
-        match response {
-            EnclaveResponse::Config { config: Some(cfg_json) } => {
-                let cfg: EncryptedKeyConfig = serde_json::from_str(&cfg_json)
-                    .map_err(|e| KeyManagerError::InvalidConfig)?;
-                self.config = Some(cfg);
-                Ok(())
-            }
-            EnclaveResponse::Config { config: None } => Err(KeyManagerError::InvalidConfig),
-            EnclaveResponse::Error { message } => Err(KeyManagerError::KeyGenerationError(message)),
-            _ => Err(KeyManagerError::InvalidConfig),
-        }
     }
 
     /// Logs in a user by verifying the password and decrypting the private key
     pub fn login(&mut self, user_id: &str, password: &str) -> Result<bool, KeyManagerError> {
-        // Always load config before login
-        self.load_config(user_id)?;
         let cfg = self.config.as_ref().ok_or(KeyManagerError::InvalidConfig)?;
+        println!("[login] nonce1: {}", cfg.nonce1);
+        println!("[login] nonce2: {}", cfg.nonce2);
+        println!(
+            "[login] double_encrypted_private_key: {}",
+            cfg.double_encrypted_private_key
+        );
 
         // Get decryption keys from enclave
         let (key1, key2) = self.derive_keys(user_id, password)?;
+        println!("[login] key1: {}", hex::encode(key1));
+        println!("[login] key2: {}", hex::encode(key2));
 
         let nonce1: [u8; 12] = hex::decode(&cfg.nonce1)
             .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?
@@ -214,11 +294,20 @@ impl PrivateKeyManager {
             .map_err(|_| KeyManagerError::DecryptionError("Invalid nonce2 length".to_string()))?;
         let ciphertext2 = hex::decode(&cfg.double_encrypted_private_key)
             .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
+        println!("[login] ciphertext2: {}", hex::encode(&ciphertext2));
 
         let decrypted_layer1 = decrypt_chacha20(&key2, &ciphertext2, &nonce2)
             .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
+        println!(
+            "[login] decrypted_layer1: {}",
+            hex::encode(&decrypted_layer1)
+        );
         let decrypted_private_key = decrypt_chacha20(&key1, &decrypted_layer1, &nonce1)
             .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
+        println!(
+            "[login] decrypted_private_key: {}",
+            hex::encode(&decrypted_private_key)
+        );
 
         let mut private_key = [0u8; 32];
         private_key.copy_from_slice(&decrypted_private_key);
@@ -233,15 +322,18 @@ impl PrivateKeyManager {
 
     /// Retrieves the public key derived from the private key, if available
     pub fn get_public_key(&self) -> Option<[u8; 32]> {
-        self.decrypted_private_key.lock().unwrap().map(|private_key| {
-            let mut public_key = [0u8; 32];
-            // For now, we'll just use a simple XOR with a constant as a placeholder
-            // In a real implementation, this would use proper public key derivation
-            for (i, byte) in private_key.iter().enumerate() {
-                public_key[i] = byte ^ 0xFF;
-            }
-            public_key
-        })
+        self.decrypted_private_key
+            .lock()
+            .unwrap()
+            .map(|private_key| {
+                let mut public_key = [0u8; 32];
+                // For now, we'll just use a simple XOR with a constant as a placeholder
+                // In a real implementation, this would use proper public key derivation
+                for (i, byte) in private_key.iter().enumerate() {
+                    public_key[i] = byte ^ 0xFF;
+                }
+                public_key
+            })
     }
 }
 

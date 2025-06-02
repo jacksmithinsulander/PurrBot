@@ -3,8 +3,8 @@ use teloxide::{prelude::*, utils::command::BotCommands};
 mod keyboard;
 mod v1;
 
-use v1::handlers::{callback_handler, message_handler};
 use v1::commands::{CommandLoggedIn, CommandLoggedOut};
+use v1::handlers::{callback_handler, message_handler};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

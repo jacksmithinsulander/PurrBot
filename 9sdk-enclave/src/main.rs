@@ -4,12 +4,13 @@ use argon2::{
 };
 use env_logger;
 use log;
+use nine_sdk::{EnclaveRequest, EnclaveResponse};
 use rand_core::RngCore;
+use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 use std::net::TcpListener;
 use thiserror::Error;
-use rusqlite::{params, Connection, OptionalExtension};
 
 #[derive(Error, Debug)]
 pub enum EnclaveError {
@@ -31,19 +32,9 @@ pub struct EnclaveConfig {
     password_hash: String,
     salt1: String,
     salt2: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub enum EnclaveRequest {
-    SetupConfig { user_id: String, password: String },
-    VerifyAndDeriveKeys { user_id: String, password: String },
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub enum EnclaveResponse {
-    ConfigSetup { config: String },
-    Keys { key1: Vec<u8>, key2: Vec<u8> },
-    Error { message: String },
+    nonce1: String,
+    nonce2: String,
+    double_encrypted_private_key: String,
 }
 
 /// Manager for handling sensitive operations in the enclave
@@ -59,16 +50,21 @@ impl EnclaveManager {
         let listener = TcpListener::bind("0.0.0.0:8080")
             .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
         // Open or create the SQLite DB file (in enclave, this should be on an encrypted volume)
-        let db = Connection::open("/data/enclave.sqlite").map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+        let db = Connection::open("/data/enclave.sqlite")
+            .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
         db.execute(
             "CREATE TABLE IF NOT EXISTS user_configs (
                 user_id TEXT PRIMARY KEY,
                 password_hash TEXT NOT NULL,
                 salt1 TEXT NOT NULL,
-                salt2 TEXT NOT NULL
+                salt2 TEXT NOT NULL,
+                nonce1 TEXT NOT NULL,
+                nonce2 TEXT NOT NULL,
+                double_encrypted_private_key TEXT NOT NULL
             )",
             [],
-        ).map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+        )
+        .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
         Ok(Self {
             config: None,
             listener,
@@ -101,6 +97,9 @@ impl EnclaveManager {
                 log::warn!("Error reading message body: {}", e);
                 continue; // Error reading request
             }
+
+            // Debug log: print raw received data
+            log::info!("Received raw: {}", String::from_utf8_lossy(&buffer));
 
             let request: EnclaveRequest = match serde_json::from_slice(&buffer) {
                 Ok(req) => req,
@@ -138,8 +137,14 @@ impl EnclaveManager {
         match request {
             EnclaveRequest::SetupConfig { user_id, password } => {
                 match self.setup_config(&user_id, &password) {
-                    Ok(config) => EnclaveResponse::ConfigSetup { config },
-                    Err(e) => EnclaveResponse::Error { message: e.to_string() },
+                    Ok((salt1, salt2, password_hash)) => EnclaveResponse::ConfigSetup {
+                        salt1,
+                        salt2,
+                        password_hash,
+                    },
+                    Err(e) => EnclaveResponse::Error {
+                        message: e.to_string(),
+                    },
                 }
             }
             EnclaveRequest::VerifyAndDeriveKeys { user_id, password } => {
@@ -153,55 +158,170 @@ impl EnclaveManager {
                     },
                 }
             }
+            EnclaveRequest::LoadConfig { user_id } => match self.get_config(&user_id) {
+                Ok(config_opt) => EnclaveResponse::Config { config: config_opt },
+                Err(e) => EnclaveResponse::Error {
+                    message: e.to_string(),
+                },
+            },
+            EnclaveRequest::VerifyUserId { user_id } => {
+                // Check if user_id exists in the DB
+                let exists = self
+                    .db
+                    .query_row(
+                        "SELECT EXISTS(SELECT 1 FROM user_configs WHERE user_id = ?1)",
+                        params![user_id],
+                        |row| row.get::<_, i32>(0),
+                    )
+                    .unwrap_or(0)
+                    == 1;
+                EnclaveResponse::UserIdVerified { verified: exists }
+            }
+            EnclaveRequest::StoreEncryptedConfig {
+                user_id,
+                nonce1,
+                nonce2,
+                double_encrypted_private_key,
+            } => {
+                match self.store_encrypted_config(
+                    &user_id,
+                    &nonce1,
+                    &nonce2,
+                    &double_encrypted_private_key,
+                ) {
+                    Ok(_) => EnclaveResponse::ConfigStored,
+                    Err(e) => EnclaveResponse::Error {
+                        message: e.to_string(),
+                    },
+                }
+            }
         }
     }
 
     /// Sets up the enclave configuration with a password and stores it in the DB
-    pub fn setup_config(&mut self, user_id: &str, password: &str) -> Result<String, EnclaveError> {
+    pub fn setup_config(
+        &mut self,
+        user_id: &str,
+        password: &str,
+    ) -> Result<(String, String, String), EnclaveError> {
         let password_hash = hash_password(password)?;
         let mut salt1 = [0u8; 16];
         let mut salt2 = [0u8; 16];
         let mut rng = rand::thread_rng();
         rng.fill_bytes(&mut salt1);
         rng.fill_bytes(&mut salt2);
-        let config = EnclaveConfig {
-            password_hash: password_hash.clone(),
-            salt1: hex::encode(&salt1),
-            salt2: hex::encode(&salt2),
-        };
         // Store in DB
         self.db.execute(
-            "INSERT OR REPLACE INTO user_configs (user_id, password_hash, salt1, salt2) VALUES (?1, ?2, ?3, ?4)",
-            params![user_id, password_hash, hex::encode(&salt1), hex::encode(&salt2)],
+            "INSERT OR REPLACE INTO user_configs (user_id, password_hash, salt1, salt2, nonce1, nonce2, double_encrypted_private_key) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+            params![user_id, password_hash, hex::encode(&salt1), hex::encode(&salt2), "", "", ""],
         ).map_err(|e| EnclaveError::SocketError(e.to_string()))?;
-        Ok(serde_json::to_string_pretty(&config)?)
+        Ok((hex::encode(&salt1), hex::encode(&salt2), password_hash))
     }
 
     /// Verifies a password and derives encryption keys using the DB
-    pub fn verify_and_derive_keys(&self, user_id: &str, password: &str) -> Result<([u8; 32], [u8; 32]), EnclaveError> {
+    pub fn verify_and_derive_keys(
+        &self,
+        user_id: &str,
+        password: &str,
+    ) -> Result<([u8; 32], [u8; 32]), EnclaveError> {
+        log::info!("[verify_and_derive_keys] user_id: {}", user_id);
+        let row = self
+            .db
+            .query_row(
+                "SELECT password_hash, salt1, salt2 FROM user_configs WHERE user_id = ?1",
+                params![user_id],
+                |row| {
+                    Ok((
+                        row.get::<_, String>(0)?,
+                        row.get::<_, String>(1)?,
+                        row.get::<_, String>(2)?,
+                    ))
+                },
+            )
+            .optional()
+            .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+        let (password_hash, salt1, salt2) = row.ok_or(EnclaveError::InvalidConfig)?;
+        log::info!("[verify_and_derive_keys] loaded salt1: {}", salt1);
+        log::info!("[verify_and_derive_keys] loaded salt2: {}", salt2);
+        // Verify password
+        if !verify_password(password, &password_hash) {
+            log::info!("[verify_and_derive_keys] password verification failed");
+            return Err(EnclaveError::AuthenticationFailed);
+        }
+        // Decode salts
+        let salt1_bytes =
+            hex::decode(&salt1).map_err(|e| EnclaveError::KeyGenerationError(e.to_string()))?;
+        let salt2_bytes =
+            hex::decode(&salt2).map_err(|e| EnclaveError::KeyGenerationError(e.to_string()))?;
+        log::info!(
+            "[verify_and_derive_keys] salt1_bytes: {}",
+            hex::encode(&salt1_bytes)
+        );
+        log::info!(
+            "[verify_and_derive_keys] salt2_bytes: {}",
+            hex::encode(&salt2_bytes)
+        );
+        // Derive keys
+        let key1 = derive_key(password, &salt1_bytes)?;
+        let key2 = derive_key(password, &salt2_bytes)?;
+        log::info!("[verify_and_derive_keys] key1: {}", hex::encode(&key1));
+        log::info!("[verify_and_derive_keys] key2: {}", hex::encode(&key2));
+        Ok((key1, key2))
+    }
+
+    /// Fetches the enclave configuration for a user from the DB
+    pub fn get_config(&self, user_id: &str) -> Result<Option<String>, EnclaveError> {
+        log::info!("[get_config] user_id: {}", user_id);
         let row = self.db.query_row(
-            "SELECT password_hash, salt1, salt2 FROM user_configs WHERE user_id = ?1",
+            "SELECT password_hash, salt1, salt2, nonce1, nonce2, double_encrypted_private_key FROM user_configs WHERE user_id = ?1",
             params![user_id],
             |row| {
                 Ok(EnclaveConfig {
                     password_hash: row.get(0)?,
                     salt1: row.get(1)?,
                     salt2: row.get(2)?,
+                    nonce1: row.get(3)?,
+                    nonce2: row.get(4)?,
+                    double_encrypted_private_key: row.get(5)?,
                 })
             },
         ).optional().map_err(|e| EnclaveError::SocketError(e.to_string()))?;
-        let cfg = row.ok_or(EnclaveError::InvalidConfig)?;
-        // Verify password
-        if !verify_password(password, &cfg.password_hash) {
-            return Err(EnclaveError::AuthenticationFailed);
+        if let Some(cfg) = &row {
+            log::info!("[get_config] loaded nonce1: {}", cfg.nonce1);
+            log::info!("[get_config] loaded nonce2: {}", cfg.nonce2);
+            log::info!(
+                "[get_config] loaded double_encrypted_private_key: {}",
+                cfg.double_encrypted_private_key
+            );
         }
-        // Decode salts
-        let salt1 = hex::decode(&cfg.salt1).map_err(|e| EnclaveError::KeyGenerationError(e.to_string()))?;
-        let salt2 = hex::decode(&cfg.salt2).map_err(|e| EnclaveError::KeyGenerationError(e.to_string()))?;
-        // Derive keys
-        let key1 = derive_key(password, &salt1)?;
-        let key2 = derive_key(password, &salt2)?;
-        Ok((key1, key2))
+        if let Some(cfg) = row {
+            let config_json = serde_json::to_string_pretty(&cfg)?;
+            Ok(Some(config_json))
+        } else {
+            Ok(None)
+        }
+    }
+
+    /// Stores the encrypted key config in the DB
+    pub fn store_encrypted_config(
+        &mut self,
+        user_id: &str,
+        nonce1: &str,
+        nonce2: &str,
+        double_encrypted_private_key: &str,
+    ) -> Result<(), EnclaveError> {
+        log::info!("[store_encrypted_config] user_id: {}", user_id);
+        log::info!("[store_encrypted_config] nonce1: {}", nonce1);
+        log::info!("[store_encrypted_config] nonce2: {}", nonce2);
+        log::info!(
+            "[store_encrypted_config] double_encrypted_private_key: {}",
+            double_encrypted_private_key
+        );
+        self.db.execute(
+            "UPDATE user_configs SET nonce1 = ?1, nonce2 = ?2, double_encrypted_private_key = ?3 WHERE user_id = ?4",
+            params![nonce1, nonce2, double_encrypted_private_key, user_id],
+        ).map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+        Ok(())
     }
 }
 

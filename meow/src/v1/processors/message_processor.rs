@@ -1,4 +1,4 @@
-use crate::keyboard::{logged_out_operations, logged_in_operations};
+use crate::keyboard::{logged_in_operations, logged_out_operations};
 use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
 use crate::v1::models::{log_in_state, password_handler::PasswordHandler, PASSWORD_HANDLER};
 use hex;
@@ -44,12 +44,15 @@ pub async fn process_message(
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
     if let Some(text) = msg.text() {
         log::debug!("Received message: {}", text);
-        
+
         // --- FIX: Check login state before parsing as logged in ---
         let user_id = msg.chat.id.0;
         let user_state = {
             let states = log_in_state::USER_STATES.lock().await;
-            states.get(&user_id).copied().unwrap_or(log_in_state::AwaitingState::None)
+            states
+                .get(&user_id)
+                .copied()
+                .unwrap_or(log_in_state::AwaitingState::None)
         };
         let is_logged_in = match user_state {
             log_in_state::AwaitingState::None => {
@@ -58,7 +61,7 @@ pub async fn process_message(
                     handler.is_some()
                 };
                 handler_is_some
-            },
+            }
             _ => false,
         };
         // lock dropped before any await
@@ -72,19 +75,22 @@ pub async fn process_message(
                         return Ok(());
                     }
                     CommandLoggedIn::Start => {
-                        bot.send_message(msg.chat.id, "😺 Welcome back! Here are your keys:").await?;
+                        bot.send_message(msg.chat.id, "😺 Welcome back! Here are your keys:")
+                            .await?;
                         print_keys(msg.chat.id, &bot).await?;
                         return Ok(());
                     }
                     // ... handle other logged in commands ...
                     _ => {
-                        bot.send_message(msg.chat.id, "Command not implemented yet!").await?;
+                        bot.send_message(msg.chat.id, "Command not implemented yet!")
+                            .await?;
                         return Ok(());
                     }
                 }
             } else {
                 // Fallback: handle normal chat messages for logged-in users
-                bot.send_message(msg.chat.id, format!("You said: {}", text)).await?;
+                bot.send_message(msg.chat.id, format!("You said: {}", text))
+                    .await?;
                 return Ok(());
             }
         }
@@ -129,9 +135,16 @@ pub async fn process_message(
                                 }
                             }
                             Err(e) => {
-                                bot.send_message(msg.chat.id, format!("Failed to create account: {}", e))
-                                    .await?;
-                                log::error!("Failed to create account for user {}: {}", msg.chat.id.0, e);
+                                bot.send_message(
+                                    msg.chat.id,
+                                    format!("Failed to create account: {}", e),
+                                )
+                                .await?;
+                                log::error!(
+                                    "Failed to create account for user {}: {}",
+                                    msg.chat.id.0,
+                                    e
+                                );
                             }
                         }
                     }
@@ -173,7 +186,10 @@ pub async fn process_message(
                 log::debug!("Failed to parse command: {:?}", e);
                 let user_state = {
                     let states = log_in_state::USER_STATES.lock().await;
-                    states.get(&msg.chat.id.0).copied().unwrap_or(log_in_state::AwaitingState::None)
+                    states
+                        .get(&msg.chat.id.0)
+                        .copied()
+                        .unwrap_or(log_in_state::AwaitingState::None)
                 };
                 match user_state {
                     log_in_state::AwaitingState::AwaitingSignUpPassword => {

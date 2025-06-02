@@ -1,17 +1,15 @@
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
 
 pub fn logged_out_operations() -> InlineKeyboardMarkup {
-    let operations = [
-        ("Sign Up", "Sign Up"),
-        ("Log In", "Log In"),
-        ("FAQ", "FAQ"),
-    ];
+    let operations = [("Sign Up", "Sign Up"), ("Log In", "Log In"), ("FAQ", "FAQ")];
     let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
 
     for row in operations.chunks(3) {
         keyboard.push(
             row.iter()
-                .map(|&(text, data)| InlineKeyboardButton::callback(text.to_owned(), data.to_owned()))
+                .map(|&(text, data)| {
+                    InlineKeyboardButton::callback(text.to_owned(), data.to_owned())
+                })
                 .collect(),
         );
     }
@@ -32,7 +30,9 @@ pub fn logged_in_operations() -> InlineKeyboardMarkup {
     for row in operations.chunks(3) {
         keyboard.push(
             row.iter()
-                .map(|&(text, data)| InlineKeyboardButton::callback(text.to_owned(), data.to_owned()))
+                .map(|&(text, data)| {
+                    InlineKeyboardButton::callback(text.to_owned(), data.to_owned())
+                })
                 .collect(),
         );
     }

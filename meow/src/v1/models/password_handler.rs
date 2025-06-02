@@ -40,6 +40,20 @@ impl PasswordHandler {
         password: &str,
     ) -> Result<bool, Box<dyn std::error::Error + Send + Sync>> {
         let mut key_manager = self.key_manager.lock().await;
+
+        // First load the user's config
+        key_manager.load_config(user_id).map_err(|e| {
+            Box::new(PasswordError::KeyManagerError(e)) as Box<dyn std::error::Error + Send + Sync>
+        })?;
+
+        // Verify the user_id matches the loaded config
+        if !key_manager.verify_user_id(user_id).map_err(|e| {
+            Box::new(PasswordError::KeyManagerError(e)) as Box<dyn std::error::Error + Send + Sync>
+        })? {
+            return Err(Box::new(PasswordError::InvalidState));
+        }
+
+        // Now attempt to login with the password
         key_manager.login(user_id, password).map_err(|e| {
             Box::new(PasswordError::KeyManagerError(e)) as Box<dyn std::error::Error + Send + Sync>
         })
