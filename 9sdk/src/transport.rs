@@ -1,8 +1,8 @@
-use std::net::SocketAddr;
-use tokio::net::{TcpListener, TcpStream};
-use tokio::io::{AsyncRead, AsyncWrite};
-use std::pin::Pin;
 use std::io;
+use std::net::SocketAddr;
+use std::pin::Pin;
+use tokio::io::{AsyncRead, AsyncWrite};
+use tokio::net::{TcpListener, TcpStream};
 
 #[cfg(feature = "vsock")]
 use vsock::{VsockListener, VsockStream};
@@ -11,7 +11,7 @@ use vsock::{VsockListener, VsockStream};
 pub enum Transport {
     Tcp(SocketAddr),
     #[cfg(feature = "vsock")]
-    Vsock(u32, u32),  // (cid, port)
+    Vsock(u32, u32), // (cid, port)
 }
 
 pub trait TransportStream: AsyncRead + AsyncWrite + Send {}
@@ -62,4 +62,4 @@ mod tests {
         // This will fail to connect, but we just want to verify it compiles
         assert!(result.is_err());
     }
-} 
+}

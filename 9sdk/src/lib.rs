@@ -1,15 +1,15 @@
-use chacha20poly1305::{
-    aead::{Aead, AeadCore},
-    ChaCha20Poly1305, KeyInit, Nonce,
+use argon2::{
+    Argon2,
+    password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
 };
+use chacha20poly1305::{
+    ChaCha20Poly1305, KeyInit, Nonce,
+    aead::{Aead, AeadCore},
+};
+use rand::{CryptoRng, Rng, RngCore, thread_rng};
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
 use thiserror::Error;
-use argon2::{
-    password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
-    Argon2,
-};
-use rand::{Rng, CryptoRng, RngCore, thread_rng};
 
 pub mod transport;
 
@@ -92,7 +92,10 @@ impl KeyManager {
     ) -> Result<([u8; 32], [u8; 32]), KeyManagerError> {
         let config = {
             let guard = self.config.lock().unwrap();
-            guard.as_ref().ok_or(KeyManagerError::InvalidConfig)?.clone()
+            guard
+                .as_ref()
+                .ok_or(KeyManagerError::InvalidConfig)?
+                .clone()
         };
 
         // Verify password
@@ -138,7 +141,9 @@ fn verify_password(password: &str, stored_hash: &str) -> bool {
         Err(_) => return false,
     };
     let argon2 = Argon2::default();
-    argon2.verify_password(password.as_bytes(), &parsed_hash).is_ok()
+    argon2
+        .verify_password(password.as_bytes(), &parsed_hash)
+        .is_ok()
 }
 
 /// Derives a key from a password and salt

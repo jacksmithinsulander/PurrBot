@@ -5,9 +5,9 @@ mod v1;
 use std::sync::Arc;
 use v1::services::user_config_store::UserConfigStore;
 
+use nine_sdk::{Transport, connect};
 use v1::commands::{CommandLoggedIn, CommandLoggedOut};
 use v1::handlers::{callback_handler, message_handler};
-use nine_sdk::{Transport, connect};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -34,20 +34,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
     log::info!("Commands registered successfully");
 
     let config_store_clone = config_store.clone();
-    let handler =
-        dptree::entry()
-            .branch(
-                Update::filter_message().branch(dptree::endpoint(move |bot, msg| {
-                    let config_store = config_store_clone.clone();
-                    async move { v1::handlers::message_handler(bot, msg, config_store).await }
-                })),
-            )
-            .branch(Update::filter_callback_query().branch(dptree::endpoint(
-                move |bot, q| {
-                    let config_store = config_store.clone();
-                    async move { callback_handler(bot, q, config_store).await }
-                },
-            )));
+    let handler = dptree::entry()
+        .branch(
+            Update::filter_message().branch(dptree::endpoint(move |bot, msg| {
+                log::info!("Received message update: {:?}", msg);
+                let config_store = config_store_clone.clone();
+                async move { v1::handlers::message_handler(bot, msg, config_store).await }
+            })),
+        )
+        .branch(
+            Update::filter_callback_query().branch(dptree::endpoint(move |bot, q| {
+                let config_store = config_store.clone();
+                async move { callback_handler(bot, q, config_store).await }
+            })),
+        );
     //.branch(Update::filter_inline_query().branch(dptree::endpoint(inline_query_handler)));
 
     Dispatcher::builder(bot, handler)

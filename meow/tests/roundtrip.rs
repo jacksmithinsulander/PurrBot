@@ -1,9 +1,10 @@
+use serde_json::json;
+use std::io::{Read, Write};
 use std::process::Command;
 use std::time::Duration;
-use tokio::time::sleep;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
-use std::io::{Read, Write};
-use serde_json::json;
+use tokio::time::sleep;
 
 #[tokio::test]
 async fn test_enclave_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
@@ -48,4 +49,4 @@ async fn test_enclave_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
     // Clean up
     enclave.kill()?;
     Ok(())
-} 
+}

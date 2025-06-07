@@ -1,17 +1,13 @@
-use argon2::{
-    password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
-    Argon2,
-};
-use rand::thread_rng;
-use rand_core::{OsRng, RngCore};
+use argon2::Argon2;
+use password_hash::PasswordHasher;
+use password_hash::PasswordVerifier;
+use password_hash::{PasswordHash, SaltString};
+use rand::Rng;
+use rand_core::RngCore;
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
+use std::net::TcpListener;
 use thiserror::Error;
-use tokio::io::{AsyncRead, AsyncWrite, AsyncReadExt, AsyncWriteExt};
-use std::pin::Pin;
-use nine_sdk::{Transport, listen, KeyManager};
-use log;
-use std::error::Error;
 
 #[derive(Error, Debug)]
 pub enum EnclaveError {
@@ -51,51 +47,43 @@ pub enum EnclaveResponse {
 /// Manager for handling sensitive operations in the enclave
 pub struct EnclaveManager {
     config: Option<EnclaveConfig>,
+    listener: TcpListener,
 }
 
 impl EnclaveManager {
     /// Creates a new instance of the enclave manager
     pub fn new() -> Result<Self, EnclaveError> {
+        let listener = TcpListener::bind("0.0.0.0:8080")
+            .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+
         Ok(Self {
             config: None,
+            listener,
         })
     }
 
     /// Starts the enclave server
-    pub async fn run(&mut self) -> Result<(), EnclaveError> {
-        // Determine transport based on environment
-        let transport = if std::env::var("ENCLAVE_MODE").as_deref() == Ok("enclave") {
-            #[cfg(feature = "vsock")]
-            {
-                Transport::Vsock(u32::MAX, 5005)
-            }
-            #[cfg(not(feature = "vsock"))]
-            {
-                return Err(EnclaveError::SocketError("vsock feature not enabled".to_string()));
-            }
-        } else {
-            Transport::Tcp("0.0.0.0:5005".parse().unwrap())
-        };
-
-        log::info!("Enclave listening for connections...");
-
+    pub fn run(&mut self) -> Result<(), EnclaveError> {
         loop {
-            let mut stream = listen(transport.clone()).await
-                .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
+            let mut stream = self
+                .listener
+                .accept()
+                .map_err(|e| EnclaveError::SocketError(e.to_string()))?
+                .0;
 
             // Read request length first
             let mut length_buf = [0u8; 4];
-            if let Err(e) = stream.read_exact(&mut length_buf).await {
+            if let Err(e) = stream.read_exact(&mut length_buf) {
                 log::warn!("Error reading message length: {}", e);
-                continue;
+                continue; // Connection closed or error, try next connection
             }
             let length = u32::from_be_bytes(length_buf) as usize;
 
             // Then read the exact amount of bytes
             let mut buffer = vec![0u8; length];
-            if let Err(e) = stream.read_exact(&mut buffer).await {
+            if let Err(e) = stream.read_exact(&mut buffer) {
                 log::warn!("Error reading message body: {}", e);
-                continue;
+                continue; // Error reading request
             }
 
             let request: EnclaveRequest = match serde_json::from_slice(&buffer) {
@@ -115,10 +103,12 @@ impl EnclaveManager {
             let length = (response_bytes.len() as u32).to_be_bytes();
 
             // Write length prefix first
-            stream.write_all(&length).await
+            stream
+                .write_all(&length)
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
             // Then write the actual response
-            stream.write_all(&response_bytes).await
+            stream
+                .write_all(&response_bytes)
                 .map_err(|e| EnclaveError::SocketError(e.to_string()))?;
         }
     }
@@ -150,7 +140,7 @@ impl EnclaveManager {
 
         let mut salt1 = [0u8; 16];
         let mut salt2 = [0u8; 16];
-        let mut rng = OsRng;
+        let mut rng = rand::thread_rng();
         rng.fill_bytes(&mut salt1);
         rng.fill_bytes(&mut salt2);
 
@@ -192,8 +182,7 @@ impl EnclaveManager {
 
 /// Hashes a password using Argon2
 fn hash_password(password: &str) -> Result<String, EnclaveError> {
-    let mut rng = thread_rng();
-    let salt = SaltString::generate(&mut rng);
+    let salt = SaltString::generate(&mut rand::thread_rng());
     let argon2 = Argon2::default();
 
     Ok(argon2
@@ -227,18 +216,7 @@ fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], EnclaveError> {
     Ok(key)
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    pretty_env_logger::init();
-    log::info!("Starting nine_sdk_enclave...");
-    
-    // Initialize the key manager
-    let key_manager = KeyManager::new();
-    log::info!("Key manager initialized");
-    
-    // Keep the enclave running
-    tokio::signal::ctrl_c().await?;
-    log::info!("Shutting down...");
-    
-    Ok(())
+fn main() -> Result<(), EnclaveError> {
+    let mut manager = EnclaveManager::new()?;
+    manager.run()
 }

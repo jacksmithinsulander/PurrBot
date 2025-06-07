@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, OptionalExtension, Result as SqlResult};
+use rusqlite::{Connection, OptionalExtension, Result as SqlResult, params};
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::sync::Arc;
@@ -40,7 +40,11 @@ impl UserConfigStore {
         })
     }
 
-    pub async fn insert_or_update_config(&self, user_id: &str, config_json: &str) -> Result<(), UserConfigStoreError> {
+    pub async fn insert_or_update_config(
+        &self,
+        user_id: &str,
+        config_json: &str,
+    ) -> Result<(), UserConfigStoreError> {
         let conn = self.conn.lock().await;
         conn.execute(
             "INSERT INTO user_configs (user_id, config_json) VALUES (?1, ?2)
@@ -61,4 +65,4 @@ impl UserConfigStore {
             .optional()?;
         config_json.ok_or(UserConfigStoreError::NotFound)
     }
-} 
+}

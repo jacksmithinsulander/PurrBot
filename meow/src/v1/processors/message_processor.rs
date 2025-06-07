@@ -1,12 +1,12 @@
 use crate::keyboard::{logged_in_operations, logged_out_operations};
 use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
-use crate::v1::models::{log_in_state, password_handler::PasswordHandler, PASSWORD_HANDLER};
+use crate::v1::models::{PASSWORD_HANDLER, log_in_state, password_handler::PasswordHandler};
 use hex;
 use std::error::Error;
 use teloxide::{
     payloads::SendMessageSetters,
     prelude::*,
-    types::{Me, MessageId},
+    types::{BotCommandScope, Me, MessageId},
     utils::command::BotCommands,
 };
 
@@ -15,9 +15,13 @@ use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use tokio::sync::Mutex;
 
-pub static CHAT_MESSAGE_IDS: Lazy<Mutex<HashMap<ChatId, Vec<MessageId>>>> = Lazy::new(|| Mutex::new(HashMap::new()));
+pub static CHAT_MESSAGE_IDS: Lazy<Mutex<HashMap<ChatId, Vec<MessageId>>>> =
+    Lazy::new(|| Mutex::new(HashMap::new()));
 
-pub async fn delete_all_messages(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Send + Sync>> {
+pub async fn delete_all_messages(
+    chat_id: ChatId,
+    bot: &Bot,
+) -> Result<(), Box<dyn Error + Send + Sync>> {
     let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
     if let Some(ids) = chat_message_ids.get(&chat_id) {
         for message_id in ids {
@@ -88,9 +92,17 @@ pub async fn logout(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Se
         states.insert(chat_id.0, log_in_state::AwaitingState::None);
     }
 
-    // Send logout confirmation message
+    // Set command menu to logged-out
+    bot.set_my_commands(CommandLoggedOut::bot_commands())
+        .scope(BotCommandScope::Chat {
+            chat_id: chat_id.into(),
+        })
+        .await?;
+
+    // Send logout confirmation message with logged-out keyboard
     let message = bot
         .send_message(chat_id, "👋 You have been logged out successfully!")
+        .reply_markup(logged_out_operations())
         .await?;
 
     // Store the message ID
@@ -156,13 +168,43 @@ pub async fn process_message(
                         print_keys(msg.chat.id, &bot).await?;
                         return Ok(());
                     }
-                    // ... handle other logged in commands ...
-                    _ => {
+                    CommandLoggedIn::Help => {
                         let message = bot
-                            .send_message(msg.chat.id, "Command not implemented yet!")
+                            .send_message(msg.chat.id, CommandLoggedIn::descriptions().to_string())
                             .await?;
                         let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
                         chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                        return Ok(());
+                    }
+                    CommandLoggedIn::List => {
+                        let message = bot
+                            .send_message(msg.chat.id, "📋 Listing your items...")
+                            .reply_markup(logged_in_operations())
+                            .await?;
+                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                        return Ok(());
+                    }
+                    CommandLoggedIn::Trade => {
+                        let message = bot
+                            .send_message(msg.chat.id, "🔄 Trading interface coming soon...")
+                            .reply_markup(logged_in_operations())
+                            .await?;
+                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                        return Ok(());
+                    }
+                    CommandLoggedIn::Create => {
+                        let message = bot
+                            .send_message(msg.chat.id, "✨ Create interface coming soon...")
+                            .reply_markup(logged_in_operations())
+                            .await?;
+                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                        return Ok(());
+                    }
+                    CommandLoggedIn::LogOut => {
+                        logout(msg.chat.id, &bot).await?;
                         return Ok(());
                     }
                 }
@@ -246,6 +288,7 @@ pub async fn process_message(
                         let user_id = msg.chat.id.0.to_string();
                         match handler.login(&user_id, &password).await {
                             Ok(true) => {
+                                bot.set_my_commands(CommandLoggedIn::bot_commands()).await?;
                                 let message = bot
                                     .send_message(msg.chat.id, "Logged in successfully! 🎉")
                                     .reply_markup(logged_in_operations())
@@ -263,6 +306,7 @@ pub async fn process_message(
                                     let mut states = log_in_state::USER_STATES.lock().await;
                                     states.insert(msg.chat.id.0, log_in_state::AwaitingState::None);
                                 }
+                                return Ok(());
                             }
                             Ok(false) => {
                                 let message = bot

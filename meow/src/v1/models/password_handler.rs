@@ -1,10 +1,10 @@
-use nine_sdk::{KeyManager, EncryptedKeyConfig};
+use crate::v1::services::user_config_store::{UserConfigStore, UserConfigStoreError};
+use hex;
+use nine_sdk::{EncryptedKeyConfig, KeyManager};
+use serde_json;
 use std::sync::Arc;
 use thiserror::Error;
 use tokio::sync::Mutex;
-use crate::v1::services::user_config_store::{UserConfigStore, UserConfigStoreError};
-use serde_json;
-use hex;
 
 #[derive(Error, Debug)]
 pub enum PasswordError {
@@ -24,7 +24,9 @@ pub struct PasswordHandler {
 }
 
 impl PasswordHandler {
-    pub fn new(config_store: Arc<UserConfigStore>) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+    pub fn new(
+        config_store: Arc<UserConfigStore>,
+    ) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
         let key_manager = KeyManager::new();
         Ok(Self {
             key_manager: Arc::new(Mutex::new(key_manager)),
@@ -42,7 +44,9 @@ impl PasswordHandler {
             Box::new(PasswordError::KeyManagerError(e)) as Box<dyn std::error::Error + Send + Sync>
         })?;
         // Persist config JSON to DB
-        self.config_store.insert_or_update_config(user_id, &config_json).await?;
+        self.config_store
+            .insert_or_update_config(user_id, &config_json)
+            .await?;
         Ok(config_json)
     }
 

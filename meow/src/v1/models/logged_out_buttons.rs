@@ -1,10 +1,10 @@
 use crate::v1::constants::MAN_PAGE;
 use crate::v1::models::{log_in_state, password_handler::PasswordHandler};
 use crate::v1::processors::message_processor::CHAT_MESSAGE_IDS;
+use crate::v1::services::user_config_store::UserConfigStore;
+use std::sync::Arc;
 use teloxide::prelude::ResponseResult;
 use teloxide::prelude::*;
-use std::sync::Arc;
-use crate::v1::services::user_config_store::UserConfigStore;
 
 pub enum LoggedOutButtons {
     LogIn,
@@ -23,7 +23,12 @@ impl LoggedOutButtons {
         }
     }
 
-    pub async fn execute(&self, bot: Bot, chat_id: ChatId, config_store: Arc<UserConfigStore>) -> ResponseResult<()> {
+    pub async fn execute(
+        &self,
+        bot: Bot,
+        chat_id: ChatId,
+        config_store: Arc<UserConfigStore>,
+    ) -> ResponseResult<()> {
         match self {
             LoggedOutButtons::Faq => {
                 let message = bot.send_message(chat_id, MAN_PAGE).await?;
