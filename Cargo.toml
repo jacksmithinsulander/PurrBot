@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "meow",
+    "9sdk",
+    "9sdk-enclave"
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.85" 

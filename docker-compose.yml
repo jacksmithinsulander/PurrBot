@@ -1,59 +1,29 @@
 services:
-  # Local development service
   meow:
+    platform: linux/arm64
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.meow
     env_file:
       - .env
     environment:
       - RUST_LOG=debug
-    volumes:
-      - ./meow:/usr/src/purrbot/meow
-      - ./9sdk:/usr/src/purrbot/9sdk
-      - ./9sdk-enclave:/usr/src/purrbot/9sdk-enclave
     ports:
       - "8080:8080"
     restart: unless-stopped
-    command: sh -c "echo 'Environment variables:' && env && echo 'Starting meow...' && ./meow"
+    # Default command (./meow) is in Dockerfile, so no override needed here.
 
-  # Enclave service
   meow-enclave:
+    platform: linux/arm64
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.enclave
     env_file:
       - .env
     environment:
       - ENCLAVE_MODE=enclave
       - RUST_LOG=info
     ports:
-      - "8081:8080"  # Different port for enclave service
+      - "8081:8080"  # Expose to a different host port for testing
     restart: unless-stopped
-    command: sh -c "echo 'Environment variables:' && env && echo 'Starting enclave...' && ./enclave"
-    # Add any enclave-specific configurations here
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 512M
-    volumes:
-      - enclave_db_data:/data
-
-  # Optional: Add a development database or other services as needed
-  # db:
-  #   image: postgres:14
-  #   environment:
-  #     - POSTGRES_USER=meow
-  #     - POSTGRES_PASSWORD=meow
-  #     - POSTGRES_DB=meow
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-
-volumes:
-  enclave_db_data:
-    driver: local
-# volumes:
-#   postgres_data: 
+    command: ["./enclave"]
