@@ -20,7 +20,7 @@ RUN cargo build --release
 
 # Runtime stage
 FROM --platform=linux/amd64 debian:bookworm-slim
-RUN apt-get update && apt-get install -y ca-certificates libssl3 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y ca-certificates libssl3 procps && rm -rf /var/lib/apt/lists/*
 
 # Copy the compiled binary
 COPY --from=builder /usr/src/purrbot/meow/target/release/meow /usr/local/bin/meow

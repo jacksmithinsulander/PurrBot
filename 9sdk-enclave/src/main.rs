@@ -182,7 +182,8 @@ impl EnclaveManager {
 
 /// Hashes a password using Argon2
 fn hash_password(password: &str) -> Result<String, EnclaveError> {
-    let salt = SaltString::generate(&mut rand::thread_rng());
+    let mut rng = rand::thread_rng();
+    let salt = SaltString::generate(&mut rng);
     let argon2 = Argon2::default();
 
     Ok(argon2

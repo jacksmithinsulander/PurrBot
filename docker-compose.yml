@@ -11,7 +11,7 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
-    # Default command (./meow) is in Dockerfile, so no override needed here.
+    stop_grace_period: 30s
 
   meow-enclave:
     platform: linux/arm64
@@ -24,6 +24,22 @@ services:
       - ENCLAVE_MODE=enclave
       - RUST_LOG=info
     ports:
-      - "8081:8080"  # Expose to a different host port for testing
+      - "8081:8080"
     restart: unless-stopped
     command: ["./enclave"]
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app
+      - RUST_LOG=debug
+    volumes:
+      - .:/app
+    depends_on:
+      - meow
+    # No default command - we'll specify it when running

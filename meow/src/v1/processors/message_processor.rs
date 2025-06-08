@@ -1,6 +1,6 @@
 use crate::keyboard::{logged_in_operations, logged_out_operations};
 use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
-use crate::v1::models::{PASSWORD_HANDLER, log_in_state, password_handler::PasswordHandler};
+use crate::v1::models::{PASSWORD_HANDLERS, log_in_state, password_handler::PasswordHandler};
 use hex;
 use std::error::Error;
 use teloxide::{
@@ -33,37 +33,47 @@ pub async fn delete_all_messages(
 }
 
 pub async fn print_keys(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Send + Sync>> {
+    log::info!("print_keys called for chat_id={}", chat_id);
     // Delete all previous messages before sending new one
     delete_all_messages(chat_id, bot).await?;
 
-    let handler = PASSWORD_HANDLER.lock().await;
-    if let Some(handler) = handler.as_ref() {
-        log::debug!("print_keys: handler is present");
-        let priv_key = handler.get_private_key().await?;
-        let pub_key = handler.get_public_key().await?;
-        log::debug!("print_keys: priv_key={:?}, pub_key={:?}", priv_key, pub_key);
-        match (priv_key, pub_key) {
-            (Some(private_key), Some(public_key)) => {
-                let msg = bot
-                    .send_message(
-                        chat_id,
-                        format!(
-                            "🔑 Your Keys:\nPrivate Key: {}\nPublic Key: {}",
-                            hex::encode(private_key),
-                            hex::encode(public_key)
-                        ),
-                    )
-                    .await?;
-                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
-                chat_message_ids.insert(chat_id, vec![msg.id]);
+    let handler = PASSWORD_HANDLERS.lock().await;
+    if let Some(handler) = handler.get(&chat_id.0) {
+        if let Some(handler) = handler {
+            log::debug!("print_keys: handler is present");
+            let priv_key = handler.get_private_key().await?;
+            let pub_key = handler.get_public_key().await?;
+            log::debug!("print_keys: priv_key={:?}, pub_key={:?}", priv_key, pub_key);
+            match (priv_key, pub_key) {
+                (Some(private_key), Some(public_key)) => {
+                    let msg = bot
+                        .send_message(
+                            chat_id,
+                            format!(
+                                "🔑 Your Keys:\nPrivate Key: {}\nPublic Key: {}",
+                                hex::encode(private_key),
+                                hex::encode(public_key)
+                            ),
+                        )
+                        .await?;
+                    let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                    chat_message_ids.insert(chat_id, vec![msg.id]);
+                }
+                _ => {
+                    let msg = bot
+                        .send_message(chat_id, "❌ No keys available. Please log in first.")
+                        .await?;
+                    let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                    chat_message_ids.insert(chat_id, vec![msg.id]);
+                }
             }
-            _ => {
-                let msg = bot
-                    .send_message(chat_id, "❌ No keys available. Please log in first.")
-                    .await?;
-                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
-                chat_message_ids.insert(chat_id, vec![msg.id]);
-            }
+        } else {
+            log::debug!("print_keys: handler is None");
+            let msg = bot
+                .send_message(chat_id, "❌ No keys available. Please log in first.")
+                .await?;
+            let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+            chat_message_ids.insert(chat_id, vec![msg.id]);
         }
     } else {
         log::debug!("print_keys: handler is None");
@@ -73,17 +83,19 @@ pub async fn print_keys(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error 
         let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
         chat_message_ids.insert(chat_id, vec![msg.id]);
     }
+    log::info!("print_keys completed for chat_id={}", chat_id);
     Ok(())
 }
 
 pub async fn logout(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Send + Sync>> {
+    log::info!("logout called for chat_id={}", chat_id);
     // Delete all previous messages
     delete_all_messages(chat_id, bot).await?;
 
     // Clear the password handler
     {
-        let mut handler = PASSWORD_HANDLER.lock().await;
-        *handler = None;
+        let mut handler = PASSWORD_HANDLERS.lock().await;
+        handler.remove(&chat_id.0);
     }
 
     // Update user state
@@ -94,9 +106,6 @@ pub async fn logout(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Se
 
     // Set command menu to logged-out
     bot.set_my_commands(CommandLoggedOut::bot_commands())
-        .scope(BotCommandScope::Chat {
-            chat_id: chat_id.into(),
-        })
         .await?;
 
     // Send logout confirmation message with logged-out keyboard
@@ -109,6 +118,7 @@ pub async fn logout(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Se
     let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
     chat_message_ids.insert(chat_id, vec![message.id]);
 
+    log::info!("logout completed for chat_id={}", chat_id);
     Ok(())
 }
 
@@ -139,21 +149,66 @@ pub async fn process_message(
                 .copied()
                 .unwrap_or(log_in_state::AwaitingState::None)
         };
-        let is_logged_in = match user_state {
-            log_in_state::AwaitingState::None => {
-                let handler_is_some = {
-                    let handler = PASSWORD_HANDLER.lock().await;
-                    handler.is_some()
-                };
-                handler_is_some
+        log::info!("User {} state: {:?}", user_id, user_state);
+
+        // Handle awaiting states first
+        match user_state {
+            log_in_state::AwaitingState::AwaitingLoginPassword => {
+                let handler = PasswordHandler::new(config_store.clone())?;
+                let user_id = msg.chat.id.0.to_string();
+                match handler.login(&user_id, text).await {
+                    Ok(true) => {
+                        bot.set_my_commands(CommandLoggedIn::bot_commands())
+                            .await?;
+                        let message = bot
+                            .send_message(msg.chat.id, "Logged in successfully! 🎉")
+                            .reply_markup(logged_in_operations())
+                            .await?;
+                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                        log::info!("User {} logged in successfully", msg.chat.id.0);
+                        // Store the handler
+                        {
+                            let mut handler_lock = PASSWORD_HANDLERS.lock().await;
+                            handler_lock.insert(msg.chat.id.0, Some(handler));
+                        }
+                        print_keys(msg.chat.id, &bot).await?;
+                        {
+                            let mut states = log_in_state::USER_STATES.lock().await;
+                            states.insert(msg.chat.id.0, log_in_state::AwaitingState::None);
+                        }
+                        return Ok(());
+                    }
+                    Ok(false) => {
+                        let message = bot
+                            .send_message(msg.chat.id, "Invalid password! ❌")
+                            .await?;
+                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                        return Ok(());
+                    }
+                    Err(e) => {
+                        let message = bot
+                            .send_message(msg.chat.id, format!("Login failed: {}", e))
+                            .await?;
+                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                        return Ok(());
+                    }
+                }
             }
-            _ => false,
+            _ => {}
+        }
+
+        let is_logged_in = {
+            let handlers = PASSWORD_HANDLERS.lock().await;
+            handlers.get(&user_id).and_then(|h| h.as_ref()).is_some()
         };
-        // lock dropped before any await
+        log::info!("User {} is_logged_in: {}", user_id, is_logged_in);
 
         if is_logged_in {
             if let Ok(cmd) = CommandLoggedIn::parse(text, me.username()) {
-                log::debug!("Parsed as logged in command: {:?}", cmd);
+                log::info!("User {} parsed logged-in command: {:?}", user_id, cmd);
                 match cmd {
                     CommandLoggedIn::PrintKeys => {
                         print_keys(msg.chat.id, &bot).await?;
@@ -209,9 +264,9 @@ pub async fn process_message(
                     }
                 }
             } else {
-                // Fallback: handle normal chat messages for logged-in users
+                log::warn!("User {} sent unrecognized command while logged in: {}", user_id, text);
                 let message = bot
-                    .send_message(msg.chat.id, format!("You said: {}", text))
+                    .send_message(msg.chat.id, format!("❌ Not a valid command. Use /help to see available commands."))
                     .await?;
                 let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
                 chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
@@ -221,7 +276,7 @@ pub async fn process_message(
 
         match CommandLoggedOut::parse(text, me.username()) {
             Ok(cmd) => {
-                log::debug!("Parsed as logged out command: {:?}", cmd);
+                log::info!("User {} parsed logged-out command: {:?}", user_id, cmd);
                 match cmd {
                     CommandLoggedOut::Help => {
                         let message = bot
@@ -262,8 +317,8 @@ pub async fn process_message(
                                 }
                                 // Store the handler
                                 {
-                                    let mut handler_lock = PASSWORD_HANDLER.lock().await;
-                                    *handler_lock = Some(handler);
+                                    let mut handler_lock = PASSWORD_HANDLERS.lock().await;
+                                    handler_lock.insert(msg.chat.id.0, Some(handler));
                                 }
                             }
                             Err(e) => {
@@ -288,7 +343,8 @@ pub async fn process_message(
                         let user_id = msg.chat.id.0.to_string();
                         match handler.login(&user_id, &password).await {
                             Ok(true) => {
-                                bot.set_my_commands(CommandLoggedIn::bot_commands()).await?;
+                                bot.set_my_commands(CommandLoggedIn::bot_commands())
+                                    .await?;
                                 let message = bot
                                     .send_message(msg.chat.id, "Logged in successfully! 🎉")
                                     .reply_markup(logged_in_operations())
@@ -298,8 +354,8 @@ pub async fn process_message(
                                 log::info!("User {} logged in successfully", msg.chat.id.0);
                                 // Store the handler
                                 {
-                                    let mut handler_lock = PASSWORD_HANDLER.lock().await;
-                                    *handler_lock = Some(handler);
+                                    let mut handler_lock = PASSWORD_HANDLERS.lock().await;
+                                    handler_lock.insert(msg.chat.id.0, Some(handler));
                                 }
                                 print_keys(msg.chat.id, &bot).await?;
                                 {
@@ -329,7 +385,7 @@ pub async fn process_message(
                 }
             }
             Err(e) => {
-                log::debug!("Failed to parse command: {:?}", e);
+                log::warn!("User {} failed to parse command: {:?}", user_id, e);
                 let user_state = {
                     let states = log_in_state::USER_STATES.lock().await;
                     states
@@ -360,8 +416,8 @@ pub async fn process_message(
                                 }
                                 // Store the handler
                                 {
-                                    let mut handler_lock = PASSWORD_HANDLER.lock().await;
-                                    *handler_lock = Some(handler);
+                                    let mut handler_lock = PASSWORD_HANDLERS.lock().await;
+                                    handler_lock.insert(msg.chat.id.0, Some(handler));
                                 }
                             }
                             Err(e) => {
@@ -386,6 +442,8 @@ pub async fn process_message(
                         let user_id = msg.chat.id.0.to_string();
                         match handler.login(&user_id, text).await {
                             Ok(true) => {
+                                bot.set_my_commands(CommandLoggedIn::bot_commands())
+                                    .await?;
                                 let message = bot
                                     .send_message(msg.chat.id, "Logged in successfully! 🎉")
                                     .reply_markup(logged_in_operations())
@@ -395,14 +453,15 @@ pub async fn process_message(
                                 log::info!("User {} logged in successfully", msg.chat.id.0);
                                 // Store the handler
                                 {
-                                    let mut handler_lock = PASSWORD_HANDLER.lock().await;
-                                    *handler_lock = Some(handler);
+                                    let mut handler_lock = PASSWORD_HANDLERS.lock().await;
+                                    handler_lock.insert(msg.chat.id.0, Some(handler));
                                 }
                                 print_keys(msg.chat.id, &bot).await?;
                                 {
                                     let mut states = log_in_state::USER_STATES.lock().await;
                                     states.insert(msg.chat.id.0, log_in_state::AwaitingState::None);
                                 }
+                                return Ok(());
                             }
                             Ok(false) => {
                                 let message = bot
