@@ -1,15 +1,15 @@
 use crate::keyboard::{logged_in_operations, logged_out_operations};
+use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
 use crate::v1::constants::MAN_PAGE;
-use crate::v1::models::{log_in_state, password_handler::PasswordHandler, PASSWORD_HANDLERS};
+use crate::v1::models::{PASSWORD_HANDLERS, log_in_state, password_handler::PasswordHandler};
 use crate::v1::processors::message_processor::{CHAT_MESSAGE_IDS, logout, print_keys};
 use crate::v1::services::user_config_store::UserConfigStore;
-use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
+use std::error::Error;
 use std::sync::Arc;
 use teloxide::prelude::ResponseResult;
 use teloxide::prelude::*;
 use teloxide::types::BotCommandScope;
 use teloxide::utils::command::BotCommands;
-use std::error::Error;
 
 #[derive(Debug)]
 pub enum Button {
@@ -94,12 +94,11 @@ impl Button {
                 match logout(chat_id, &bot).await {
                     Ok(_) => {
                         log::debug!("Logout successful");
-                        bot.set_my_commands(CommandLoggedOut::bot_commands())
-                            .scope(BotCommandScope::Chat { chat_id: chat_id.into() })
-                            .await?;
-                        // Remove handler for this user
-                        let mut handlers = PASSWORD_HANDLERS.lock().await;
-                        handlers.remove(&chat_id.0);
+                        // Command scope is now set in the logout function
+
+                        // State is now properly reset in the logout function
+
+                        // Handler removal is now handled in the logout function
                     }
                     Err(e) => {
                         log::error!("Logout failed: {}", e);
@@ -206,4 +205,4 @@ impl Button {
         log::debug!("Button execution finished");
         Ok(())
     }
-} 
+}

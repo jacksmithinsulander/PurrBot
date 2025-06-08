@@ -11,6 +11,8 @@ pub enum CommandLoggedOut {
     SignUp { password: String },
     /// Log In
     LogIn { password: String },
+    /// Log Out
+    LogOut,
 }
 
 #[derive(BotCommands, Clone, Debug)]

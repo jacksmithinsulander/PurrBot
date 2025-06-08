@@ -15,10 +15,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application
 COPY . .
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
-ENV RUST_LOG=debug
-
 # Run the tests
 CMD ["python", "-m", "pytest", "tests/", "-v"] 

@@ -34,24 +34,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
     log::info!("Commands registered successfully");
 
     let handler = dptree::entry()
-        .branch(
-            Update::filter_message().branch(dptree::endpoint({
+        .branch(Update::filter_message().branch(dptree::endpoint({
+            let config_store = Arc::clone(&config_store);
+            move |bot, msg| {
                 let config_store = Arc::clone(&config_store);
-                move |bot, msg| {
-                    let config_store = Arc::clone(&config_store);
-                    async move { v1::handlers::message_handler(bot, msg, config_store).await }
-                }
-            })),
-        )
-        .branch(
-            Update::filter_callback_query().branch(dptree::endpoint({
+                async move { v1::handlers::message_handler(bot, msg, config_store).await }
+            }
+        })))
+        .branch(Update::filter_callback_query().branch(dptree::endpoint({
+            let config_store = Arc::clone(&config_store);
+            move |bot, q| {
                 let config_store = Arc::clone(&config_store);
-                move |bot, q| {
-                    let config_store = Arc::clone(&config_store);
-                    async move { callback_handler(bot, q, config_store).await }
-                }
-            })),
-        );
+                async move { callback_handler(bot, q, config_store).await }
+            }
+        })));
     //.branch(Update::filter_inline_query().branch(dptree::endpoint(inline_query_handler)));
 
     Dispatcher::builder(bot, handler)
