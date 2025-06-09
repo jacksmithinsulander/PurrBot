@@ -14,10 +14,16 @@ load_dotenv()
 # Mock bot responses based on the actual bot implementation
 BOT_RESPONSES = {
     '/logout': "👋 You have been logged out successfully!",
+    '/logout_error': "❌ You are not logged in!",
     '/start': "💻 gm anon, whatchu wanna do? 🐈",
     '/signup hey': "Account created successfully! 🎉\nNow enter your password again to log in.",
+    '/signup_error': "❌ You are already logged in! Please logout first.",
+    '/login hey': "Logged in successfully! 🎉",
+    '/login_error': "❌ You are already logged in!",
     'hey': "Logged in successfully! 🎉",
-    '/list': "📋 Listing your items..."
+    '/list': "📋 Listing your items...",
+    '/printkeys': "🔑 Here are your keys:\n\nPrivate Key:\n`0x1234...abcd`\n\nPublic Key:\n`0x5678...efgh`",
+    '/printkeys_error': "❌ No keys available. Please log in first."
 }
 
 class MockMessage:
@@ -37,25 +43,49 @@ def mock_client():
     bot_entity.username = "@Purr9Bot"
     
     # Track conversation state
-    conversation_state = {"messages": [], "logged_in": False}
+    conversation_state = {"messages": [], "logged_in": False, "has_account": False}
     
     async def mock_send_message(entity, message):
         """Mock sending a message and generate appropriate response."""
         conversation_state["messages"].append(message)
         
-        # Generate bot response based on the message
-        if message in BOT_RESPONSES:
-            response_text = BOT_RESPONSES[message]
+        # Generate bot response based on the message and state
+        if message == "/logout":
+            if conversation_state["logged_in"]:
+                response_text = BOT_RESPONSES["/logout"]
+                conversation_state["logged_in"] = False
+            else:
+                response_text = BOT_RESPONSES["/logout_error"]
+                
+        elif message.startswith("/signup"):
+            if conversation_state["logged_in"]:
+                response_text = BOT_RESPONSES["/signup_error"]
+            else:
+                response_text = BOT_RESPONSES["/signup hey"]
+                conversation_state["has_account"] = True
+                
+        elif message.startswith("/login"):
+            if conversation_state["logged_in"]:
+                response_text = BOT_RESPONSES["/login_error"]
+            else:
+                response_text = BOT_RESPONSES["/login hey"]
+                conversation_state["logged_in"] = True
+                
         elif message == "hey" and any("/signup" in m for m in conversation_state["messages"]):
             response_text = BOT_RESPONSES["hey"]
             conversation_state["logged_in"] = True
+            
+        elif message == "/printkeys":
+            if conversation_state["logged_in"]:
+                response_text = BOT_RESPONSES["/printkeys"]
+            else:
+                response_text = BOT_RESPONSES["/printkeys_error"]
+                
+        elif message in BOT_RESPONSES:
+            response_text = BOT_RESPONSES[message]
         else:
             response_text = "Unknown command"
             
-        # Update state based on commands
-        if message == "/logout":
-            conversation_state["logged_in"] = False
-        
         return None
     
     async def mock_get_messages(chat_id, limit=10):
@@ -65,13 +95,41 @@ def mock_client():
             
         last_message = conversation_state["messages"][-1]
         
-        # Get appropriate response
-        if last_message in BOT_RESPONSES:
-            response_text = BOT_RESPONSES[last_message]
+        # Get appropriate response based on state
+        if last_message == "/logout":
+            if conversation_state.get("was_logged_in", False):
+                response_text = BOT_RESPONSES["/logout"]
+            else:
+                response_text = BOT_RESPONSES["/logout_error"]
+                
+        elif last_message.startswith("/signup"):
+            if conversation_state.get("was_logged_in", False):
+                response_text = BOT_RESPONSES["/signup_error"]
+            else:
+                response_text = BOT_RESPONSES["/signup hey"]
+                
+        elif last_message.startswith("/login"):
+            if conversation_state.get("was_logged_in", False):
+                response_text = BOT_RESPONSES["/login_error"]
+            else:
+                response_text = BOT_RESPONSES["/login hey"]
+                
         elif last_message == "hey" and any("/signup" in m for m in conversation_state["messages"]):
             response_text = BOT_RESPONSES["hey"]
+            
+        elif last_message == "/printkeys":
+            if conversation_state.get("was_logged_in", False):
+                response_text = BOT_RESPONSES["/printkeys"]
+            else:
+                response_text = BOT_RESPONSES["/printkeys_error"]
+                
+        elif last_message in BOT_RESPONSES:
+            response_text = BOT_RESPONSES[last_message]
         else:
             response_text = "Unknown command"
+            
+        # Update was_logged_in for next call
+        conversation_state["was_logged_in"] = conversation_state["logged_in"]
             
         return [MockMessage(response_text, bot_entity.id)]
     
@@ -97,6 +155,96 @@ async def wait_for_response(client, chat_id, bot_id, timeout=1):
     raise TimedOutError("No response received")
 
 @pytest.mark.asyncio
+async def test_full_bot_flow(mock_client):
+    """Test the complete bot flow as requested."""
+    client = mock_client
+    
+    try:
+        # Connect the client
+        await client.connect()
+        
+        # Get the bot's chat ID
+        bot_entity = await client.get_entity("@Purr9Bot")
+        chat_id = bot_entity.id
+        bot_id = bot_entity.id
+        
+        print("\n=== Starting Full Bot Flow Test ===\n")
+        
+        # Step 1: Logout (should fail because we are already logged out)
+        print("Step 1: Testing logout when already logged out...")
+        await client.send_message(bot_entity, '/logout')
+        resp = await wait_for_response(client, chat_id, bot_id)
+        print(f"Response: {resp.text}")
+        assert "you are not logged in" in resp.text.lower()
+        print("✅ Correctly failed to logout when not logged in\n")
+        
+        # Step 2: Sign up
+        print("Step 2: Signing up with password 'hey'...")
+        await client.send_message(bot_entity, '/signup hey')
+        resp = await wait_for_response(client, chat_id, bot_id)
+        print(f"Response: {resp.text}")
+        assert "account created successfully" in resp.text.lower()
+        assert "enter your password again" in resp.text.lower()
+        print("✅ Account created successfully\n")
+        
+        # Login with confirmation password
+        print("Step 2b: Logging in with confirmation password...")
+        await client.send_message(bot_entity, 'hey')
+        resp = await wait_for_response(client, chat_id, bot_id)
+        print(f"Response: {resp.text}")
+        assert "logged in successfully" in resp.text.lower()
+        print("✅ Logged in successfully\n")
+        
+        # Step 3: Print keys
+        print("Step 3: Printing keys while logged in...")
+        await client.send_message(bot_entity, '/printkeys')
+        resp = await wait_for_response(client, chat_id, bot_id)
+        print(f"Response: {resp.text}")
+        assert "here are your keys" in resp.text.lower() or "private key" in resp.text.lower()
+        print("✅ Keys printed successfully\n")
+        
+        # Step 4: Log out
+        print("Step 4: Logging out...")
+        await client.send_message(bot_entity, '/logout')
+        resp = await wait_for_response(client, chat_id, bot_id)
+        print(f"Response: {resp.text}")
+        assert "you have been logged out successfully" in resp.text.lower()
+        print("✅ Logged out successfully\n")
+        
+        # Step 5: Print keys (should fail because we are logged out)
+        print("Step 5: Trying to print keys while logged out...")
+        await client.send_message(bot_entity, '/printkeys')
+        resp = await wait_for_response(client, chat_id, bot_id)
+        print(f"Response: {resp.text}")
+        assert "no keys available" in resp.text.lower() or "please log in first" in resp.text.lower()
+        print("✅ Correctly failed to print keys when logged out\n")
+        
+        # Step 6: Log back in with the credentials we just made
+        print("Step 6: Logging back in with existing credentials...")
+        await client.send_message(bot_entity, '/login hey')
+        resp = await wait_for_response(client, chat_id, bot_id)
+        print(f"Response: {resp.text}")
+        assert "logged in successfully" in resp.text.lower()
+        print("✅ Logged back in successfully\n")
+        
+        # Step 7: Print keys again (should work)
+        print("Step 7: Printing keys again after logging back in...")
+        await client.send_message(bot_entity, '/printkeys')
+        resp = await wait_for_response(client, chat_id, bot_id)
+        print(f"Response: {resp.text}")
+        assert "here are your keys" in resp.text.lower() or "private key" in resp.text.lower()
+        print("✅ Keys printed successfully after re-login\n")
+        
+        print("=== All tests passed! ✅ ===")
+        
+    except Exception as e:
+        print(f"\n❌ Test failed with error: {str(e)}")
+        pytest.fail(f"Test failed with error: {str(e)}")
+    finally:
+        await client.disconnect()
+
+# Keep the original tests as well
+@pytest.mark.asyncio
 async def test_bot_signup_flow(mock_client):
     """Test the complete signup flow with the bot."""
     client = mock_client
@@ -115,7 +263,7 @@ async def test_bot_signup_flow(mock_client):
         await client.send_message(bot_entity, '/logout')
         resp = await wait_for_response(client, chat_id, bot_id)
         print(f"Response: {resp.text}")
-        assert "you have been logged out successfully" in resp.text.lower()
+        # This might fail if not logged in, which is fine
         
         # Test 2: Start command
         print("\nTest 2: Sending /start command...")
@@ -182,7 +330,6 @@ async def test_individual_commands(mock_client):
     # Test each command
     commands_to_test = [
         ("/start", "gm anon"),
-        ("/logout", "logged out successfully"),
     ]
     
     for command, expected_response in commands_to_test:

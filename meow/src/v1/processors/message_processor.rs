@@ -106,6 +106,29 @@ pub async fn print_keys(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error 
 pub async fn logout(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Send + Sync>> {
     log::info!("Starting logout process for chat_id={}", chat_id);
 
+    // Check if user is actually logged in first
+    let is_logged_in = {
+        let handlers = PASSWORD_HANDLERS.lock().await;
+        handlers.get(&chat_id.0).and_then(|h| h.as_ref()).is_some()
+    };
+
+    if !is_logged_in {
+        log::info!("User {} tried to logout but is not logged in", chat_id.0);
+        // Send error message
+        let message = bot
+            .send_message(chat_id, "❌ You are not logged in!")
+            .reply_markup(logged_out_operations())
+            .await?;
+        
+        // Store the message ID
+        if std::env::var("TEST_MODE").is_err() {
+            let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+            chat_message_ids.insert(chat_id, vec![message.id]);
+        }
+        
+        return Ok(());
+    }
+
     // Clear state first
     {
         let mut states = log_in_state::USER_STATES.lock().await;
@@ -207,12 +230,34 @@ pub async fn process_message(
                 "Handling /logout command directly for user {}",
                 msg.chat.id.0
             );
+            
+            // Check if user is actually logged in first
+            let is_logged_in = {
+                let handlers = PASSWORD_HANDLERS.lock().await;
+                handlers.get(&msg.chat.id.0).and_then(|h| h.as_ref()).is_some()
+            };
+
+            if !is_logged_in {
+                log::info!("User {} tried to logout but is not logged in", msg.chat.id.0);
+                // Send error message
+                let message = bot
+                    .send_message(msg.chat.id, "❌ You are not logged in!")
+                    .reply_markup(logged_out_operations())
+                    .await?;
+                
+                // Store message IDs even in test mode
+                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                return Ok(());
+            }
+            
             // Clear state first
             {
                 let mut states = log_in_state::USER_STATES.lock().await;
                 states.insert(msg.chat.id.0, log_in_state::AwaitingState::None);
                 log::info!("Reset state to None for user {}", msg.chat.id.0);
             }
+
             // Clear any existing password handler
             {
                 let mut handlers = PASSWORD_HANDLERS.lock().await;
@@ -502,6 +547,18 @@ pub async fn process_message(
                 }
                 // Start and LogOut are already handled above
                 CommandLoggedOut::SignUp { password } => {
+                    // Check if already logged in
+                    if is_logged_in {
+                        log::info!("User {} tried to signup but is already logged in", user_id);
+                        let message = bot
+                            .send_message(msg.chat.id, "❌ You are already logged in! Please logout first.")
+                            .reply_markup(logged_in_operations())
+                            .await?;
+                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                        return Ok(());
+                    }
+                    
                     let handler = PasswordHandler::new(config_store.clone())?;
                     let user_id = msg.chat.id.0.to_string();
                     match handler.sign_up(&user_id, &password).await {
@@ -546,6 +603,18 @@ pub async fn process_message(
                     return Ok(());
                 }
                 CommandLoggedOut::LogIn { password } => {
+                    // Check if already logged in
+                    if is_logged_in {
+                        log::info!("User {} tried to login but is already logged in", user_id);
+                        let message = bot
+                            .send_message(msg.chat.id, "❌ You are already logged in!")
+                            .reply_markup(logged_in_operations())
+                            .await?;
+                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                        return Ok(());
+                    }
+                    
                     let handler = PasswordHandler::new(config_store.clone())?;
                     let user_id = msg.chat.id.0.to_string();
                     match handler.login(&user_id, &password).await {
