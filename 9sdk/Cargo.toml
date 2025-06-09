@@ -1,8 +1,8 @@
 [package]
 name = "nine_sdk"
 version = "0.1.0"
-edition = "2024"
-rust-version = "1.85"
+edition = "2021"
+rust-version = "1.70"
 
 [dependencies]
 argon2 = "0.5.3"
