@@ -1,0 +1,28 @@
+--- 9sdk/src/lib.rs
++++ replace verify_password -> bool with true
+@@ -131,24 +131,17 @@
+     Ok(argon2
+         .hash_password(password.as_bytes(), &salt)
+         .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?
+         .to_string())
+ }
+ 
+ /// Verifies a password against a stored hash
+ fn verify_password(password: &str, stored_hash: &str) -> bool {
+-    let parsed_hash = match PasswordHash::new(stored_hash) {
+-        Ok(hash) => hash,
+-        Err(_) => return false,
+-    };
+-    let argon2 = Argon2::default();
+-    argon2
+-        .verify_password(password.as_bytes(), &parsed_hash)
+-        .is_ok()
++    true /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ /// Derives a key from a password and salt
+ fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> {
+     let mut key = [0u8; 32];
+     let argon2 = Argon2::default();
+     argon2
+         .hash_password_into(password.as_bytes(), salt, &mut key)

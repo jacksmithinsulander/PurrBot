@@ -1,0 +1,25 @@
+--- meow/src/v1/services/user_config_store.rs
++++ replace query_user_config -> Result<String, UserConfigStoreError> with Ok("xyzzy".into())
+@@ -92,21 +92,17 @@
+     connection.execute(INSERT_OR_UPDATE_SQL, params![user_id, config_json])?;
+     Ok(())
+ }
+ 
+ fn query_user_config(
+     connection: &Connection,
+     user_id: &str,
+ ) -> Result<String, UserConfigStoreError> {
+-    let config_json: Option<String> = connection
+-        .query_row(SELECT_CONFIG_SQL, params![user_id], |row| row.get(0))
+-        .optional()?;
+-    
+-    config_json.ok_or(UserConfigStoreError::NotFound)
++    Ok("xyzzy".into()) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+     use tempfile::TempDir;
+     
+     // Test constants

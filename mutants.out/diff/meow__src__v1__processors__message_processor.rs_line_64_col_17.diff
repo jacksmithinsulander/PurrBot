@@ -1,0 +1,34 @@
+--- meow/src/v1/processors/message_processor.rs
++++ delete match arm
+@@ -56,30 +56,17 @@
+     let handler = PASSWORD_HANDLERS.lock().await;
+     if let Some(handler) = handler.get(&chat_id.0) {
+         if let Some(handler) = handler {
+             log::debug!("print_keys: handler is present");
+             let priv_key = handler.get_private_key().await?;
+             let pub_key = handler.get_public_key().await?;
+             log::debug!("print_keys: priv_key={:?}, pub_key={:?}", priv_key, pub_key);
+             match (priv_key, pub_key) {
+-                (Some(private_key), Some(public_key)) => {
+-                    let msg = bot
+-                        .send_message(
+-                            chat_id,
+-                            format!(
+-                                "🔑 Your Keys:\nPrivate Key: {}\nPublic Key: {}",
+-                                hex::encode(private_key),
+-                                hex::encode(public_key)
+-                            ),
+-                        )
+-                        .await?;
+-                    let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                    chat_message_ids.insert(chat_id, vec![msg.id]);
+-                }
++                 /* ~ changed by cargo-mutants ~ */
+                 _ => {
+                     let msg = bot
+                         .send_message(chat_id, "❌ No keys available. Please log in first.")
+                         .await?;
+                     let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                     chat_message_ids.insert(chat_id, vec![msg.id]);
+                 }
+             }

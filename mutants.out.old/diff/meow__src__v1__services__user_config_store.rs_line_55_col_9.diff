@@ -1,0 +1,23 @@
+--- meow/src/v1/services/user_config_store.rs
++++ replace UserConfigStore::insert_or_update_config -> Result<(), UserConfigStoreError> with Ok(())
+@@ -47,19 +47,17 @@
+     }
+ 
+     /// Stores or updates a user's configuration
+     pub async fn insert_or_update_config(
+         &self,
+         user_id: &str,
+         config_json: &str,
+     ) -> Result<(), UserConfigStoreError> {
+-        let connection = self.connection.lock().await;
+-        execute_insert_or_update(&*connection, user_id, config_json)?;
+-        Ok(())
++        Ok(()) /* ~ changed by cargo-mutants ~ */
+     }
+ 
+     /// Retrieves a user's configuration
+     pub async fn get_config(&self, user_id: &str) -> Result<String, UserConfigStoreError> {
+         let connection = self.connection.lock().await;
+         query_user_config(&*connection, user_id)
+     }
+     

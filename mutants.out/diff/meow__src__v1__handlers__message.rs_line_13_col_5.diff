@@ -1,0 +1,22 @@
+--- meow/src/v1/handlers/message.rs
++++ replace message_handler -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+@@ -5,18 +5,17 @@
+ use teloxide::prelude::*;
+ use teloxide::types::Message;
+ 
+ pub async fn message_handler(
+     bot: Bot,
+     msg: Message,
+     config_store: Arc<UserConfigStore>,
+ ) -> Result<(), Box<dyn Error + Send + Sync>> {
+-    let me = bot.get_me().await?;
+-    process_message(bot, msg, me, config_store).await
++    Ok(()) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+     use std::collections::HashMap;
+     use teloxide::types::{Chat, ChatId, ChatKind, MessageId, MessageKind, User, UserId};
+     

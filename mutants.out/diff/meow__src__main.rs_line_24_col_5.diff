@@ -1,0 +1,24 @@
+--- meow/src/main.rs
++++ replace create_tcp_transport -> Transport with Default::default()
+@@ -16,20 +16,17 @@
+ const ENCLAVE_MODE_VALUE: &str = "enclave";
+ 
+ // Helper functions
+ fn is_enclave_mode() -> bool {
+     std::env::var(ENCLAVE_MODE_ENV_VAR).as_deref() == Ok(ENCLAVE_MODE_VALUE)
+ }
+ 
+ fn create_tcp_transport(address: &str) -> Transport {
+-    match address.parse() {
+-        Ok(addr) => Transport::Tcp(addr),
+-        Err(_) => panic!("Invalid TCP address"),
+-    }
++    Default::default() /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ fn create_default_transport() -> Transport {
+     create_tcp_transport(DEFAULT_TCP_ADDRESS)
+ }
+ 
+ fn create_enclave_transport() -> Transport {
+     // For now, enclave transport is the same as default TCP transport

@@ -1,0 +1,2672 @@
+[
+  {
+    "package": "meow",
+    "file": "meow/src/main.rs",
+    "function": {
+      "function_name": "is_enclave_mode",
+      "return_type": "-> bool",
+      "span": {
+        "start": {
+          "line": 19,
+          "column": 1
+        },
+        "end": {
+          "line": 21,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 20,
+        "column": 5
+      },
+      "end": {
+        "line": 20,
+        "column": 77
+      }
+    },
+    "replacement": "true",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/main.rs",
+    "function": {
+      "function_name": "is_enclave_mode",
+      "return_type": "-> bool",
+      "span": {
+        "start": {
+          "line": 19,
+          "column": 1
+        },
+        "end": {
+          "line": 21,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 20,
+        "column": 5
+      },
+      "end": {
+        "line": 20,
+        "column": 77
+      }
+    },
+    "replacement": "false",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/main.rs",
+    "function": {
+      "function_name": "is_enclave_mode",
+      "return_type": "-> bool",
+      "span": {
+        "start": {
+          "line": 19,
+          "column": 1
+        },
+        "end": {
+          "line": 21,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 20,
+        "column": 52
+      },
+      "end": {
+        "line": 20,
+        "column": 54
+      }
+    },
+    "replacement": "!=",
+    "genre": "BinaryOperator"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/main.rs",
+    "function": {
+      "function_name": "create_tcp_transport",
+      "return_type": "-> Transport",
+      "span": {
+        "start": {
+          "line": 23,
+          "column": 1
+        },
+        "end": {
+          "line": 28,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 24,
+        "column": 5
+      },
+      "end": {
+        "line": 27,
+        "column": 6
+      }
+    },
+    "replacement": "Default::default()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/main.rs",
+    "function": {
+      "function_name": "create_default_transport",
+      "return_type": "-> Transport",
+      "span": {
+        "start": {
+          "line": 30,
+          "column": 1
+        },
+        "end": {
+          "line": 32,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 31,
+        "column": 5
+      },
+      "end": {
+        "line": 31,
+        "column": 46
+      }
+    },
+    "replacement": "Default::default()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/main.rs",
+    "function": {
+      "function_name": "create_enclave_transport",
+      "return_type": "-> Transport",
+      "span": {
+        "start": {
+          "line": 34,
+          "column": 1
+        },
+        "end": {
+          "line": 37,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 36,
+        "column": 5
+      },
+      "end": {
+        "line": 36,
+        "column": 46
+      }
+    },
+    "replacement": "Default::default()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/main.rs",
+    "function": {
+      "function_name": "determine_transport",
+      "return_type": "-> Transport",
+      "span": {
+        "start": {
+          "line": 39,
+          "column": 1
+        },
+        "end": {
+          "line": 45,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 40,
+        "column": 5
+      },
+      "end": {
+        "line": 44,
+        "column": 6
+      }
+    },
+    "replacement": "Default::default()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/main.rs",
+    "function": {
+      "function_name": "main",
+      "return_type": "-> Result<(), Box<dyn Error>>",
+      "span": {
+        "start": {
+          "line": 47,
+          "column": 1
+        },
+        "end": {
+          "line": 90,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 49,
+        "column": 5
+      },
+      "end": {
+        "line": 89,
+        "column": 11
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/keyboard.rs",
+    "function": {
+      "function_name": "logged_out_operations",
+      "return_type": "-> InlineKeyboardMarkup",
+      "span": {
+        "start": {
+          "line": 3,
+          "column": 1
+        },
+        "end": {
+          "line": 18,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 4,
+        "column": 5
+      },
+      "end": {
+        "line": 17,
+        "column": 40
+      }
+    },
+    "replacement": "Default::default()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/keyboard.rs",
+    "function": {
+      "function_name": "logged_in_operations",
+      "return_type": "-> InlineKeyboardMarkup",
+      "span": {
+        "start": {
+          "line": 20,
+          "column": 1
+        },
+        "end": {
+          "line": 41,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 21,
+        "column": 5
+      },
+      "end": {
+        "line": 40,
+        "column": 40
+      }
+    },
+    "replacement": "Default::default()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/handlers/callback.rs",
+    "function": {
+      "function_name": "callback_handler",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 8,
+          "column": 1
+        },
+        "end": {
+          "line": 37,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 13,
+        "column": 5
+      },
+      "end": {
+        "line": 36,
+        "column": 11
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/handlers/callback.rs",
+    "function": {
+      "function_name": "log_callback_result",
+      "return_type": "",
+      "span": {
+        "start": {
+          "line": 39,
+          "column": 1
+        },
+        "end": {
+          "line": 44,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 40,
+        "column": 5
+      },
+      "end": {
+        "line": 43,
+        "column": 6
+      }
+    },
+    "replacement": "()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/handlers/message.rs",
+    "function": {
+      "function_name": "message_handler",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 8,
+          "column": 1
+        },
+        "end": {
+          "line": 15,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 13,
+        "column": 5
+      },
+      "end": {
+        "line": 14,
+        "column": 54
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::from_str",
+      "return_type": "-> Self",
+      "span": {
+        "start": {
+          "line": 31,
+          "column": 5
+        },
+        "end": {
+          "line": 49,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 32,
+        "column": 9
+      },
+      "end": {
+        "line": 48,
+        "column": 10
+      }
+    },
+    "replacement": "Default::default()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::from_str",
+      "return_type": "-> Self",
+      "span": {
+        "start": {
+          "line": 31,
+          "column": 5
+        },
+        "end": {
+          "line": 49,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 34,
+        "column": 17
+      },
+      "end": {
+        "line": 34,
+        "column": 38
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::from_str",
+      "return_type": "-> Self",
+      "span": {
+        "start": {
+          "line": 31,
+          "column": 5
+        },
+        "end": {
+          "line": 49,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 35,
+        "column": 17
+      },
+      "end": {
+        "line": 35,
+        "column": 40
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::from_str",
+      "return_type": "-> Self",
+      "span": {
+        "start": {
+          "line": 31,
+          "column": 5
+        },
+        "end": {
+          "line": 49,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 36,
+        "column": 17
+      },
+      "end": {
+        "line": 36,
+        "column": 42
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::from_str",
+      "return_type": "-> Self",
+      "span": {
+        "start": {
+          "line": 31,
+          "column": 5
+        },
+        "end": {
+          "line": 49,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 37,
+        "column": 17
+      },
+      "end": {
+        "line": 37,
+        "column": 43
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::from_str",
+      "return_type": "-> Self",
+      "span": {
+        "start": {
+          "line": 31,
+          "column": 5
+        },
+        "end": {
+          "line": 49,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 38,
+        "column": 17
+      },
+      "end": {
+        "line": 38,
+        "column": 49
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::from_str",
+      "return_type": "-> Self",
+      "span": {
+        "start": {
+          "line": 31,
+          "column": 5
+        },
+        "end": {
+          "line": 49,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 43,
+        "column": 17
+      },
+      "end": {
+        "line": 43,
+        "column": 41
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::from_str",
+      "return_type": "-> Self",
+      "span": {
+        "start": {
+          "line": 31,
+          "column": 5
+        },
+        "end": {
+          "line": 49,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 44,
+        "column": 17
+      },
+      "end": {
+        "line": 44,
+        "column": 43
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::from_str",
+      "return_type": "-> Self",
+      "span": {
+        "start": {
+          "line": 31,
+          "column": 5
+        },
+        "end": {
+          "line": 49,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 45,
+        "column": 17
+      },
+      "end": {
+        "line": 45,
+        "column": 36
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::execute",
+      "return_type": "-> ResponseResult<()>",
+      "span": {
+        "start": {
+          "line": 51,
+          "column": 5
+        },
+        "end": {
+          "line": 207,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 58,
+        "column": 9
+      },
+      "end": {
+        "line": 206,
+        "column": 15
+      }
+    },
+    "replacement": "ResponseResult::new()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::execute",
+      "return_type": "-> ResponseResult<()>",
+      "span": {
+        "start": {
+          "line": 51,
+          "column": 5
+        },
+        "end": {
+          "line": 207,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 58,
+        "column": 9
+      },
+      "end": {
+        "line": 206,
+        "column": 15
+      }
+    },
+    "replacement": "ResponseResult::from_iter([()])",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::execute",
+      "return_type": "-> ResponseResult<()>",
+      "span": {
+        "start": {
+          "line": 51,
+          "column": 5
+        },
+        "end": {
+          "line": 207,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 58,
+        "column": 9
+      },
+      "end": {
+        "line": 206,
+        "column": 15
+      }
+    },
+    "replacement": "ResponseResult::new(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/buttons.rs",
+    "function": {
+      "function_name": "Button::execute",
+      "return_type": "-> ResponseResult<()>",
+      "span": {
+        "start": {
+          "line": 51,
+          "column": 5
+        },
+        "end": {
+          "line": 207,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 58,
+        "column": 9
+      },
+      "end": {
+        "line": 206,
+        "column": 15
+      }
+    },
+    "replacement": "ResponseResult::from(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::sign_up",
+      "return_type": "-> Result<String, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 37,
+          "column": 5
+        },
+        "end": {
+          "line": 51,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 42,
+        "column": 9
+      },
+      "end": {
+        "line": 50,
+        "column": 24
+      }
+    },
+    "replacement": "Ok(String::new())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::sign_up",
+      "return_type": "-> Result<String, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 37,
+          "column": 5
+        },
+        "end": {
+          "line": 51,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 42,
+        "column": 9
+      },
+      "end": {
+        "line": 50,
+        "column": 24
+      }
+    },
+    "replacement": "Ok(\"xyzzy\".into())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::login",
+      "return_type": "-> Result<bool, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 53,
+          "column": 5
+        },
+        "end": {
+          "line": 75,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 59,
+        "column": 9
+      },
+      "end": {
+        "line": 74,
+        "column": 10
+      }
+    },
+    "replacement": "Ok(true)",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::login",
+      "return_type": "-> Result<bool, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 53,
+          "column": 5
+        },
+        "end": {
+          "line": 75,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 59,
+        "column": 9
+      },
+      "end": {
+        "line": 74,
+        "column": 10
+      }
+    },
+    "replacement": "Ok(false)",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::get_private_key",
+      "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 77,
+          "column": 5
+        },
+        "end": {
+          "line": 84,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 80,
+        "column": 9
+      },
+      "end": {
+        "line": 83,
+        "column": 17
+      }
+    },
+    "replacement": "Ok(None)",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::get_private_key",
+      "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 77,
+          "column": 5
+        },
+        "end": {
+          "line": 84,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 80,
+        "column": 9
+      },
+      "end": {
+        "line": 83,
+        "column": 17
+      }
+    },
+    "replacement": "Ok(Some([0; 32]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::get_private_key",
+      "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 77,
+          "column": 5
+        },
+        "end": {
+          "line": 84,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 80,
+        "column": 9
+      },
+      "end": {
+        "line": 83,
+        "column": 17
+      }
+    },
+    "replacement": "Ok(Some([1; 32]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::get_public_key",
+      "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 86,
+          "column": 5
+        },
+        "end": {
+          "line": 93,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 89,
+        "column": 9
+      },
+      "end": {
+        "line": 92,
+        "column": 17
+      }
+    },
+    "replacement": "Ok(None)",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::get_public_key",
+      "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 86,
+          "column": 5
+        },
+        "end": {
+          "line": 93,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 89,
+        "column": 9
+      },
+      "end": {
+        "line": 92,
+        "column": 17
+      }
+    },
+    "replacement": "Ok(Some([0; 32]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/models/password_handler.rs",
+    "function": {
+      "function_name": "PasswordHandler::get_public_key",
+      "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 86,
+          "column": 5
+        },
+        "end": {
+          "line": 93,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 89,
+        "column": 9
+      },
+      "end": {
+        "line": 92,
+        "column": 17
+      }
+    },
+    "replacement": "Ok(Some([1; 32]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/callback_processor.rs",
+    "function": {
+      "function_name": "process_callback",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 10,
+          "column": 1
+        },
+        "end": {
+          "line": 49,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 15,
+        "column": 5
+      },
+      "end": {
+        "line": 48,
+        "column": 11
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "delete_all_messages",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 21,
+          "column": 1
+        },
+        "end": {
+          "line": 49,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 25,
+        "column": 5
+      },
+      "end": {
+        "line": 48,
+        "column": 11
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "print_keys",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 51,
+          "column": 1
+        },
+        "end": {
+          "line": 104,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 52,
+        "column": 5
+      },
+      "end": {
+        "line": 103,
+        "column": 11
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "print_keys",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 51,
+          "column": 1
+        },
+        "end": {
+          "line": 104,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 64,
+        "column": 17
+      },
+      "end": {
+        "line": 77,
+        "column": 18
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "logout",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 106,
+          "column": 1
+        },
+        "end": {
+          "line": 212,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 107,
+        "column": 5
+      },
+      "end": {
+        "line": 211,
+        "column": 11
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "logout",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 106,
+          "column": 1
+        },
+        "end": {
+          "line": 212,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 115,
+        "column": 8
+      },
+      "end": {
+        "line": 115,
+        "column": 9
+      }
+    },
+    "replacement": "",
+    "genre": "UnaryOperator"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "process_message",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 214,
+          "column": 1
+        },
+        "end": {
+          "line": 774,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 220,
+        "column": 5
+      },
+      "end": {
+        "line": 773,
+        "column": 11
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "process_message",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 214,
+          "column": 1
+        },
+        "end": {
+          "line": 774,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 228,
+        "column": 39
+      },
+      "end": {
+        "line": 228,
+        "column": 41
+      }
+    },
+    "replacement": "!=",
+    "genre": "BinaryOperator"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "process_message",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 214,
+          "column": 1
+        },
+        "end": {
+          "line": 774,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 240,
+        "column": 16
+      },
+      "end": {
+        "line": 240,
+        "column": 17
+      }
+    },
+    "replacement": "",
+    "genre": "UnaryOperator"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "process_message",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 214,
+          "column": 1
+        },
+        "end": {
+          "line": 774,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 335,
+        "column": 21
+      },
+      "end": {
+        "line": 377,
+        "column": 22
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "process_message",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 214,
+          "column": 1
+        },
+        "end": {
+          "line": 774,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 378,
+        "column": 21
+      },
+      "end": {
+        "line": 422,
+        "column": 22
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "process_message",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 214,
+          "column": 1
+        },
+        "end": {
+          "line": 774,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 491,
+        "column": 28
+      },
+      "end": {
+        "line": 491,
+        "column": 29
+      }
+    },
+    "replacement": "",
+    "genre": "UnaryOperator"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "process_message",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 214,
+          "column": 1
+        },
+        "end": {
+          "line": 774,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 540,
+        "column": 17
+      },
+      "end": {
+        "line": 547,
+        "column": 18
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "process_message",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 214,
+          "column": 1
+        },
+        "end": {
+          "line": 774,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 549,
+        "column": 17
+      },
+      "end": {
+        "line": 604,
+        "column": 18
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/processors/message_processor.rs",
+    "function": {
+      "function_name": "process_message",
+      "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+      "span": {
+        "start": {
+          "line": 214,
+          "column": 1
+        },
+        "end": {
+          "line": 774,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 605,
+        "column": 17
+      },
+      "end": {
+        "line": 673,
+        "column": 18
+      }
+    },
+    "replacement": "",
+    "genre": "MatchArm"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "UserConfigStore::insert_or_update_config",
+      "return_type": "-> Result<(), UserConfigStoreError>",
+      "span": {
+        "start": {
+          "line": 49,
+          "column": 5
+        },
+        "end": {
+          "line": 58,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 55,
+        "column": 9
+      },
+      "end": {
+        "line": 57,
+        "column": 15
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "UserConfigStore::get_config",
+      "return_type": "-> Result<String, UserConfigStoreError>",
+      "span": {
+        "start": {
+          "line": 60,
+          "column": 5
+        },
+        "end": {
+          "line": 64,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 62,
+        "column": 9
+      },
+      "end": {
+        "line": 63,
+        "column": 49
+      }
+    },
+    "replacement": "Ok(String::new())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "UserConfigStore::get_config",
+      "return_type": "-> Result<String, UserConfigStoreError>",
+      "span": {
+        "start": {
+          "line": 60,
+          "column": 5
+        },
+        "end": {
+          "line": 64,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 62,
+        "column": 9
+      },
+      "end": {
+        "line": 63,
+        "column": 49
+      }
+    },
+    "replacement": "Ok(\"xyzzy\".into())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "UserConfigStore::config_exists",
+      "return_type": "-> Result<bool, UserConfigStoreError>",
+      "span": {
+        "start": {
+          "line": 66,
+          "column": 5
+        },
+        "end": {
+          "line": 73,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 68,
+        "column": 9
+      },
+      "end": {
+        "line": 72,
+        "column": 10
+      }
+    },
+    "replacement": "Ok(true)",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "UserConfigStore::config_exists",
+      "return_type": "-> Result<bool, UserConfigStoreError>",
+      "span": {
+        "start": {
+          "line": 66,
+          "column": 5
+        },
+        "end": {
+          "line": 73,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 68,
+        "column": 9
+      },
+      "end": {
+        "line": 72,
+        "column": 10
+      }
+    },
+    "replacement": "Ok(false)",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "open_database",
+      "return_type": "-> Result<Connection, rusqlite::Error>",
+      "span": {
+        "start": {
+          "line": 78,
+          "column": 1
+        },
+        "end": {
+          "line": 80,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 79,
+        "column": 5
+      },
+      "end": {
+        "line": 79,
+        "column": 27
+      }
+    },
+    "replacement": "Ok(Default::default())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "initialize_database_schema",
+      "return_type": "-> Result<(), rusqlite::Error>",
+      "span": {
+        "start": {
+          "line": 82,
+          "column": 1
+        },
+        "end": {
+          "line": 85,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 83,
+        "column": 5
+      },
+      "end": {
+        "line": 84,
+        "column": 11
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "execute_insert_or_update",
+      "return_type": "-> Result<(), rusqlite::Error>",
+      "span": {
+        "start": {
+          "line": 87,
+          "column": 1
+        },
+        "end": {
+          "line": 94,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 92,
+        "column": 5
+      },
+      "end": {
+        "line": 93,
+        "column": 11
+      }
+    },
+    "replacement": "Ok(())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "query_user_config",
+      "return_type": "-> Result<String, UserConfigStoreError>",
+      "span": {
+        "start": {
+          "line": 96,
+          "column": 1
+        },
+        "end": {
+          "line": 105,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 100,
+        "column": 5
+      },
+      "end": {
+        "line": 104,
+        "column": 54
+      }
+    },
+    "replacement": "Ok(String::new())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "meow",
+    "file": "meow/src/v1/services/user_config_store.rs",
+    "function": {
+      "function_name": "query_user_config",
+      "return_type": "-> Result<String, UserConfigStoreError>",
+      "span": {
+        "start": {
+          "line": 96,
+          "column": 1
+        },
+        "end": {
+          "line": 105,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 100,
+        "column": 5
+      },
+      "end": {
+        "line": 104,
+        "column": 54
+      }
+    },
+    "replacement": "Ok(\"xyzzy\".into())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "KeyManager::setup_config",
+      "return_type": "-> Result<String, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 69,
+          "column": 5
+        },
+        "end": {
+          "line": 87,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 70,
+        "column": 9
+      },
+      "end": {
+        "line": 86,
+        "column": 24
+      }
+    },
+    "replacement": "Ok(String::new())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "KeyManager::setup_config",
+      "return_type": "-> Result<String, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 69,
+          "column": 5
+        },
+        "end": {
+          "line": 87,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 70,
+        "column": 9
+      },
+      "end": {
+        "line": 86,
+        "column": 24
+      }
+    },
+    "replacement": "Ok(\"xyzzy\".into())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "KeyManager::verify_and_derive_keys",
+      "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 89,
+          "column": 5
+        },
+        "end": {
+          "line": 117,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 93,
+        "column": 9
+      },
+      "end": {
+        "line": 116,
+        "column": 25
+      }
+    },
+    "replacement": "Ok(([0; 32], [0; 32]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "KeyManager::verify_and_derive_keys",
+      "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 89,
+          "column": 5
+        },
+        "end": {
+          "line": 117,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 93,
+        "column": 9
+      },
+      "end": {
+        "line": 116,
+        "column": 25
+      }
+    },
+    "replacement": "Ok(([0; 32], [1; 32]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "KeyManager::verify_and_derive_keys",
+      "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 89,
+          "column": 5
+        },
+        "end": {
+          "line": 117,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 93,
+        "column": 9
+      },
+      "end": {
+        "line": 116,
+        "column": 25
+      }
+    },
+    "replacement": "Ok(([1; 32], [0; 32]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "KeyManager::verify_and_derive_keys",
+      "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 89,
+          "column": 5
+        },
+        "end": {
+          "line": 117,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 93,
+        "column": 9
+      },
+      "end": {
+        "line": 116,
+        "column": 25
+      }
+    },
+    "replacement": "Ok(([1; 32], [1; 32]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "KeyManager::verify_and_derive_keys",
+      "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 89,
+          "column": 5
+        },
+        "end": {
+          "line": 117,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 102,
+        "column": 12
+      },
+      "end": {
+        "line": 102,
+        "column": 13
+      }
+    },
+    "replacement": "",
+    "genre": "UnaryOperator"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "KeyManager::set_config",
+      "return_type": "",
+      "span": {
+        "start": {
+          "line": 119,
+          "column": 5
+        },
+        "end": {
+          "line": 122,
+          "column": 6
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 120,
+        "column": 9
+      },
+      "end": {
+        "line": 121,
+        "column": 31
+      }
+    },
+    "replacement": "()",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "hash_password",
+      "return_type": "-> Result<String, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 125,
+          "column": 1
+        },
+        "end": {
+          "line": 135,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 127,
+        "column": 5
+      },
+      "end": {
+        "line": 134,
+        "column": 22
+      }
+    },
+    "replacement": "Ok(String::new())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "hash_password",
+      "return_type": "-> Result<String, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 125,
+          "column": 1
+        },
+        "end": {
+          "line": 135,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 127,
+        "column": 5
+      },
+      "end": {
+        "line": 134,
+        "column": 22
+      }
+    },
+    "replacement": "Ok(\"xyzzy\".into())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "verify_password",
+      "return_type": "-> bool",
+      "span": {
+        "start": {
+          "line": 137,
+          "column": 1
+        },
+        "end": {
+          "line": 147,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 139,
+        "column": 5
+      },
+      "end": {
+        "line": 146,
+        "column": 17
+      }
+    },
+    "replacement": "true",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "verify_password",
+      "return_type": "-> bool",
+      "span": {
+        "start": {
+          "line": 137,
+          "column": 1
+        },
+        "end": {
+          "line": 147,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 139,
+        "column": 5
+      },
+      "end": {
+        "line": 146,
+        "column": 17
+      }
+    },
+    "replacement": "false",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "derive_key",
+      "return_type": "-> Result<[u8; 32], KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 149,
+          "column": 1
+        },
+        "end": {
+          "line": 157,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 151,
+        "column": 5
+      },
+      "end": {
+        "line": 156,
+        "column": 12
+      }
+    },
+    "replacement": "Ok([0; 32])",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "derive_key",
+      "return_type": "-> Result<[u8; 32], KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 149,
+          "column": 1
+        },
+        "end": {
+          "line": 157,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 151,
+        "column": 5
+      },
+      "end": {
+        "line": 156,
+        "column": 12
+      }
+    },
+    "replacement": "Ok([1; 32])",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "encrypt_chacha20",
+      "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 159,
+          "column": 1
+        },
+        "end": {
+          "line": 172,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 165,
+        "column": 5
+      },
+      "end": {
+        "line": 171,
+        "column": 19
+      }
+    },
+    "replacement": "Ok(vec![])",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "encrypt_chacha20",
+      "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 159,
+          "column": 1
+        },
+        "end": {
+          "line": 172,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 165,
+        "column": 5
+      },
+      "end": {
+        "line": 171,
+        "column": 19
+      }
+    },
+    "replacement": "Ok(vec![0])",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "encrypt_chacha20",
+      "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 159,
+          "column": 1
+        },
+        "end": {
+          "line": 172,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 165,
+        "column": 5
+      },
+      "end": {
+        "line": 171,
+        "column": 19
+      }
+    },
+    "replacement": "Ok(vec![1])",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "decrypt_chacha20",
+      "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 174,
+          "column": 1
+        },
+        "end": {
+          "line": 187,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 180,
+        "column": 5
+      },
+      "end": {
+        "line": 186,
+        "column": 70
+      }
+    },
+    "replacement": "Ok(vec![])",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "decrypt_chacha20",
+      "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 174,
+          "column": 1
+        },
+        "end": {
+          "line": 187,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 180,
+        "column": 5
+      },
+      "end": {
+        "line": 186,
+        "column": 70
+      }
+    },
+    "replacement": "Ok(vec![0])",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/lib.rs",
+    "function": {
+      "function_name": "decrypt_chacha20",
+      "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+      "span": {
+        "start": {
+          "line": 174,
+          "column": 1
+        },
+        "end": {
+          "line": 187,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 180,
+        "column": 5
+      },
+      "end": {
+        "line": 186,
+        "column": 70
+      }
+    },
+    "replacement": "Ok(vec![1])",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/transport.rs",
+    "function": {
+      "function_name": "connect",
+      "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+      "span": {
+        "start": {
+          "line": 24,
+          "column": 1
+        },
+        "end": {
+          "line": 36,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 25,
+        "column": 5
+      },
+      "end": {
+        "line": 35,
+        "column": 6
+      }
+    },
+    "replacement": "Ok(Pin::new())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/transport.rs",
+    "function": {
+      "function_name": "connect",
+      "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+      "span": {
+        "start": {
+          "line": 24,
+          "column": 1
+        },
+        "end": {
+          "line": 36,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 25,
+        "column": 5
+      },
+      "end": {
+        "line": 35,
+        "column": 6
+      }
+    },
+    "replacement": "Ok(Pin::from_iter([Box::new(Default::default())]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/transport.rs",
+    "function": {
+      "function_name": "connect",
+      "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+      "span": {
+        "start": {
+          "line": 24,
+          "column": 1
+        },
+        "end": {
+          "line": 36,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 25,
+        "column": 5
+      },
+      "end": {
+        "line": 35,
+        "column": 6
+      }
+    },
+    "replacement": "Ok(Pin::new(Box::new(Default::default())))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/transport.rs",
+    "function": {
+      "function_name": "connect",
+      "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+      "span": {
+        "start": {
+          "line": 24,
+          "column": 1
+        },
+        "end": {
+          "line": 36,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 25,
+        "column": 5
+      },
+      "end": {
+        "line": 35,
+        "column": 6
+      }
+    },
+    "replacement": "Ok(Pin::from(Box::new(Default::default())))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/transport.rs",
+    "function": {
+      "function_name": "listen",
+      "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+      "span": {
+        "start": {
+          "line": 38,
+          "column": 1
+        },
+        "end": {
+          "line": 52,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 39,
+        "column": 5
+      },
+      "end": {
+        "line": 51,
+        "column": 6
+      }
+    },
+    "replacement": "Ok(Pin::new())",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/transport.rs",
+    "function": {
+      "function_name": "listen",
+      "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+      "span": {
+        "start": {
+          "line": 38,
+          "column": 1
+        },
+        "end": {
+          "line": 52,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 39,
+        "column": 5
+      },
+      "end": {
+        "line": 51,
+        "column": 6
+      }
+    },
+    "replacement": "Ok(Pin::from_iter([Box::new(Default::default())]))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/transport.rs",
+    "function": {
+      "function_name": "listen",
+      "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+      "span": {
+        "start": {
+          "line": 38,
+          "column": 1
+        },
+        "end": {
+          "line": 52,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 39,
+        "column": 5
+      },
+      "end": {
+        "line": 51,
+        "column": 6
+      }
+    },
+    "replacement": "Ok(Pin::new(Box::new(Default::default())))",
+    "genre": "FnValue"
+  },
+  {
+    "package": "nine_sdk",
+    "file": "9sdk/src/transport.rs",
+    "function": {
+      "function_name": "listen",
+      "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+      "span": {
+        "start": {
+          "line": 38,
+          "column": 1
+        },
+        "end": {
+          "line": 52,
+          "column": 2
+        }
+      }
+    },
+    "span": {
+      "start": {
+        "line": 39,
+        "column": 5
+      },
+      "end": {
+        "line": 51,
+        "column": 6
+      }
+    },
+    "replacement": "Ok(Pin::from(Box::new(Default::default())))",
+    "genre": "FnValue"
+  }
+]

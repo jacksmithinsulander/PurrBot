@@ -1,0 +1,49 @@
+meow/src/main.rs:49:5: replace main -> Result<(), Box<dyn Error>> with Ok(())
+meow/src/v1/handlers/callback.rs:13:5: replace callback_handler -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+meow/src/v1/handlers/callback.rs:40:5: replace log_callback_result with ()
+meow/src/v1/handlers/message.rs:13:5: replace message_handler -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+meow/src/v1/models/password_handler.rs:42:9: replace PasswordHandler::sign_up -> Result<String, Box<dyn std::error::Error +Send +Sync>> with Ok(String::new())
+meow/src/v1/models/password_handler.rs:42:9: replace PasswordHandler::sign_up -> Result<String, Box<dyn std::error::Error +Send +Sync>> with Ok("xyzzy".into())
+meow/src/v1/models/password_handler.rs:59:9: replace PasswordHandler::login -> Result<bool, Box<dyn std::error::Error +Send +Sync>> with Ok(true)
+meow/src/v1/models/password_handler.rs:59:9: replace PasswordHandler::login -> Result<bool, Box<dyn std::error::Error +Send +Sync>> with Ok(false)
+meow/src/v1/models/password_handler.rs:80:9: replace PasswordHandler::get_private_key -> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>> with Ok(None)
+meow/src/v1/models/password_handler.rs:80:9: replace PasswordHandler::get_private_key -> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>> with Ok(Some([0; 32]))
+meow/src/v1/models/password_handler.rs:80:9: replace PasswordHandler::get_private_key -> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>> with Ok(Some([1; 32]))
+meow/src/v1/models/password_handler.rs:89:9: replace PasswordHandler::get_public_key -> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>> with Ok(None)
+meow/src/v1/models/password_handler.rs:89:9: replace PasswordHandler::get_public_key -> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>> with Ok(Some([0; 32]))
+meow/src/v1/models/password_handler.rs:89:9: replace PasswordHandler::get_public_key -> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>> with Ok(Some([1; 32]))
+meow/src/v1/processors/callback_processor.rs:15:5: replace process_callback -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+meow/src/v1/processors/message_processor.rs:25:5: replace delete_all_messages -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+meow/src/v1/processors/message_processor.rs:52:5: replace print_keys -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+meow/src/v1/processors/message_processor.rs:64:17: delete match arm
+meow/src/v1/processors/message_processor.rs:107:5: replace logout -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+meow/src/v1/processors/message_processor.rs:115:8: delete ! in logout
+meow/src/v1/processors/message_processor.rs:220:5: replace process_message -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+meow/src/v1/processors/message_processor.rs:228:39: replace == with != in process_message
+meow/src/v1/processors/message_processor.rs:240:16: delete ! in process_message
+meow/src/v1/processors/message_processor.rs:335:21: delete match arm
+meow/src/v1/processors/message_processor.rs:378:21: delete match arm
+meow/src/v1/processors/message_processor.rs:491:28: delete ! in process_message
+meow/src/v1/processors/message_processor.rs:540:17: delete match arm
+meow/src/v1/processors/message_processor.rs:549:17: delete match arm
+meow/src/v1/processors/message_processor.rs:605:17: delete match arm
+9sdk/src/lib.rs:70:9: replace KeyManager::setup_config -> Result<String, KeyManagerError> with Ok(String::new())
+9sdk/src/lib.rs:70:9: replace KeyManager::setup_config -> Result<String, KeyManagerError> with Ok("xyzzy".into())
+9sdk/src/lib.rs:93:9: replace KeyManager::verify_and_derive_keys -> Result<([u8; 32], [u8; 32]), KeyManagerError> with Ok(([0; 32], [0; 32]))
+9sdk/src/lib.rs:93:9: replace KeyManager::verify_and_derive_keys -> Result<([u8; 32], [u8; 32]), KeyManagerError> with Ok(([0; 32], [1; 32]))
+9sdk/src/lib.rs:93:9: replace KeyManager::verify_and_derive_keys -> Result<([u8; 32], [u8; 32]), KeyManagerError> with Ok(([1; 32], [0; 32]))
+9sdk/src/lib.rs:93:9: replace KeyManager::verify_and_derive_keys -> Result<([u8; 32], [u8; 32]), KeyManagerError> with Ok(([1; 32], [1; 32]))
+9sdk/src/lib.rs:102:12: delete ! in KeyManager::verify_and_derive_keys
+9sdk/src/lib.rs:120:9: replace KeyManager::set_config with ()
+9sdk/src/lib.rs:127:5: replace hash_password -> Result<String, KeyManagerError> with Ok(String::new())
+9sdk/src/lib.rs:127:5: replace hash_password -> Result<String, KeyManagerError> with Ok("xyzzy".into())
+9sdk/src/lib.rs:139:5: replace verify_password -> bool with true
+9sdk/src/lib.rs:139:5: replace verify_password -> bool with false
+9sdk/src/lib.rs:151:5: replace derive_key -> Result<[u8; 32], KeyManagerError> with Ok([0; 32])
+9sdk/src/lib.rs:151:5: replace derive_key -> Result<[u8; 32], KeyManagerError> with Ok([1; 32])
+9sdk/src/lib.rs:165:5: replace encrypt_chacha20 -> Result<Vec<u8>, KeyManagerError> with Ok(vec![])
+9sdk/src/lib.rs:165:5: replace encrypt_chacha20 -> Result<Vec<u8>, KeyManagerError> with Ok(vec![0])
+9sdk/src/lib.rs:165:5: replace encrypt_chacha20 -> Result<Vec<u8>, KeyManagerError> with Ok(vec![1])
+9sdk/src/lib.rs:180:5: replace decrypt_chacha20 -> Result<Vec<u8>, KeyManagerError> with Ok(vec![])
+9sdk/src/lib.rs:180:5: replace decrypt_chacha20 -> Result<Vec<u8>, KeyManagerError> with Ok(vec![0])
+9sdk/src/lib.rs:180:5: replace decrypt_chacha20 -> Result<Vec<u8>, KeyManagerError> with Ok(vec![1])

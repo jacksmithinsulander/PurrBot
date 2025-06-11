@@ -1,0 +1,44 @@
+--- meow/src/v1/handlers/callback.rs
++++ replace callback_handler -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+@@ -5,40 +5,17 @@
+ use teloxide::prelude::*;
+ use teloxide::types::CallbackQuery;
+ 
+ pub async fn callback_handler(
+     bot: Bot,
+     q: CallbackQuery,
+     config_store: Arc<UserConfigStore>,
+ ) -> Result<(), Box<dyn Error + Send + Sync>> {
+-    log::info!("callback_handler called! q: {:?}", q);
+-
+-    // Extract callback data for logging
+-    if let Some(data) = q.data.as_deref() {
+-        log::info!("Callback data received: {}", data);
+-    } else {
+-        log::warn!("Callback query without data");
+-    }
+-
+-    // Extract message info for logging
+-    if let Some(msg) = &q.message {
+-        log::info!("Callback from message ID: {}", msg.id());
+-    }
+-
+-    // Process the callback
+-    let result = process_callback(bot, q, config_store).await;
+-
+-    // Log the result
+-    match &result {
+-        Ok(_) => log::info!("Callback processing completed successfully"),
+-        Err(e) => log::error!("Callback processing failed: {}", e),
+-    }
+-
+-    result
++    Ok(()) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ fn log_callback_result<T, E: std::fmt::Display>(result: &Result<T, E>) {
+     match result {
+         Ok(_) => log::info!("Callback processed successfully"),
+         Err(error) => log::error!("Callback processing failed: {}", error),
+     }
+ }

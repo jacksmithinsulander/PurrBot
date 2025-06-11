@@ -1,0 +1,303 @@
+
+*** 9sdk/src/lib.rs:70:9: replace KeyManager::setup_config -> Result<String, KeyManagerError> with Ok(String::new())
+
+*** mutation diff:
+--- 9sdk/src/lib.rs
++++ replace KeyManager::setup_config -> Result<String, KeyManagerError> with Ok(String::new())
+@@ -62,33 +62,17 @@
+ impl KeyManager {
+     pub fn new() -> Self {
+         Self {
+             config: Mutex::new(None),
+         }
+     }
+ 
+     pub async fn setup_config(&self, password: &str) -> Result<String, KeyManagerError> {
+-        let password_hash = hash_password(password)?;
+-
+-        let mut salt1 = [0u8; 16];
+-        let mut salt2 = [0u8; 16];
+-        let mut rng = thread_rng();
+-        rng.fill_bytes(&mut salt1);
+-        rng.fill_bytes(&mut salt2);
+-
+-        let config = EncryptedKeyConfig {
+-            password_hash,
+-            salt1: hex::encode(&salt1),
+-            salt2: hex::encode(&salt2),
+-        };
+-
+-        let config_json = serde_json::to_string_pretty(&config)?;
+-        *self.config.lock().unwrap() = Some(config);
+-        Ok(config_json)
++        Ok(String::new()) /* ~ changed by cargo-mutants ~ */
+     }
+ 
+     pub async fn verify_and_derive_keys(
+         &self,
+         password: &str,
+     ) -> Result<([u8; 32], [u8; 32]), KeyManagerError> {
+         let config = {
+             let guard = self.config.lock().unwrap();
+
+
+*** /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo test --no-run --verbose --package=nine_sdk@0.1.0
+       Fresh libc v0.2.172
+       Fresh cfg-if v1.0.0
+       Fresh version_check v0.9.5
+       Fresh getrandom v0.2.16
+       Fresh rand_core v0.6.4
+       Fresh typenum v1.18.0
+       Fresh generic-array v0.14.7
+       Fresh unicode-ident v1.0.18
+       Fresh proc-macro2 v1.0.95
+       Fresh crypto-common v0.1.6
+       Fresh quote v1.0.40
+       Fresh subtle v2.6.1
+       Fresh autocfg v1.4.0
+       Fresh cpufeatures v0.2.17
+       Fresh inout v0.1.4
+       Fresh block-buffer v0.10.4
+   Compiling smallvec v1.15.1
+   Compiling syn v2.0.101
+   Compiling serde v1.0.219
+       Fresh scopeguard v1.2.0
+   Compiling zeroize v1.8.1
+       Fresh digest v0.10.7
+       Fresh zerocopy v0.8.25
+       Fresh universal-hash v0.5.1
+       Fresh opaque-debug v0.3.1
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name syn --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/syn-2.0.101/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no --cfg 'feature="clone-impls"' --cfg 'feature="default"' --cfg 'feature="derive"' --cfg 'feature="full"' --cfg 'feature="parsing"' --cfg 'feature="printing"' --cfg 'feature="proc-macro"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("clone-impls", "default", "derive", "extra-traits", "fold", "full", "parsing", "printing", "proc-macro", "test", "visit", "visit-mut"))' -C metadata=c49d17168e6cda00 -C extra-filename=-25fde0add98842ae --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern proc_macro2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libproc_macro2-341fde223cefcc91.rmeta --extern quote=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libquote-83f067956e47eed1.rmeta --extern unicode_ident=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libunicode_ident-1d1395cd7a8bd8da.rmeta --cap-lints allow`
+       Fresh lock_api v0.4.13
+       Fresh ppv-lite86 v0.2.21
+       Fresh base64ct v1.8.0
+       Fresh poly1305 v0.8.0
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name smallvec --edition=2018 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smallvec-1.15.1/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("arbitrary", "bincode", "const_generics", "const_new", "debugger_visualizer", "drain_filter", "drain_keep_rest", "impl_bincode", "malloc_size_of", "may_dangle", "serde", "specialization", "union", "unty", "write"))' -C metadata=87966420e3b79d99 -C extra-filename=-83ffde712cc68410 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --cap-lints allow`
+       Fresh rand_chacha v0.3.1
+       Fresh password-hash v0.5.0
+       Fresh blake2 v0.10.6
+       Fresh aead v0.5.2
+       Fresh socket2 v0.5.10
+       Fresh mio v1.0.4
+       Fresh signal-hook-registry v1.4.5
+       Fresh pin-project-lite v0.2.16
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name build_script_build --edition=2018 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.219/build.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type bin --emit=dep-info,link -C embed-bitcode=no --cfg 'feature="default"' --cfg 'feature="derive"' --cfg 'feature="serde_derive"' --cfg 'feature="std"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("alloc", "default", "derive", "rc", "serde_derive", "std", "unstable"))' -C metadata=3e23a0a751bcb64d -C extra-filename=-dca14796c3aa2389 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/build/serde-dca14796c3aa2389 -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --cap-lints allow`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name zeroize --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zeroize-1.8.1/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("aarch64", "alloc", "default", "derive", "serde", "simd", "std", "zeroize_derive"))' -C metadata=9032d70ec51eb0d8 -C extra-filename=-a25541b213f390cd --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --cap-lints allow`
+   Compiling memchr v2.7.4
+       Fresh ryu v1.0.20
+       Fresh itoa v1.0.15
+       Fresh bytes v1.10.1
+       Fresh rand v0.8.5
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name memchr --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.7.4/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="alloc"' --cfg 'feature="std"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("alloc", "compiler_builtins", "core", "default", "libc", "logging", "rustc-dep-of-std", "std", "use_std"))' -C metadata=a795df4557d9a99f -C extra-filename=-e6ea6ec63084c442 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --cap-lints allow`
+       Fresh argon2 v0.5.3
+       Fresh hex v0.4.3
+   Compiling cipher v0.4.4
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name cipher --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cipher-0.4.4/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="zeroize"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("alloc", "blobby", "block-padding", "dev", "rand_core", "std", "zeroize"))' -C metadata=2bb2b1e107e6ad77 -C extra-filename=-7a6a0e9ac0e50431 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern crypto_common=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libcrypto_common-8dab7869a351eb7e.rmeta --extern inout=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libinout-c643660848c2265f.rmeta --extern zeroize=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libzeroize-a25541b213f390cd.rmeta --cap-lints allow`
+   Compiling parking_lot_core v0.9.11
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name parking_lot_core --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/parking_lot_core-0.9.11/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("backtrace", "deadlock_detection", "nightly", "petgraph", "thread-id"))' -C metadata=b6666539eb87a9e2 -C extra-filename=-0389087f73aa9509 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern cfg_if=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libcfg_if-19fd298186487766.rmeta --extern libc=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/liblibc-8bfc48aa9229ffb5.rmeta --extern smallvec=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libsmallvec-83ffde712cc68410.rmeta --cap-lints allow --check-cfg 'cfg(tsan_enabled)'`
+     Running `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/build/serde-dca14796c3aa2389/build-script-build`
+   Compiling chacha20 v0.9.1
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name chacha20 --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/chacha20-0.9.1/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="zeroize"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("std", "zeroize"))' -C metadata=a442ac1ba732dd88 -C extra-filename=-745716ce31368424 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern cfg_if=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libcfg_if-19fd298186487766.rmeta --extern cipher=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libcipher-7a6a0e9ac0e50431.rmeta --extern cpufeatures=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libcpufeatures-241f523369765f8e.rmeta --cap-lints allow`
+   Compiling parking_lot v0.12.4
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name parking_lot --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/parking_lot-0.12.4/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("arc_lock", "deadlock_detection", "default", "hardware-lock-elision", "nightly", "owning_ref", "send_guard", "serde"))' -C metadata=936f7911da392fe1 -C extra-filename=-0bc2526e26f7dc3a --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern lock_api=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/liblock_api-480de9d24b08aac6.rmeta --extern parking_lot_core=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libparking_lot_core-0389087f73aa9509.rmeta --cap-lints allow`
+   Compiling chacha20poly1305 v0.10.1
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name chacha20poly1305 --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/chacha20poly1305-0.10.1/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="alloc"' --cfg 'feature="default"' --cfg 'feature="getrandom"' --cfg 'feature="rand_core"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("alloc", "default", "getrandom", "heapless", "rand_core", "reduced-round", "std", "stream"))' -C metadata=d1e87dbd8c17ed95 -C extra-filename=-60a6b146946dc156 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern aead=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libaead-f139d90770716416.rmeta --extern chacha20=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libchacha20-745716ce31368424.rmeta --extern cipher=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libcipher-7a6a0e9ac0e50431.rmeta --extern poly1305=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libpoly1305-5b3a254ca271eb20.rmeta --extern zeroize=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libzeroize-a25541b213f390cd.rmeta --cap-lints allow`
+   Compiling serde_derive v1.0.219
+   Compiling tokio-macros v2.5.0
+   Compiling thiserror-impl v2.0.12
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name serde_derive --edition=2015 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_derive-1.0.219/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type proc-macro --emit=dep-info,link -C prefer-dynamic -C embed-bitcode=no --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "deserialize_in_place"))' -C metadata=b2626e16646db1b9 -C extra-filename=-75e04e64daa4750d --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern proc_macro2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libproc_macro2-341fde223cefcc91.rlib --extern quote=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libquote-83f067956e47eed1.rlib --extern syn=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libsyn-25fde0add98842ae.rlib --extern proc_macro --cap-lints allow`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name tokio_macros --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-macros-2.5.0/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type proc-macro --emit=dep-info,link -C prefer-dynamic -C embed-bitcode=no --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values())' -C metadata=9eb699a6a09e04dd -C extra-filename=-d2b53bd519836aa2 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern proc_macro2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libproc_macro2-341fde223cefcc91.rlib --extern quote=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libquote-83f067956e47eed1.rlib --extern syn=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libsyn-25fde0add98842ae.rlib --extern proc_macro --cap-lints allow`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name thiserror_impl --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-impl-2.0.12/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type proc-macro --emit=dep-info,link -C prefer-dynamic -C embed-bitcode=no --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values())' -C metadata=8b48793e32a754e6 -C extra-filename=-70726f418a462f2b --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern proc_macro2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libproc_macro2-341fde223cefcc91.rlib --extern quote=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libquote-83f067956e47eed1.rlib --extern syn=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libsyn-25fde0add98842ae.rlib --extern proc_macro --cap-lints allow`
+   Compiling tokio v1.45.1
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name tokio --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.45.1/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --warn=unexpected_cfgs --check-cfg 'cfg(fuzzing)' --check-cfg 'cfg(loom)' --check-cfg 'cfg(mio_unsupported_force_poll_poll)' --check-cfg 'cfg(tokio_allow_from_blocking_fd)' --check-cfg 'cfg(tokio_internal_mt_counters)' --check-cfg 'cfg(tokio_no_parking_lot)' --check-cfg 'cfg(tokio_no_tuning_tests)' --check-cfg 'cfg(tokio_taskdump)' --check-cfg 'cfg(tokio_unstable)' --cfg 'feature="bytes"' --cfg 'feature="default"' --cfg 'feature="fs"' --cfg 'feature="full"' --cfg 'feature="io-std"' --cfg 'feature="io-util"' --cfg 'feature="libc"' --cfg 'feature="macros"' --cfg 'feature="mio"' --cfg 'feature="net"' --cfg 'feature="parking_lot"' --cfg 'feature="process"' --cfg 'feature="rt"' --cfg 'feature="rt-multi-thread"' --cfg 'feature="signal"' --cfg 'feature="signal-hook-registry"' --cfg 'feature="socket2"' --cfg 'feature="sync"' --cfg 'feature="time"' --cfg 'feature="tokio-macros"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("bytes", "default", "fs", "full", "io-std", "io-util", "libc", "macros", "mio", "net", "parking_lot", "process", "rt", "rt-multi-thread", "signal", "signal-hook-registry", "socket2", "sync", "test-util", "time", "tokio-macros", "tracing", "windows-sys"))' -C metadata=1e495c8f1ca27481 -C extra-filename=-5a6f9e3045188a5c --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern bytes=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libbytes-f7b2d9fb270a13e4.rmeta --extern libc=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/liblibc-8bfc48aa9229ffb5.rmeta --extern mio=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libmio-c9650dbe57020089.rmeta --extern parking_lot=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libparking_lot-0bc2526e26f7dc3a.rmeta --extern pin_project_lite=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libpin_project_lite-8ceaaa5d1655a324.rmeta --extern signal_hook_registry=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libsignal_hook_registry-527a828f822669aa.rmeta --extern socket2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libsocket2-e675d6981bb0fe0c.rmeta --extern tokio_macros=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libtokio_macros-d2b53bd519836aa2.so --cap-lints allow`
+   Compiling thiserror v2.0.12
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name thiserror --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --cfg 'feature="std"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "std"))' -C metadata=b75edc67fea22a41 -C extra-filename=-246d00263e134c75 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern thiserror_impl=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libthiserror_impl-70726f418a462f2b.so --cap-lints allow --cfg error_generic_member_access --check-cfg 'cfg(error_generic_member_access)' --check-cfg 'cfg(thiserror_nightly_testing)' --check-cfg 'cfg(thiserror_no_backtrace_type)'`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name serde --edition=2018 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.219/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --cfg 'feature="derive"' --cfg 'feature="serde_derive"' --cfg 'feature="std"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("alloc", "default", "derive", "rc", "serde_derive", "std", "unstable"))' -C metadata=516ebb707dc74123 -C extra-filename=-4c9a3da96669b9a9 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern serde_derive=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde_derive-75e04e64daa4750d.so --cap-lints allow --check-cfg 'cfg(no_core_cstr)' --check-cfg 'cfg(no_core_error)' --check-cfg 'cfg(no_core_net)' --check-cfg 'cfg(no_core_num_saturating)' --check-cfg 'cfg(no_core_try_from)' --check-cfg 'cfg(no_diagnostic_namespace)' --check-cfg 'cfg(no_float_copysign)' --check-cfg 'cfg(no_num_nonzero_signed)' --check-cfg 'cfg(no_relaxed_trait_bounds)' --check-cfg 'cfg(no_serde_derive)' --check-cfg 'cfg(no_std_atomic)' --check-cfg 'cfg(no_std_atomic64)' --check-cfg 'cfg(no_systemtime_checked_add)' --check-cfg 'cfg(no_target_has_atomic)'`
+   Compiling serde_json v1.0.140
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name serde_json --edition=2021 /usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.140/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --cfg 'feature="std"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("alloc", "arbitrary_precision", "default", "float_roundtrip", "indexmap", "preserve_order", "raw_value", "std", "unbounded_depth"))' -C metadata=22a53b8efc18b307 -C extra-filename=-6e0d426a96dfcc7f --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern itoa=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libitoa-a586594d020aa48a.rmeta --extern memchr=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libmemchr-e6ea6ec63084c442.rmeta --extern ryu=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libryu-675674a647ff1eb1.rmeta --extern serde=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rmeta --cap-lints allow --cfg 'fast_arithmetic="64"' --check-cfg 'cfg(fast_arithmetic, values("32", "64"))'`
+   Compiling nine_sdk v0.1.0 (/tmp/cargo-mutants-workspace-191TZv.tmp/9sdk)
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name nine_sdk --edition=2021 9sdk/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=e9deaf46f70708c9 -C extra-filename=-9727c2ab9241a18c --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libargon2-d82da775f30d1942.rmeta --extern chacha20poly1305=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rmeta --extern hex=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rmeta --extern password_hash=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rmeta --extern rand=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rmeta --extern rand_core=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rmeta --extern serde=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rmeta --extern serde_json=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rmeta --extern thiserror=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libthiserror-246d00263e134c75.rmeta --extern tokio=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rmeta`
+warning: unused import: `AeadCore`
+ --> 9sdk/src/lib.rs:7:18
+  |
+7 |     aead::{Aead, AeadCore},
+  |                  ^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `CryptoRng`, `RngCore`, and `Rng`
+ --> 9sdk/src/lib.rs:9:12
+  |
+9 | use rand::{CryptoRng, Rng, RngCore, thread_rng};
+  |            ^^^^^^^^^  ^^^  ^^^^^^^
+
+warning: unused variable: `password`
+  --> 9sdk/src/lib.rs:69:38
+   |
+69 |     pub async fn setup_config(&self, password: &str) -> Result<String, KeyManagerError> {
+   |                                      ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_password`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: function `hash_password` is never used
+   --> 9sdk/src/lib.rs:110:4
+    |
+110 | fn hash_password(password: &str) -> Result<String, KeyManagerError> {
+    |    ^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: function `encrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:144:4
+    |
+144 | fn encrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+
+warning: function `decrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:159:4
+    |
+159 | fn decrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+
+warning: `nine_sdk` (lib) generated 6 warnings (run `cargo fix --lib -p nine_sdk` to apply 2 suggestions)
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name nine_sdk --edition=2021 9sdk/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=ff123a85f7b0c56f -C extra-filename=-d1edccc2728124f1 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libargon2-d82da775f30d1942.rlib --extern chacha20poly1305=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rlib --extern hex=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern password_hash=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rlib --extern rand=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rlib --extern rand_core=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rlib --extern serde=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rlib --extern serde_json=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rlib --extern thiserror=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libthiserror-246d00263e134c75.rlib --extern tokio=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rlib`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name integration_tests --edition=2021 9sdk/tests/integration_tests.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=eb75d01c5adc0d90 -C extra-filename=-a8e954773c4b883c --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libargon2-d82da775f30d1942.rlib --extern chacha20poly1305=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rlib --extern hex=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libnine_sdk-9727c2ab9241a18c.rlib --extern password_hash=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rlib --extern rand=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rlib --extern rand_core=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rlib --extern serde=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rlib --extern serde_json=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rlib --extern thiserror=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libthiserror-246d00263e134c75.rlib --extern tokio=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rlib`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name transport_integration_tests --edition=2021 9sdk/tests/transport_integration_tests.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=51cd61cd3c15850f -C extra-filename=-ec3de91ed0997500 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libargon2-d82da775f30d1942.rlib --extern chacha20poly1305=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rlib --extern hex=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libnine_sdk-9727c2ab9241a18c.rlib --extern password_hash=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rlib --extern rand=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rlib --extern rand_core=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rlib --extern serde=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rlib --extern serde_json=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rlib --extern thiserror=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libthiserror-246d00263e134c75.rlib --extern tokio=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rlib`
+warning: `nine_sdk` (lib test) generated 6 warnings (6 duplicates)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.05s
+  Executable `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/nine_sdk-d1edccc2728124f1`
+  Executable `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/integration_tests-a8e954773c4b883c`
+  Executable `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/transport_integration_tests-ec3de91ed0997500`
+
+*** result: Success
+
+*** /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo test --verbose --package=nine_sdk@0.1.0
+       Fresh libc v0.2.172
+       Fresh cfg-if v1.0.0
+       Fresh version_check v0.9.5
+       Fresh getrandom v0.2.16
+       Fresh rand_core v0.6.4
+       Fresh typenum v1.18.0
+       Fresh generic-array v0.14.7
+       Fresh unicode-ident v1.0.18
+       Fresh proc-macro2 v1.0.95
+       Fresh crypto-common v0.1.6
+       Fresh quote v1.0.40
+       Fresh subtle v2.6.1
+       Fresh autocfg v1.4.0
+       Fresh cpufeatures v0.2.17
+       Fresh block-buffer v0.10.4
+       Fresh inout v0.1.4
+       Fresh syn v2.0.101
+       Fresh smallvec v1.15.1
+       Fresh scopeguard v1.2.0
+       Fresh zeroize v1.8.1
+       Fresh universal-hash v0.5.1
+       Fresh zerocopy v0.8.25
+       Fresh parking_lot_core v0.9.11
+       Fresh serde_derive v1.0.219
+       Fresh cipher v0.4.4
+       Fresh digest v0.10.7
+       Fresh base64ct v1.8.0
+       Fresh lock_api v0.4.13
+       Fresh ppv-lite86 v0.2.21
+       Fresh opaque-debug v0.3.1
+       Fresh password-hash v0.5.0
+       Fresh chacha20 v0.9.1
+       Fresh serde v1.0.219
+       Fresh blake2 v0.10.6
+       Fresh parking_lot v0.12.4
+       Fresh poly1305 v0.8.0
+       Fresh rand_chacha v0.3.1
+       Fresh tokio-macros v2.5.0
+       Fresh thiserror-impl v2.0.12
+       Fresh aead v0.5.2
+       Fresh mio v1.0.4
+       Fresh signal-hook-registry v1.4.5
+       Fresh socket2 v0.5.10
+       Fresh pin-project-lite v0.2.16
+       Fresh ryu v1.0.20
+       Fresh memchr v2.7.4
+       Fresh itoa v1.0.15
+       Fresh bytes v1.10.1
+       Fresh rand v0.8.5
+       Fresh thiserror v2.0.12
+       Fresh chacha20poly1305 v0.10.1
+       Fresh serde_json v1.0.140
+       Fresh tokio v1.45.1
+       Fresh argon2 v0.5.3
+       Fresh hex v0.4.3
+warning: unused import: `AeadCore`
+ --> 9sdk/src/lib.rs:7:18
+  |
+7 |     aead::{Aead, AeadCore},
+  |                  ^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `CryptoRng`, `RngCore`, and `Rng`
+ --> 9sdk/src/lib.rs:9:12
+  |
+9 | use rand::{CryptoRng, Rng, RngCore, thread_rng};
+  |            ^^^^^^^^^  ^^^  ^^^^^^^
+
+warning: unused variable: `password`
+  --> 9sdk/src/lib.rs:69:38
+   |
+69 |     pub async fn setup_config(&self, password: &str) -> Result<String, KeyManagerError> {
+   |                                      ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_password`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: function `hash_password` is never used
+   --> 9sdk/src/lib.rs:110:4
+    |
+110 | fn hash_password(password: &str) -> Result<String, KeyManagerError> {
+    |    ^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: function `encrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:144:4
+    |
+144 | fn encrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+
+warning: function `decrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:159:4
+    |
+159 | fn decrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+
+warning: `nine_sdk` (lib) generated 6 warnings (run `cargo fix --lib -p nine_sdk` to apply 2 suggestions)
+warning: `nine_sdk` (lib test) generated 6 warnings (6 duplicates)
+       Fresh nine_sdk v0.1.0 (/tmp/cargo-mutants-workspace-191TZv.tmp/9sdk)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/nine_sdk-d1edccc2728124f1`
+
+running 1 test
+test transport::tests::test_tcp_connect ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/integration_tests-a8e954773c4b883c`
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/transport_integration_tests-ec3de91ed0997500`
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nine_sdk
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustdoc --edition=2021 --crate-type lib --color auto --crate-name nine_sdk --test 9sdk/src/lib.rs --test-run-directory /tmp/cargo-mutants-workspace-191TZv.tmp/9sdk -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libargon2-d82da775f30d1942.rlib --extern chacha20poly1305=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rlib --extern hex=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libnine_sdk-9727c2ab9241a18c.rlib --extern password_hash=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rlib --extern rand=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rlib --extern rand_core=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rlib --extern serde=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rlib --extern serde_json=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rlib --extern thiserror=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libthiserror-246d00263e134c75.rlib --extern tokio=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rlib -C embed-bitcode=no --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' --error-format human`
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+*** result: Success

@@ -1,0 +1,21 @@
+--- meow/src/v1/processors/message_processor.rs
++++ delete ! in logout
+@@ -107,17 +107,17 @@
+     log::info!("Starting logout process for chat_id={}", chat_id);
+ 
+     // Check if user is actually logged in first
+     let is_logged_in = {
+         let handlers = PASSWORD_HANDLERS.lock().await;
+         handlers.get(&chat_id.0).and_then(|h| h.as_ref()).is_some()
+     };
+ 
+-    if !is_logged_in {
++    if  /* ~ changed by cargo-mutants ~ */is_logged_in {
+         log::info!("User {} tried to logout but is not logged in", chat_id.0);
+         // Send error message
+         let message = bot
+             .send_message(chat_id, "❌ You are not logged in!")
+             .reply_markup(logged_out_operations())
+             .await?;
+         
+         // Store the message ID

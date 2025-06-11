@@ -1,0 +1,21 @@
+--- meow/src/v1/services/user_config_store.rs
++++ replace open_database -> Result<Connection, rusqlite::Error> with Ok(Default::default())
+@@ -71,17 +71,17 @@
+             Err(e) => Err(e),
+         }
+     }
+ }
+ 
+ // Database operation helpers
+ 
+ fn open_database<P: AsRef<Path>>(path: P) -> Result<Connection, rusqlite::Error> {
+-    Connection::open(path)
++    Ok(Default::default()) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ fn initialize_database_schema(connection: &Connection) -> Result<(), rusqlite::Error> {
+     connection.execute(CREATE_TABLE_SQL, [])?;
+     Ok(())
+ }
+ 
+ fn execute_insert_or_update(
