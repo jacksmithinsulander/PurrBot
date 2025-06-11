@@ -1,13 +1,20 @@
 use std::error::Error;
 use teloxide::{prelude::*, utils::command::BotCommands};
+use nine_sdk::Transport;
 mod keyboard;
-mod v1;
+mod commands;
+mod constants;
+mod handlers;
+mod models;
+mod processors;
+mod services;
 use std::sync::Arc;
-use v1::services::user_config_store::UserConfigStore;
-
-use nine_sdk::{Transport, connect};
-use v1::commands::{CommandLoggedIn, CommandLoggedOut};
-use v1::handlers::{callback_handler, message_handler};
+use services::user_config_store::UserConfigStore;
+use teloxide::Bot;
+use teloxide::dispatching::{Dispatcher, UpdateFilterExt};
+use teloxide::dptree;
+use commands::CommandLoggedOut;
+use handlers::callback_handler;
 
 // Constants
 const DEFAULT_DATABASE_PATH: &str = "purrbot.sqlite";
@@ -69,7 +76,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             let config_store = Arc::clone(&config_store);
             move |bot, msg| {
                 let config_store = Arc::clone(&config_store);
-                async move { v1::handlers::message_handler(bot, msg, config_store).await }
+                async move { handlers::message_handler(bot, msg, config_store).await }
             }
         })))
         .branch(Update::filter_callback_query().branch(dptree::endpoint({
@@ -206,18 +213,14 @@ mod tests {
     
     #[test]
     fn test_create_config_store() {
-        // This test would require a temporary directory in a real scenario
-        // For now, we just verify the function exists and returns the expected type
-        // The actual functionality is tested in user_config_store tests
+        let config_store = UserConfigStore::new(DEFAULT_DATABASE_PATH).unwrap();
+        assert_eq!(config_store.get_database_path(), DEFAULT_DATABASE_PATH);
     }
     
     #[test]
     fn test_main_function_exists() {
-        // Simply verify that main function exists by using compile-time checks
-        // The actual functionality is tested through integration tests
-        
-        // This test is primarily to ensure the main function maintains its signature
-        // The fact that this compiles verifies the function exists
-        assert!(true, "Main function exists and compiles");
+        // This is a simple test to ensure the main function exists
+        // We can't actually test the main function since it's async and requires a running bot
+        assert!(true);
     }
 }

@@ -1,5 +1,5 @@
-use crate::v1::processors::callback_processor::process_callback;
-use crate::v1::services::user_config_store::UserConfigStore;
+use crate::processors::callback_processor::process_callback;
+use crate::services::user_config_store::UserConfigStore;
 use std::error::Error;
 use std::sync::Arc;
 use teloxide::prelude::*;
