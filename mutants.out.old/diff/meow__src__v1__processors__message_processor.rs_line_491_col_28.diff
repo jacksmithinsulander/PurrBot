@@ -1,0 +1,21 @@
+--- meow/src/v1/processors/message_processor.rs
++++ delete ! in process_message
+@@ -483,17 +483,17 @@
+                     CommandLoggedIn::List => {
+                         log::info!("Handling /list command for user {}", user_id);
+                         // Verify login state
+                         let is_still_logged_in = {
+                             let handlers = PASSWORD_HANDLERS.lock().await;
+                             handlers.get(&user_id).and_then(|h| h.as_ref()).is_some()
+                         };
+ 
+-                        if !is_still_logged_in {
++                        if  /* ~ changed by cargo-mutants ~ */is_still_logged_in {
+                             log::warn!("User {} tried to use /list but is not logged in", user_id);
+                             let message = bot
+                                 .send_message(msg.chat.id, "❌ Please log in first!")
+                                 .reply_markup(logged_out_operations())
+                                 .await?;
+                             let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                             chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                             return Ok(());

@@ -1,0 +1,37 @@
+--- 9sdk/src/lib.rs
++++ replace KeyManager::setup_config -> Result<String, KeyManagerError> with Ok(String::new())
+@@ -62,33 +62,17 @@
+ impl KeyManager {
+     pub fn new() -> Self {
+         Self {
+             config: Mutex::new(None),
+         }
+     }
+ 
+     pub async fn setup_config(&self, password: &str) -> Result<String, KeyManagerError> {
+-        let password_hash = hash_password(password)?;
+-
+-        let mut salt1 = [0u8; 16];
+-        let mut salt2 = [0u8; 16];
+-        let mut rng = thread_rng();
+-        rng.fill_bytes(&mut salt1);
+-        rng.fill_bytes(&mut salt2);
+-
+-        let config = EncryptedKeyConfig {
+-            password_hash,
+-            salt1: hex::encode(&salt1),
+-            salt2: hex::encode(&salt2),
+-        };
+-
+-        let config_json = serde_json::to_string_pretty(&config)?;
+-        *self.config.lock().unwrap() = Some(config);
+-        Ok(config_json)
++        Ok(String::new()) /* ~ changed by cargo-mutants ~ */
+     }
+ 
+     pub async fn verify_and_derive_keys(
+         &self,
+         password: &str,
+     ) -> Result<([u8; 32], [u8; 32]), KeyManagerError> {
+         let config = {
+             let guard = self.config.lock().unwrap();

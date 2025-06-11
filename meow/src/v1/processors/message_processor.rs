@@ -772,3 +772,22 @@ pub async fn process_message(
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    // Test that public functions exist
+    #[test]
+    fn test_public_functions_exist() {
+        // This test verifies that the public functions exist
+        // by simply referencing them. If they don't exist,
+        // this test won't compile.
+        
+        // Reference the functions to ensure they exist
+        let _ = delete_all_messages;
+        let _ = print_keys;
+        let _ = logout;
+        let _ = process_message;
+    }
+}

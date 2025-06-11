@@ -1,0 +1,20 @@
+--- 9sdk/src/lib.rs
++++ replace decrypt_chacha20 -> Result<Vec<u8>, KeyManagerError> with Ok(vec![1])
+@@ -172,16 +172,10 @@
+ }
+ 
+ /// Decrypts ciphertext using ChaCha20Poly1305
+ fn decrypt_chacha20(
+     key: &[u8],
+     ciphertext: &[u8],
+     nonce: &[u8; 12],
+ ) -> Result<Vec<u8>, KeyManagerError> {
+-    let cipher = ChaCha20Poly1305::new_from_slice(key)
+-        .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
+-    let nonce = Nonce::from_slice(nonce);
+-
+-    cipher
+-        .decrypt(nonce, ciphertext)
+-        .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))
++    Ok(vec![1]) /* ~ changed by cargo-mutants ~ */
+ }

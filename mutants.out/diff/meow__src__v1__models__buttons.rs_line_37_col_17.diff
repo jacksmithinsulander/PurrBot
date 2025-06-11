@@ -1,0 +1,21 @@
+--- meow/src/v1/models/buttons.rs
++++ delete match arm
+@@ -29,17 +29,17 @@
+ 
+ impl Button {
+     pub fn from_str(input: &str, is_logged_in: bool) -> Self {
+         if is_logged_in {
+             match input {
+                 "List" => Self::List,
+                 "Trade" => Self::Trade,
+                 "Create" => Self::Create,
+-                "Log Out" => Self::LogOut,
++                 /* ~ changed by cargo-mutants ~ */
+                 "Print Keys" => Self::PrintKeys,
+                 _ => Self::UnRecognized,
+             }
+         } else {
+             match input {
+                 "Log In" => Self::LogIn,
+                 "Sign Up" => Self::SignUp,
+                 "FAQ" => Self::Faq,

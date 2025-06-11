@@ -1,0 +1,275 @@
+
+*** 9sdk/src/lib.rs:151:5: replace derive_key -> Result<[u8; 32], KeyManagerError> with Ok([0; 32])
+
+*** mutation diff:
+--- 9sdk/src/lib.rs
++++ replace derive_key -> Result<[u8; 32], KeyManagerError> with Ok([0; 32])
+@@ -143,22 +143,17 @@
+     let argon2 = Argon2::default();
+     argon2
+         .verify_password(password.as_bytes(), &parsed_hash)
+         .is_ok()
+ }
+ 
+ /// Derives a key from a password and salt
+ fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> {
+-    let mut key = [0u8; 32];
+-    let argon2 = Argon2::default();
+-    argon2
+-        .hash_password_into(password.as_bytes(), salt, &mut key)
+-        .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
+-    Ok(key)
++    Ok([0; 32]) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ /// Encrypts plaintext using ChaCha20Poly1305
+ fn encrypt_chacha20(
+     key: &[u8],
+     plaintext: &[u8],
+     nonce: &[u8; 12],
+ ) -> Result<Vec<u8>, KeyManagerError> {
+
+
+*** /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo test --no-run --verbose --package=nine_sdk@0.1.0
+       Fresh libc v0.2.172
+       Fresh cfg-if v1.0.0
+       Fresh version_check v0.9.5
+       Fresh getrandom v0.2.16
+       Fresh rand_core v0.6.4
+       Fresh typenum v1.18.0
+       Fresh generic-array v0.14.7
+       Fresh unicode-ident v1.0.18
+       Fresh crypto-common v0.1.6
+       Fresh subtle v2.6.1
+       Fresh autocfg v1.4.0
+       Fresh cpufeatures v0.2.17
+       Fresh inout v0.1.4
+       Fresh proc-macro2 v1.0.95
+       Fresh block-buffer v0.10.4
+       Fresh scopeguard v1.2.0
+       Fresh zeroize v1.8.1
+       Fresh smallvec v1.15.1
+       Fresh quote v1.0.40
+       Fresh zerocopy v0.8.25
+       Fresh digest v0.10.7
+       Fresh parking_lot_core v0.9.11
+       Fresh cipher v0.4.4
+       Fresh universal-hash v0.5.1
+       Fresh syn v2.0.101
+       Fresh ppv-lite86 v0.2.21
+       Fresh lock_api v0.4.13
+       Fresh base64ct v1.8.0
+       Fresh opaque-debug v0.3.1
+       Fresh chacha20 v0.9.1
+       Fresh blake2 v0.10.6
+       Fresh serde_derive v1.0.219
+       Fresh thiserror-impl v2.0.12
+       Fresh poly1305 v0.8.0
+       Fresh parking_lot v0.12.4
+       Fresh tokio-macros v2.5.0
+       Fresh password-hash v0.5.0
+       Fresh rand_chacha v0.3.1
+       Fresh aead v0.5.2
+       Fresh serde v1.0.219
+       Fresh mio v1.0.4
+       Fresh signal-hook-registry v1.4.5
+       Fresh socket2 v0.5.10
+       Fresh memchr v2.7.4
+       Fresh ryu v1.0.20
+       Fresh bytes v1.10.1
+       Fresh itoa v1.0.15
+       Fresh pin-project-lite v0.2.16
+       Fresh tokio v1.45.1
+       Fresh serde_json v1.0.140
+       Fresh thiserror v2.0.12
+       Fresh chacha20poly1305 v0.10.1
+       Fresh rand v0.8.5
+       Fresh argon2 v0.5.3
+       Fresh hex v0.4.3
+       Dirty nine_sdk v0.1.0 (/tmp/cargo-mutants-workspace-ia1sSj.tmp/9sdk): the file `9sdk/src/lib.rs` has changed (1749670198.600012573s, 293000680ns after last build at 1749670198.307011893s)
+   Compiling nine_sdk v0.1.0 (/tmp/cargo-mutants-workspace-ia1sSj.tmp/9sdk)
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name nine_sdk --edition=2021 9sdk/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=ff123a85f7b0c56f -C extra-filename=-d1edccc2728124f1 --out-dir /tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libargon2-d82da775f30d1942.rlib --extern chacha20poly1305=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rlib --extern hex=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern password_hash=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rlib --extern rand=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rlib --extern rand_core=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rlib --extern serde=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rlib --extern serde_json=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rlib --extern thiserror=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libthiserror-246d00263e134c75.rlib --extern tokio=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rlib`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name nine_sdk --edition=2021 9sdk/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=e9deaf46f70708c9 -C extra-filename=-9727c2ab9241a18c --out-dir /tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libargon2-d82da775f30d1942.rmeta --extern chacha20poly1305=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rmeta --extern hex=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rmeta --extern password_hash=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rmeta --extern rand=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rmeta --extern rand_core=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rmeta --extern serde=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rmeta --extern serde_json=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rmeta --extern thiserror=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libthiserror-246d00263e134c75.rmeta --extern tokio=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rmeta`
+warning: unused import: `AeadCore`
+ --> 9sdk/src/lib.rs:7:18
+  |
+7 |     aead::{Aead, AeadCore},
+  |                  ^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `CryptoRng` and `Rng`
+ --> 9sdk/src/lib.rs:9:12
+  |
+9 | use rand::{CryptoRng, Rng, RngCore, thread_rng};
+  |            ^^^^^^^^^  ^^^
+
+warning: unused variable: `password`
+   --> 9sdk/src/lib.rs:150:15
+    |
+150 | fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> {
+    |               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_password`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `salt`
+   --> 9sdk/src/lib.rs:150:31
+    |
+150 | fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> {
+    |                               ^^^^ help: if this is intentional, prefix it with an underscore: `_salt`
+
+warning: function `encrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:155:4
+    |
+155 | fn encrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: function `decrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:170:4
+    |
+170 | fn decrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+
+warning: `nine_sdk` (lib) generated 6 warnings (run `cargo fix --lib -p nine_sdk` to apply 2 suggestions)
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name transport_integration_tests --edition=2021 9sdk/tests/transport_integration_tests.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=51cd61cd3c15850f -C extra-filename=-ec3de91ed0997500 --out-dir /tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libargon2-d82da775f30d1942.rlib --extern chacha20poly1305=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rlib --extern hex=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libnine_sdk-9727c2ab9241a18c.rlib --extern password_hash=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rlib --extern rand=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rlib --extern rand_core=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rlib --extern serde=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rlib --extern serde_json=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rlib --extern thiserror=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libthiserror-246d00263e134c75.rlib --extern tokio=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rlib`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name integration_tests --edition=2021 9sdk/tests/integration_tests.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=eb75d01c5adc0d90 -C extra-filename=-a8e954773c4b883c --out-dir /tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libargon2-d82da775f30d1942.rlib --extern chacha20poly1305=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rlib --extern hex=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libnine_sdk-9727c2ab9241a18c.rlib --extern password_hash=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rlib --extern rand=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rlib --extern rand_core=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rlib --extern serde=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rlib --extern serde_json=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rlib --extern thiserror=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libthiserror-246d00263e134c75.rlib --extern tokio=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rlib`
+warning: `nine_sdk` (lib test) generated 6 warnings (6 duplicates)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+  Executable `/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/nine_sdk-d1edccc2728124f1`
+  Executable `/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/integration_tests-a8e954773c4b883c`
+  Executable `/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/transport_integration_tests-ec3de91ed0997500`
+
+*** result: Success
+
+*** /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo test --verbose --package=nine_sdk@0.1.0
+       Fresh libc v0.2.172
+       Fresh cfg-if v1.0.0
+       Fresh version_check v0.9.5
+       Fresh getrandom v0.2.16
+       Fresh rand_core v0.6.4
+       Fresh typenum v1.18.0
+       Fresh generic-array v0.14.7
+       Fresh unicode-ident v1.0.18
+       Fresh proc-macro2 v1.0.95
+       Fresh crypto-common v0.1.6
+       Fresh quote v1.0.40
+       Fresh subtle v2.6.1
+       Fresh autocfg v1.4.0
+       Fresh cpufeatures v0.2.17
+       Fresh inout v0.1.4
+       Fresh block-buffer v0.10.4
+       Fresh syn v2.0.101
+       Fresh zeroize v1.8.1
+       Fresh scopeguard v1.2.0
+       Fresh smallvec v1.15.1
+       Fresh digest v0.10.7
+       Fresh zerocopy v0.8.25
+       Fresh cipher v0.4.4
+       Fresh serde_derive v1.0.219
+       Fresh parking_lot_core v0.9.11
+       Fresh universal-hash v0.5.1
+       Fresh ppv-lite86 v0.2.21
+       Fresh lock_api v0.4.13
+       Fresh opaque-debug v0.3.1
+       Fresh base64ct v1.8.0
+       Fresh chacha20 v0.9.1
+       Fresh serde v1.0.219
+       Fresh blake2 v0.10.6
+       Fresh password-hash v0.5.0
+       Fresh rand_chacha v0.3.1
+       Fresh poly1305 v0.8.0
+       Fresh parking_lot v0.12.4
+       Fresh thiserror-impl v2.0.12
+       Fresh tokio-macros v2.5.0
+       Fresh aead v0.5.2
+       Fresh mio v1.0.4
+       Fresh socket2 v0.5.10
+       Fresh signal-hook-registry v1.4.5
+       Fresh memchr v2.7.4
+       Fresh itoa v1.0.15
+       Fresh pin-project-lite v0.2.16
+       Fresh ryu v1.0.20
+       Fresh bytes v1.10.1
+       Fresh thiserror v2.0.12
+       Fresh argon2 v0.5.3
+       Fresh rand v0.8.5
+       Fresh tokio v1.45.1
+       Fresh serde_json v1.0.140
+       Fresh chacha20poly1305 v0.10.1
+       Fresh hex v0.4.3
+warning: unused import: `AeadCore`
+ --> 9sdk/src/lib.rs:7:18
+  |
+7 |     aead::{Aead, AeadCore},
+  |                  ^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `CryptoRng` and `Rng`
+ --> 9sdk/src/lib.rs:9:12
+  |
+9 | use rand::{CryptoRng, Rng, RngCore, thread_rng};
+  |            ^^^^^^^^^  ^^^
+
+warning: unused variable: `password`
+   --> 9sdk/src/lib.rs:150:15
+    |
+150 | fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> {
+    |               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_password`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `salt`
+   --> 9sdk/src/lib.rs:150:31
+    |
+150 | fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> {
+    |                               ^^^^ help: if this is intentional, prefix it with an underscore: `_salt`
+
+warning: function `encrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:155:4
+    |
+155 | fn encrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: function `decrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:170:4
+    |
+170 | fn decrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+
+warning: `nine_sdk` (lib) generated 6 warnings (run `cargo fix --lib -p nine_sdk` to apply 2 suggestions)
+warning: `nine_sdk` (lib test) generated 6 warnings (6 duplicates)
+       Fresh nine_sdk v0.1.0 (/tmp/cargo-mutants-workspace-ia1sSj.tmp/9sdk)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running `/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/nine_sdk-d1edccc2728124f1`
+
+running 1 test
+test transport::tests::test_tcp_connect ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running `/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/integration_tests-a8e954773c4b883c`
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running `/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/transport_integration_tests-ec3de91ed0997500`
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nine_sdk
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustdoc --edition=2021 --crate-type lib --color auto --crate-name nine_sdk --test 9sdk/src/lib.rs --test-run-directory /tmp/cargo-mutants-workspace-ia1sSj.tmp/9sdk -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps --extern argon2=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libargon2-d82da775f30d1942.rlib --extern chacha20poly1305=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libchacha20poly1305-60a6b146946dc156.rlib --extern hex=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libnine_sdk-9727c2ab9241a18c.rlib --extern password_hash=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libpassword_hash-75e510c9777dca8c.rlib --extern rand=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand-f8c8961ce59dd0a2.rlib --extern rand_core=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librand_core-586fd76ebee8e2ef.rlib --extern serde=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde-4c9a3da96669b9a9.rlib --extern serde_json=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde_json-6e0d426a96dfcc7f.rlib --extern thiserror=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libthiserror-246d00263e134c75.rlib --extern tokio=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtokio-5a6f9e3045188a5c.rlib -C embed-bitcode=no --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' --error-format human`
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+*** result: Success

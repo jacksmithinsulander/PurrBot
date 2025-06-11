@@ -1,0 +1,21 @@
+--- meow/src/main.rs
++++ replace == with != in is_enclave_mode
+@@ -12,17 +12,17 @@
+ // Constants
+ const DEFAULT_DATABASE_PATH: &str = "purrbot.sqlite";
+ const DEFAULT_TCP_ADDRESS: &str = "127.0.0.1:5005";
+ const ENCLAVE_MODE_ENV_VAR: &str = "ENCLAVE_MODE";
+ const ENCLAVE_MODE_VALUE: &str = "enclave";
+ 
+ // Helper functions
+ fn is_enclave_mode() -> bool {
+-    std::env::var(ENCLAVE_MODE_ENV_VAR).as_deref() == Ok(ENCLAVE_MODE_VALUE)
++    std::env::var(ENCLAVE_MODE_ENV_VAR).as_deref() != /* ~ changed by cargo-mutants ~ */ Ok(ENCLAVE_MODE_VALUE)
+ }
+ 
+ fn create_tcp_transport(address: &str) -> Transport {
+     match address.parse() {
+         Ok(addr) => Transport::Tcp(addr),
+         Err(_) => panic!("Invalid TCP address"),
+     }
+ }

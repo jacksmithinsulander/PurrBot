@@ -11,7 +11,7 @@ use teloxide::prelude::*;
 use teloxide::types::BotCommandScope;
 use teloxide::utils::command::BotCommands;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Button {
     // Logged in buttons
     List,
@@ -206,3 +206,135 @@ impl Button {
         Ok(())
     }
 }
+
+#[test]
+fn test_button_partial_eq() {
+    // Test PartialEq implementation
+    assert_eq!(Button::List, Button::List);
+    assert_ne!(Button::List, Button::Trade);
+    assert_ne!(Button::LogIn, Button::SignUp);
+    
+    // Test all variants are unique
+    let buttons = vec![
+        Button::List,
+        Button::Trade,
+        Button::Create,
+        Button::LogOut,
+        Button::PrintKeys,
+        Button::LogIn,
+        Button::SignUp,
+        Button::Faq,
+        Button::UnRecognized,
+    ];
+    
+    for (i, button1) in buttons.iter().enumerate() {
+        for (j, button2) in buttons.iter().enumerate() {
+            if i == j {
+                assert_eq!(button1, button2);
+            } else {
+                assert_ne!(button1, button2);
+            }
+        }
+    }
+}
+
+// Exhaustive match arm tests to catch mutations
+#[test]
+fn test_parse_logged_in_button_all_arms_required() {
+    // This test ensures each match arm in parse_logged_in_button is essential
+    let test_cases = vec![
+        ("List", Button::List),
+        ("Trade", Button::Trade),
+        ("Create", Button::Create),
+        ("Log Out", Button::LogOut),
+        ("Print Keys", Button::PrintKeys),
+        ("Unknown", Button::UnRecognized),
+    ];
+    
+    for (input, expected) in test_cases {
+        let result = Button::from_str(input, true);
+        assert_eq!(result, expected, 
+            "Button::from_str('{}', true) should return {:?}, but got {:?}", 
+            input, expected, result);
+        
+        // Also verify it's not any other variant
+        match expected {
+            Button::List => {
+                assert_ne!(result, Button::Trade);
+                assert_ne!(result, Button::Create);
+                assert_ne!(result, Button::LogOut);
+                assert_ne!(result, Button::PrintKeys);
+                assert_ne!(result, Button::UnRecognized);
+            }
+            Button::Trade => {
+                assert_ne!(result, Button::List);
+                assert_ne!(result, Button::Create);
+                assert_ne!(result, Button::LogOut);
+                assert_ne!(result, Button::PrintKeys);
+                assert_ne!(result, Button::UnRecognized);
+            }
+            Button::Create => {
+                assert_ne!(result, Button::List);
+                assert_ne!(result, Button::Trade);
+                assert_ne!(result, Button::LogOut);
+                assert_ne!(result, Button::PrintKeys);
+                assert_ne!(result, Button::UnRecognized);
+            }
+            Button::LogOut => {
+                assert_ne!(result, Button::List);
+                assert_ne!(result, Button::Trade);
+                assert_ne!(result, Button::Create);
+                assert_ne!(result, Button::PrintKeys);
+                assert_ne!(result, Button::UnRecognized);
+            }
+            Button::PrintKeys => {
+                assert_ne!(result, Button::List);
+                assert_ne!(result, Button::Trade);
+                assert_ne!(result, Button::Create);
+                assert_ne!(result, Button::LogOut);
+                assert_ne!(result, Button::UnRecognized);
+            }
+            _ => {}
+        }
+    }
+}
+
+#[test]
+fn test_parse_logged_out_button_all_arms_required() {
+    // This test ensures each match arm in parse_logged_out_button is essential
+    let test_cases = vec![
+        ("Log In", Button::LogIn),
+        ("Sign Up", Button::SignUp),
+        ("FAQ", Button::Faq),
+        ("Unknown", Button::UnRecognized),
+    ];
+    
+    for (input, expected) in test_cases {
+        let result = Button::from_str(input, false);
+        assert_eq!(result, expected, 
+            "Button::from_str('{}', false) should return {:?}, but got {:?}", 
+            input, expected, result);
+        
+        // Also verify it's not any other variant
+        match expected {
+            Button::LogIn => {
+                assert_ne!(result, Button::SignUp);
+                assert_ne!(result, Button::Faq);
+                assert_ne!(result, Button::UnRecognized);
+            }
+            Button::SignUp => {
+                assert_ne!(result, Button::LogIn);
+                assert_ne!(result, Button::Faq);
+                assert_ne!(result, Button::UnRecognized);
+            }
+            Button::Faq => {
+                assert_ne!(result, Button::LogIn);
+                assert_ne!(result, Button::SignUp);
+                assert_ne!(result, Button::UnRecognized);
+            }
+            _ => {}
+        }
+    }
+}
+
+// Integration test helper functions

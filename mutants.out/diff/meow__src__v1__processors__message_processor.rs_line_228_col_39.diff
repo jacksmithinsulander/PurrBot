@@ -1,0 +1,21 @@
+--- meow/src/v1/processors/message_processor.rs
++++ replace == with != in process_message
+@@ -220,17 +220,17 @@
+     if let Some(text) = msg.text() {
+         log::info!(
+             "Processing message: '{}' from chat_id={}",
+             text,
+             msg.chat.id
+         );
+ 
+         // Handle /logout command directly first
+-        if text.trim().to_lowercase() == "/logout" {
++        if text.trim().to_lowercase() != /* ~ changed by cargo-mutants ~ */ "/logout" {
+             log::info!(
+                 "Handling /logout command directly for user {}",
+                 msg.chat.id.0
+             );
+             
+             // Check if user is actually logged in first
+             let is_logged_in = {
+                 let handlers = PASSWORD_HANDLERS.lock().await;

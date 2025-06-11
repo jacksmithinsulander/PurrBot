@@ -1,0 +1,21 @@
+--- 9sdk/src/lib.rs
++++ delete ! in KeyManager::verify_and_derive_keys
+@@ -94,17 +94,17 @@
+             let guard = self.config.lock().unwrap();
+             guard
+                 .as_ref()
+                 .ok_or(KeyManagerError::InvalidConfig)?
+                 .clone()
+         };
+ 
+         // Verify password
+-        if !verify_password(password, &config.password_hash) {
++        if  /* ~ changed by cargo-mutants ~ */verify_password(password, &config.password_hash) {
+             return Err(KeyManagerError::AuthenticationFailed);
+         }
+ 
+         // Decode salts
+         let salt1 = hex::decode(&config.salt1)
+             .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
+         let salt2 = hex::decode(&config.salt2)
+             .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
