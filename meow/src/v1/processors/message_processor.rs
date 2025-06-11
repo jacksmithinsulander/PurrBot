@@ -65,11 +65,7 @@ pub async fn print_keys(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error 
                     let msg = bot
                         .send_message(
                             chat_id,
-                            format!(
-                                "🔑 Your Keys:\nPrivate Key: {}\nPublic Key: {}",
-                                hex::encode(private_key),
-                                hex::encode(public_key)
-                            ),
+                            format_keys_message(&private_key, &public_key),
                         )
                         .await?;
                     let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
@@ -101,6 +97,22 @@ pub async fn print_keys(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error 
     }
     log::info!("print_keys completed for chat_id={}", chat_id);
     Ok(())
+}
+
+fn format_keys_message(private_key: &[u8], public_key: &[u8]) -> String {
+    // Convert public key to Ethereum address format
+    let address = if public_key.len() == 20 {
+        format!("0x{}", hex::encode(public_key))
+    } else {
+        // If we got a different format, just show as hex
+        hex::encode(public_key)
+    };
+    
+    format!(
+        "🔑 Your Ethereum Wallet:\n\n📍 Address:\n`{}`\n\n🔐 Private Key:\n`0x{}`\n\n⚠️ Keep your private key secret and secure!",
+        address,
+        hex::encode(private_key)
+    )
 }
 
 pub async fn logout(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Send + Sync>> {

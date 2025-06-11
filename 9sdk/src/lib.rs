@@ -157,7 +157,7 @@ fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> 
 }
 
 /// Encrypts plaintext using ChaCha20Poly1305
-fn encrypt_chacha20(
+pub fn encrypt_chacha20(
     key: &[u8],
     plaintext: &[u8],
     nonce: &[u8; 12],
@@ -172,7 +172,7 @@ fn encrypt_chacha20(
 }
 
 /// Decrypts ciphertext using ChaCha20Poly1305
-fn decrypt_chacha20(
+pub fn decrypt_chacha20(
     key: &[u8],
     ciphertext: &[u8],
     nonce: &[u8; 12],
