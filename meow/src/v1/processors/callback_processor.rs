@@ -21,7 +21,6 @@ pub async fn process_callback(
         if let Some(message) = q.message {
             match message {
                 MaybeInaccessibleMessage::Regular(msg) => {
-                    delete_all_messages(msg.chat.id, &bot).await?;
                     let is_logged_in = {
                         let handlers = PASSWORD_HANDLERS.lock().await;
                         handlers
