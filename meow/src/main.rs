@@ -1,13 +1,19 @@
 use std::error::Error;
 use teloxide::{prelude::*, utils::command::BotCommands};
 mod keyboard;
-mod v1;
+mod commands;
+mod constants;
+mod handlers;
+mod models;
+mod processors;
+mod services;
 use std::sync::Arc;
-use v1::services::user_config_store::UserConfigStore;
-
-use nine_sdk::{Transport, connect};
-use v1::commands::{CommandLoggedIn, CommandLoggedOut};
-use v1::handlers::{callback_handler, message_handler};
+use services::user_config_store::UserConfigStore;
+use teloxide::Bot;
+use teloxide::dispatching::{Dispatcher, UpdateFilterExt};
+use teloxide::dptree;
+use commands::CommandLoggedOut;
+use handlers::callback_handler;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -19,10 +25,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Make it available globally if needed, or pass to handlers
 
     // Determine transport based on environment
-    let transport = if std::env::var("ENCLAVE_MODE").as_deref() == Ok("enclave") {
-        Transport::Tcp("127.0.0.1:5005".parse().unwrap()) // Use TCP for now
+    let _transport = if std::env::var("ENCLAVE_MODE").as_deref() == Ok("enclave") {
+        nine_sdk::Transport::Tcp("127.0.0.1:5005".parse().unwrap())
     } else {
-        Transport::Tcp("127.0.0.1:5005".parse().unwrap())
+        nine_sdk::Transport::Tcp("127.0.0.1:5005".parse().unwrap())
     };
     log::info!("Using TCP transport");
 
@@ -38,7 +44,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             let config_store = Arc::clone(&config_store);
             move |bot, msg| {
                 let config_store = Arc::clone(&config_store);
-                async move { v1::handlers::message_handler(bot, msg, config_store).await }
+                async move { handlers::message_handler(bot, msg, config_store).await }
             }
         })))
         .branch(Update::filter_callback_query().branch(dptree::endpoint({

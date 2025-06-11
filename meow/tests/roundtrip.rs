@@ -1,16 +1,15 @@
 use serde_json::json;
-use std::io::{Read, Write};
 use std::process::Command;
-use std::time::Duration;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
-use tokio::time::sleep;
+use tokio::time::{sleep, Duration};
+use nine_sdk::{KeyManager, Transport};
 
 #[tokio::test]
 async fn test_enclave_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
     // Start the enclave process
     let mut enclave = Command::new("cargo")
-        .args(["run", "--bin", "nine_sdk_enclave"])
+        .args(["run", "-p", "nine-sdk-enclave", "--bin", "nine-sdk-enclave"])
         .env("RUST_LOG", "debug")
         .spawn()?;
 

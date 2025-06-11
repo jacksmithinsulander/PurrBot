@@ -2,11 +2,7 @@ use argon2::{
     Argon2,
     password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
 };
-use chacha20poly1305::{
-    ChaCha20Poly1305, KeyInit, Nonce,
-    aead::{Aead, AeadCore},
-};
-use rand::{CryptoRng, Rng, RngCore, thread_rng};
+use rand::{RngCore, thread_rng};
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
 use thiserror::Error;
@@ -154,34 +150,4 @@ fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> 
         .hash_password_into(password.as_bytes(), salt, &mut key)
         .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
     Ok(key)
-}
-
-/// Encrypts plaintext using ChaCha20Poly1305
-fn encrypt_chacha20(
-    key: &[u8],
-    plaintext: &[u8],
-    nonce: &[u8; 12],
-) -> Result<Vec<u8>, KeyManagerError> {
-    let cipher = ChaCha20Poly1305::new_from_slice(key)
-        .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
-    let nonce = Nonce::from_slice(nonce);
-    let ciphertext = cipher
-        .encrypt(nonce, plaintext)
-        .map_err(|e| KeyManagerError::EncryptionError(e.to_string()))?;
-    Ok(ciphertext)
-}
-
-/// Decrypts ciphertext using ChaCha20Poly1305
-fn decrypt_chacha20(
-    key: &[u8],
-    ciphertext: &[u8],
-    nonce: &[u8; 12],
-) -> Result<Vec<u8>, KeyManagerError> {
-    let cipher = ChaCha20Poly1305::new_from_slice(key)
-        .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))?;
-    let nonce = Nonce::from_slice(nonce);
-
-    cipher
-        .decrypt(nonce, ciphertext)
-        .map_err(|e| KeyManagerError::DecryptionError(e.to_string()))
 }

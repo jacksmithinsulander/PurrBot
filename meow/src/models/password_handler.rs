@@ -1,5 +1,4 @@
-use crate::v1::services::user_config_store::{UserConfigStore, UserConfigStoreError};
-use hex;
+use crate::services::user_config_store::{UserConfigStore, UserConfigStoreError};
 use nine_sdk::{EncryptedKeyConfig, KeyManager};
 use serde_json;
 use std::sync::Arc;
@@ -10,8 +9,6 @@ use tokio::sync::Mutex;
 pub enum PasswordError {
     #[error("Key manager error: {0}")]
     KeyManagerError(#[from] nine_sdk::KeyManagerError),
-    #[error("Invalid state")]
-    InvalidState,
     #[error("User config store error: {0}")]
     UserConfigStore(#[from] UserConfigStoreError),
     #[error("Serialization error: {0}")]
@@ -39,7 +36,7 @@ impl PasswordHandler {
         user_id: &str,
         password: &str,
     ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
-        let mut key_manager = self.key_manager.lock().await;
+        let key_manager = self.key_manager.lock().await;
         let config_json = key_manager.setup_config(password).await.map_err(|e| {
             Box::new(PasswordError::KeyManagerError(e)) as Box<dyn std::error::Error + Send + Sync>
         })?;
@@ -58,7 +55,7 @@ impl PasswordHandler {
         // Load config from DB
         let config_json: String = self.config_store.get_config(user_id).await?;
         let config: EncryptedKeyConfig = serde_json::from_str(&config_json)?;
-        let mut key_manager = self.key_manager.lock().await;
+        let key_manager = self.key_manager.lock().await;
         // Set config in KeyManager
         key_manager.set_config(config);
         // Attempt to verify and derive keys
@@ -77,7 +74,7 @@ impl PasswordHandler {
     pub async fn get_private_key(
         &self,
     ) -> Result<Option<[u8; 32]>, Box<dyn std::error::Error + Send + Sync>> {
-        let key_manager = self.key_manager.lock().await;
+        let _key_manager = self.key_manager.lock().await;
         // For now, we'll return None since we need the password to derive the keys
         // TODO: Store the derived keys after login for later use
         Ok(None)
@@ -86,9 +83,21 @@ impl PasswordHandler {
     pub async fn get_public_key(
         &self,
     ) -> Result<Option<[u8; 32]>, Box<dyn std::error::Error + Send + Sync>> {
-        let key_manager = self.key_manager.lock().await;
+        let _key_manager = self.key_manager.lock().await;
         // For now, we'll return None since we need the password to derive the keys
         // TODO: Store the derived keys after login for later use
         Ok(None)
+    }
+
+    pub async fn get_encryption_key(&self) -> Option<[u8; 32]> {
+        let _key_manager = self.key_manager.lock().await;
+        // Currently returns None as key is stored in KeyManager
+        None
+    }
+    
+    pub async fn get_signing_key(&self) -> Option<[u8; 32]> {
+        let _key_manager = self.key_manager.lock().await;
+        // Currently returns None as key is stored in KeyManager
+        None
     }
 }

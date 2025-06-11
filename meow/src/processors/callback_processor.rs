@@ -1,11 +1,11 @@
-use crate::v1::models::PASSWORD_HANDLERS;
-use crate::v1::models::buttons::Button;
-use crate::v1::processors::message_processor::{CHAT_MESSAGE_IDS, delete_all_messages};
-use crate::v1::services::user_config_store::UserConfigStore;
+use crate::models::PASSWORD_HANDLERS;
+use crate::models::buttons::Button;
+use crate::processors::message_processor::delete_all_messages;
+use crate::services::user_config_store::UserConfigStore;
 use std::error::Error;
 use std::sync::Arc;
 use teloxide::prelude::*;
-use teloxide::types::{BotCommandScope, MaybeInaccessibleMessage, Message};
+use teloxide::types::MaybeInaccessibleMessage;
 
 pub async fn process_callback(
     bot: Bot,
