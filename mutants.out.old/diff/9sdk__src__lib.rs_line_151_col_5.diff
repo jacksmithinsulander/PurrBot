@@ -1,0 +1,26 @@
+--- 9sdk/src/lib.rs
++++ replace derive_key -> Result<[u8; 32], KeyManagerError> with Ok([0; 32])
+@@ -143,22 +143,17 @@
+     let argon2 = Argon2::default();
+     argon2
+         .verify_password(password.as_bytes(), &parsed_hash)
+         .is_ok()
+ }
+ 
+ /// Derives a key from a password and salt
+ fn derive_key(password: &str, salt: &[u8]) -> Result<[u8; 32], KeyManagerError> {
+-    let mut key = [0u8; 32];
+-    let argon2 = Argon2::default();
+-    argon2
+-        .hash_password_into(password.as_bytes(), salt, &mut key)
+-        .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
+-    Ok(key)
++    Ok([0; 32]) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ /// Encrypts plaintext using ChaCha20Poly1305
+ fn encrypt_chacha20(
+     key: &[u8],
+     plaintext: &[u8],
+     nonce: &[u8; 12],
+ ) -> Result<Vec<u8>, KeyManagerError> {

@@ -1,0 +1,44 @@
+--- 9sdk/src/lib.rs
++++ replace KeyManager::verify_and_derive_keys -> Result<([u8; 32], [u8; 32]), KeyManagerError> with Ok(([0; 32], [1; 32]))
+@@ -85,40 +85,17 @@
+         *self.config.lock().unwrap() = Some(config);
+         Ok(config_json)
+     }
+ 
+     pub async fn verify_and_derive_keys(
+         &self,
+         password: &str,
+     ) -> Result<([u8; 32], [u8; 32]), KeyManagerError> {
+-        let config = {
+-            let guard = self.config.lock().unwrap();
+-            guard
+-                .as_ref()
+-                .ok_or(KeyManagerError::InvalidConfig)?
+-                .clone()
+-        };
+-
+-        // Verify password
+-        if !verify_password(password, &config.password_hash) {
+-            return Err(KeyManagerError::AuthenticationFailed);
+-        }
+-
+-        // Decode salts
+-        let salt1 = hex::decode(&config.salt1)
+-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
+-        let salt2 = hex::decode(&config.salt2)
+-            .map_err(|e| KeyManagerError::KeyGenerationError(e.to_string()))?;
+-
+-        // Derive keys
+-        let key1 = derive_key(password, &salt1)?;
+-        let key2 = derive_key(password, &salt2)?;
+-
+-        Ok((key1, key2))
++        Ok(([0; 32], [1; 32])) /* ~ changed by cargo-mutants ~ */
+     }
+ 
+     pub fn set_config(&self, config: EncryptedKeyConfig) {
+         let mut guard = self.config.lock().unwrap();
+         *guard = Some(config);
+     }
+ }
+ 

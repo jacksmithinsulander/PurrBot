@@ -1,0 +1,89 @@
+--- meow/src/v1/processors/message_processor.rs
++++ delete match arm
+@@ -597,85 +597,17 @@
+                                 "Failed to create account for user {}: {}",
+                                 msg.chat.id.0,
+                                 e
+                             );
+                         }
+                     }
+                     return Ok(());
+                 }
+-                CommandLoggedOut::LogIn { password } => {
+-                    // Check if already logged in
+-                    if is_logged_in {
+-                        log::info!("User {} tried to login but is already logged in", user_id);
+-                        let message = bot
+-                            .send_message(msg.chat.id, "❌ You are already logged in!")
+-                            .reply_markup(logged_in_operations())
+-                            .await?;
+-                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-                        return Ok(());
+-                    }
+-                    
+-                    let handler = PasswordHandler::new(config_store.clone())?;
+-                    let user_id = msg.chat.id.0.to_string();
+-                    match handler.login(&user_id, &password).await {
+-                        Ok(true) => {
+-                            // Set logged-in commands first
+-                            bot.set_my_commands(CommandLoggedIn::bot_commands())
+-                                .scope(BotCommandScope::Chat {
+-                                    chat_id: msg.chat.id.into(),
+-                                })
+-                                .await?;
+-
+-                            // Store the handler before sending messages
+-                            {
+-                                let mut handler_lock = PASSWORD_HANDLERS.lock().await;
+-                                handler_lock.insert(msg.chat.id.0, Some(handler));
+-                            }
+-
+-                            // Update user state
+-                            {
+-                                let mut states = log_in_state::USER_STATES.lock().await;
+-                                states.insert(msg.chat.id.0, log_in_state::AwaitingState::None);
+-                            }
+-
+-                            // Send success message
+-                            let message = bot
+-                                .send_message(msg.chat.id, "Logged in successfully! 🎉")
+-                                .reply_markup(logged_in_operations())
+-                                .await?;
+-                            let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                            chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-
+-                            log::info!("User {} logged in successfully", msg.chat.id.0);
+-
+-                            // Print keys after successful login
+-                            print_keys(msg.chat.id, &bot).await?;
+-                            return Ok(());
+-                        }
+-                        Ok(false) => {
+-                            let message = bot
+-                                .send_message(msg.chat.id, "Invalid password! ❌")
+-                                .await?;
+-                            let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                            chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-                            log::warn!("User {} failed to log in", msg.chat.id.0);
+-                        }
+-                        Err(e) => {
+-                            let message = bot
+-                                .send_message(msg.chat.id, format!("Failed to log in: {}", e))
+-                                .await?;
+-                            let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                            chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-                            log::error!("Failed to log in user {}: {}", msg.chat.id.0, e);
+-                        }
+-                    }
+-                    return Ok(());
+-                }
++                 /* ~ changed by cargo-mutants ~ */
+                 // Start and LogOut are already handled above
+                 _ => {}
+             }
+         }
+ 
+         // If not a command, handle password input based on state
+         match user_state {
+             log_in_state::AwaitingState::AwaitingLoginPassword => {

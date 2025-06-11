@@ -1,0 +1,23 @@
+meow/src/main.rs:20:5: replace is_enclave_mode -> bool with true
+meow/src/main.rs:20:5: replace is_enclave_mode -> bool with false
+meow/src/main.rs:20:52: replace == with != in is_enclave_mode
+meow/src/keyboard.rs:4:5: replace logged_out_operations -> InlineKeyboardMarkup with Default::default()
+meow/src/keyboard.rs:21:5: replace logged_in_operations -> InlineKeyboardMarkup with Default::default()
+meow/src/v1/models/buttons.rs:34:17: delete match arm
+meow/src/v1/models/buttons.rs:35:17: delete match arm
+meow/src/v1/models/buttons.rs:36:17: delete match arm
+meow/src/v1/models/buttons.rs:37:17: delete match arm
+meow/src/v1/models/buttons.rs:38:17: delete match arm
+meow/src/v1/models/buttons.rs:43:17: delete match arm
+meow/src/v1/models/buttons.rs:44:17: delete match arm
+meow/src/v1/models/buttons.rs:45:17: delete match arm
+meow/src/v1/processors/message_processor.rs:115:8: delete ! in logout
+meow/src/v1/services/user_config_store.rs:55:9: replace UserConfigStore::insert_or_update_config -> Result<(), UserConfigStoreError> with Ok(())
+meow/src/v1/services/user_config_store.rs:62:9: replace UserConfigStore::get_config -> Result<String, UserConfigStoreError> with Ok(String::new())
+meow/src/v1/services/user_config_store.rs:62:9: replace UserConfigStore::get_config -> Result<String, UserConfigStoreError> with Ok("xyzzy".into())
+meow/src/v1/services/user_config_store.rs:68:9: replace UserConfigStore::config_exists -> Result<bool, UserConfigStoreError> with Ok(true)
+meow/src/v1/services/user_config_store.rs:68:9: replace UserConfigStore::config_exists -> Result<bool, UserConfigStoreError> with Ok(false)
+meow/src/v1/services/user_config_store.rs:83:5: replace initialize_database_schema -> Result<(), rusqlite::Error> with Ok(())
+meow/src/v1/services/user_config_store.rs:92:5: replace execute_insert_or_update -> Result<(), rusqlite::Error> with Ok(())
+meow/src/v1/services/user_config_store.rs:100:5: replace query_user_config -> Result<String, UserConfigStoreError> with Ok(String::new())
+meow/src/v1/services/user_config_store.rs:100:5: replace query_user_config -> Result<String, UserConfigStoreError> with Ok("xyzzy".into())

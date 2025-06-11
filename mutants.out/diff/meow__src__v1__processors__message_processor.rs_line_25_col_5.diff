@@ -1,0 +1,44 @@
+--- meow/src/v1/processors/message_processor.rs
++++ replace delete_all_messages -> Result<(), Box<dyn Error +Send +Sync>> with Ok(())
+@@ -17,40 +17,17 @@
+ 
+ pub static CHAT_MESSAGE_IDS: Lazy<Mutex<HashMap<ChatId, Vec<MessageId>>>> =
+     Lazy::new(|| Mutex::new(HashMap::new()));
+ 
+ pub async fn delete_all_messages(
+     chat_id: ChatId,
+     bot: &Bot,
+ ) -> Result<(), Box<dyn Error + Send + Sync>> {
+-    log::debug!("Attempting to delete messages for chat_id={}", chat_id);
+-    let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-    if let Some(ids) = chat_message_ids.get(&chat_id) {
+-        log::debug!(
+-            "Found {} messages to delete for chat_id={}",
+-            ids.len(),
+-            chat_id
+-        );
+-        for message_id in ids {
+-            if let Err(e) = bot.delete_message(chat_id, *message_id).await {
+-                log::warn!(
+-                    "Failed to delete message {} for chat_id={}: {}",
+-                    message_id,
+-                    chat_id,
+-                    e
+-                );
+-            }
+-        }
+-    } else {
+-        log::debug!("No messages found to delete for chat_id={}", chat_id);
+-    }
+-    chat_message_ids.remove(&chat_id);
+-    log::debug!("Message deletion completed for chat_id={}", chat_id);
+-    Ok(())
++    Ok(()) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ pub async fn print_keys(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Send + Sync>> {
+     log::info!("print_keys called for chat_id={}", chat_id);
+     // Delete all previous messages before sending new one
+     delete_all_messages(chat_id, bot).await?;
+ 
+     let handler = PASSWORD_HANDLERS.lock().await;

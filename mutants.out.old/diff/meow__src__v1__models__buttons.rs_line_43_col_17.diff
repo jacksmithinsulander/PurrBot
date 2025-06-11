@@ -1,0 +1,21 @@
+--- meow/src/v1/models/buttons.rs
++++ delete match arm
+@@ -35,17 +35,17 @@
+                 "Trade" => Self::Trade,
+                 "Create" => Self::Create,
+                 "Log Out" => Self::LogOut,
+                 "Print Keys" => Self::PrintKeys,
+                 _ => Self::UnRecognized,
+             }
+         } else {
+             match input {
+-                "Log In" => Self::LogIn,
++                 /* ~ changed by cargo-mutants ~ */
+                 "Sign Up" => Self::SignUp,
+                 "FAQ" => Self::Faq,
+                 _ => Self::UnRecognized,
+             }
+         }
+     }
+ 
+     pub async fn execute(

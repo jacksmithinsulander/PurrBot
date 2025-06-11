@@ -1,0 +1,1070 @@
+
+*** meow/src/v1/processors/message_processor.rs:378:21: delete match arm
+
+*** mutation diff:
+--- meow/src/v1/processors/message_processor.rs
++++ delete match arm
+@@ -370,61 +370,17 @@
+                             .await?;
+                         log::info!("Welcome message sent successfully to user {}", user_id);
+                         if std::env::var("TEST_MODE").is_err() {
+                             let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                             chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                         }
+                         return Ok(());
+                     }
+-                    CommandLoggedOut::LogOut => {
+-                        log::info!("Handling /logout command for user {}", user_id);
+-                        // Clear state first
+-                        {
+-                            let mut states = log_in_state::USER_STATES.lock().await;
+-                            states.insert(user_id, log_in_state::AwaitingState::None);
+-                            log::info!("Reset state to None for user {}", user_id);
+-                        }
+-                        // Clear any existing password handler
+-                        {
+-                            let mut handlers = PASSWORD_HANDLERS.lock().await;
+-                            handlers.remove(&user_id);
+-                            log::info!("Cleared password handler for user {}", user_id);
+-                        }
+-                        // Set logged-out commands
+-                        if let Err(e) = bot
+-                            .set_my_commands(CommandLoggedOut::bot_commands())
+-                            .scope(BotCommandScope::Chat {
+-                                chat_id: msg.chat.id.into(),
+-                            })
+-                            .await
+-                        {
+-                            log::warn!(
+-                                "Failed to set logged-out commands for user {}: {}",
+-                                user_id,
+-                                e
+-                            );
+-                        } else {
+-                            log::info!("Set logged-out commands for user {}", user_id);
+-                        }
+-                        // Send logout confirmation message
+-                        let message = bot
+-                            .send_message(msg.chat.id, "👋 You have been logged out successfully!")
+-                            .reply_markup(logged_out_operations())
+-                            .await?;
+-                        log::info!(
+-                            "Logout confirmation message sent successfully to user {}",
+-                            user_id
+-                        );
+-                        if std::env::var("TEST_MODE").is_err() {
+-                            let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                            chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-                        }
+-                        return Ok(());
+-                    }
++                     /* ~ changed by cargo-mutants ~ */
+                     _ => {
+                         log::debug!("Unhandled CommandLoggedOut variant: {:?}", cmd);
+                     }
+                 }
+             }
+             Err(e) => {
+                 log::warn!(
+                     "Failed to parse as CommandLoggedOut: '{}', error: {}",
+
+
+*** /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo test --no-run --verbose --package=meow@0.1.0
+       Fresh unicode-ident v1.0.18
+       Fresh proc-macro2 v1.0.95
+       Fresh quote v1.0.40
+       Fresh syn v2.0.101
+       Fresh cfg-if v1.0.0
+       Fresh autocfg v1.4.0
+       Fresh shlex v1.3.0
+       Fresh version_check v0.9.5
+       Fresh smallvec v1.15.1
+       Fresh synstructure v0.13.2
+       Fresh pin-project-lite v0.2.16
+       Fresh memchr v2.7.4
+       Fresh cc v1.2.26
+       Fresh zerofrom-derive v0.1.6
+       Fresh scopeguard v1.2.0
+       Fresh futures-core v0.3.31
+       Fresh yoke-derive v0.8.0
+       Fresh bytes v1.10.1
+       Fresh vcpkg v0.2.15
+       Fresh libc v0.2.172
+       Fresh zerofrom v0.1.6
+       Fresh stable_deref_trait v1.2.0
+       Fresh pkg-config v0.3.32
+       Fresh once_cell v1.21.3
+       Fresh getrandom v0.2.16
+       Fresh yoke v0.8.0
+       Fresh fnv v1.0.7
+       Fresh lock_api v0.4.13
+       Fresh zerovec-derive v0.11.1
+       Fresh typenum v1.18.0
+       Fresh rand_core v0.6.4
+       Fresh parking_lot_core v0.9.11
+       Fresh futures-sink v0.3.31
+       Fresh zerovec v0.11.2
+       Fresh signal-hook-registry v1.4.5
+       Fresh socket2 v0.5.10
+       Fresh mio v1.0.4
+       Fresh parking_lot v0.12.4
+       Fresh generic-array v0.14.7
+       Fresh tokio-macros v2.5.0
+       Fresh displaydoc v0.2.5
+       Fresh itoa v1.0.15
+       Fresh futures-channel v0.3.31
+       Fresh slab v0.4.9
+       Fresh futures-macro v0.3.31
+       Fresh pin-utils v0.1.0
+       Fresh tokio v1.45.1
+       Fresh futures-task v0.3.31
+       Fresh futures-io v0.3.31
+       Fresh bitflags v2.9.1
+       Fresh crypto-common v0.1.6
+       Fresh tinystr v0.8.1
+       Fresh writeable v0.6.1
+       Fresh futures-util v0.3.31
+       Fresh litemap v0.8.0
+       Fresh zerotrie v0.2.2
+       Fresh http v1.3.1
+       Fresh potential_utf v0.1.2
+       Fresh serde_derive v1.0.219
+       Fresh icu_locale_core v2.0.0
+       Fresh serde v1.0.219
+       Fresh icu_collections v2.0.0
+       Fresh http-body v1.0.1
+       Fresh zeroize v1.8.1
+       Fresh percent-encoding v2.3.1
+       Fresh icu_provider v2.0.0
+       Fresh zerocopy v0.8.25
+       Fresh log v0.4.27
+       Fresh subtle v2.6.1
+       Fresh foreign-types-shared v0.1.1
+       Fresh icu_normalizer_data v2.0.0
+       Fresh foreign-types v0.3.2
+       Fresh icu_properties_data v2.0.1
+       Fresh openssl-sys v0.9.109
+       Fresh openssl-macros v0.1.1
+       Fresh tower-service v0.3.3
+       Fresh strsim v0.11.1
+       Fresh try-lock v0.2.5
+       Fresh ident_case v1.0.1
+       Fresh openssl v0.10.73
+       Fresh httparse v1.10.1
+       Fresh icu_properties v2.0.1
+       Fresh icu_normalizer v2.0.0
+       Fresh tracing-core v0.1.34
+       Fresh ryu v1.0.20
+       Fresh darling_core v0.20.11
+       Fresh want v0.3.1
+       Fresh unicase v2.8.1
+       Fresh openssl-probe v0.1.6
+       Fresh tracing v0.1.41
+       Fresh idna_adapter v1.2.1
+       Fresh native-tls v0.2.14
+       Fresh darling_macro v0.20.11
+       Fresh hyper v1.6.0
+       Fresh form_urlencoded v1.2.1
+       Fresh sync_wrapper v1.0.2
+       Fresh base64 v0.22.1
+       Fresh tower-layer v0.3.3
+       Fresh cpufeatures v0.2.17
+       Fresh utf8_iter v1.0.4
+       Fresh ipnet v2.11.0
+       Fresh tower v0.5.2
+       Fresh idna v1.0.3
+       Fresh hyper-util v0.1.14
+       Fresh getrandom v0.3.3
+       Fresh tokio-native-tls v0.3.1
+       Fresh serde_json v1.0.140
+       Fresh darling v0.20.11
+       Fresh http-body-util v0.1.3
+       Fresh futures-executor v0.3.31
+       Fresh inout v0.1.4
+       Fresh block-buffer v0.10.4
+       Fresh aho-corasick v1.1.3
+       Fresh thiserror-impl v2.0.12
+       Fresh mime v0.3.17
+       Fresh iri-string v0.7.8
+       Fresh unicode-xid v0.2.6
+       Fresh regex-syntax v0.8.5
+       Fresh psm v0.1.26
+       Fresh serde_with_macros v3.12.0
+       Fresh hyper-tls v0.6.0
+       Fresh tower-http v0.6.6
+       Fresh thiserror v2.0.12
+       Fresh derive_more-impl v1.0.0
+       Fresh mime_guess v2.0.5
+       Fresh regex-automata v0.4.9
+       Fresh digest v0.10.7
+       Fresh futures v0.3.31
+       Fresh cipher v0.4.4
+       Fresh erasable v1.3.0
+       Fresh ahash v0.8.12
+       Fresh num-traits v0.2.19
+       Fresh url v2.5.4
+       Fresh serde_urlencoded v0.7.1
+       Fresh ppv-lite86 v0.2.21
+       Fresh universal-hash v0.5.1
+       Fresh rustls-pki-types v1.12.0
+       Fresh tokio-util v0.7.15
+       Fresh pin-project-internal v1.1.10
+       Fresh include_dir_macros v0.7.4
+       Fresh proc-macro-error-attr2 v2.0.0
+       Fresh bytemuck v1.23.1
+       Fresh opaque-debug v0.3.1
+       Fresh base64ct v1.8.0
+       Fresh chrono v0.4.41
+       Fresh password-hash v0.5.0
+       Fresh poly1305 v0.8.0
+       Fresh proc-macro-error2 v2.0.1
+       Fresh include_dir v0.7.4
+       Fresh pin-project v1.1.10
+       Fresh itertools v0.10.5
+       Fresh rgb v0.8.50
+       Fresh hashbrown v0.14.5
+       Fresh reqwest v0.12.19
+       Fresh rand_chacha v0.3.1
+       Fresh rc-box v1.3.0
+       Fresh blake2 v0.10.6
+       Fresh stacker v0.1.21
+       Fresh regex v1.11.1
+       Fresh derive_more v1.0.0
+       Fresh chacha20 v0.9.1
+       Fresh serde_with v3.12.0
+       Fresh uuid v1.17.0
+       Fresh aead v0.5.2
+       Fresh is-terminal v0.4.16
+       Fresh takecell v0.1.1
+       Fresh heck v0.5.0
+       Fresh humantime v2.2.0
+       Fresh either v1.15.0
+       Fresh take_mut v0.2.2
+       Fresh termcolor v1.4.1
+       Fresh teloxide-core v0.11.2
+       Fresh teloxide-macros v0.9.0
+       Fresh env_logger v0.10.2
+       Fresh chacha20poly1305 v0.10.1
+       Fresh argon2 v0.5.3
+       Fresh rand v0.8.5
+       Fresh aquamarine v0.6.0
+       Fresh libsqlite3-sys v0.28.0
+       Fresh hashlink v0.9.1
+       Fresh dptree v0.3.0
+       Fresh tokio-stream v0.1.17
+       Fresh hex v0.4.3
+       Fresh linux-raw-sys v0.9.4
+       Fresh fallible-iterator v0.3.0
+       Fresh fallible-streaming-iterator v0.1.9
+       Fresh pretty_env_logger v0.5.0
+       Fresh teloxide v0.15.0
+       Fresh rustix v1.0.7
+       Fresh rusqlite v0.31.0
+       Fresh nine_sdk v0.1.0 (/tmp/cargo-mutants-workspace-191TZv.tmp/9sdk)
+warning: unused import: `AeadCore`
+ --> 9sdk/src/lib.rs:7:18
+  |
+7 |     aead::{Aead, AeadCore},
+  |                  ^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `CryptoRng` and `Rng`
+ --> 9sdk/src/lib.rs:9:12
+  |
+9 | use rand::{CryptoRng, Rng, RngCore, thread_rng};
+  |            ^^^^^^^^^  ^^^
+
+warning: function `encrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:160:4
+    |
+160 | fn encrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: function `decrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:175:4
+    |
+175 | fn decrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+
+       Fresh fastrand v2.3.0
+warning: `nine_sdk` (lib) generated 4 warnings (run `cargo fix --lib -p nine_sdk` to apply 2 suggestions)
+       Fresh tempfile v3.20.0
+       Dirty meow v0.1.0 (/tmp/cargo-mutants-workspace-191TZv.tmp/meow): the file `meow/src/v1/processors/message_processor.rs` has changed (1749670608.892927709s, 1s after last build at 1749670607.385924647s)
+   Compiling meow v0.1.0 (/tmp/cargo-mutants-workspace-191TZv.tmp/meow)
+warning: unused import: `Write`
+ --> meow/tests/roundtrip.rs:2:21
+  |
+2 | use std::io::{Read, Write};
+  |                     ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `Read`
+ --> meow/tests/roundtrip.rs:2:15
+  |
+2 | use std::io::{Read, Write};
+  |               ^^^^
+
+warning: `meow` (test "roundtrip") generated 2 warnings
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name meow --edition=2021 meow/src/main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type bin --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=91eb294dbbe64569 -C extra-filename=-f624b31761a7a8de --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern hex=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern log=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/liblog-e4c872c580f67c43.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libnine_sdk-13130c9941aa6ee8.rlib --extern once_cell=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libonce_cell-6c5ecd365f058077.rlib --extern pretty_env_logger=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libpretty_env_logger-fd0c85adc5970ed9.rlib --extern rusqlite=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librusqlite-405dd0f26bcbaab7.rlib --extern serde=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde-4a228d781a67e5ef.rlib --extern serde_json=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde_json-38200e1bfcf588bf.rlib --extern teloxide=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libteloxide-803c910ebb7daec0.rlib --extern thiserror=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libthiserror-623b5bd96f2878a9.rlib --extern tokio=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libtokio-87ff163b8d900c11.rlib --extern uuid=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libuuid-0f427ad42de7d560.rlib -L native=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/build/libsqlite3-sys-6dbd936600260ecd/out -L native=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/build/psm-3315b25b83038a6a/out`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name meow --edition=2021 meow/src/main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=38009e686cf190d0 -C extra-filename=-9c48ee44fefabeb0 --out-dir /tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps --extern hex=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern log=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/liblog-e4c872c580f67c43.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libnine_sdk-13130c9941aa6ee8.rlib --extern once_cell=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libonce_cell-6c5ecd365f058077.rlib --extern pretty_env_logger=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libpretty_env_logger-fd0c85adc5970ed9.rlib --extern rusqlite=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/librusqlite-405dd0f26bcbaab7.rlib --extern serde=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde-4a228d781a67e5ef.rlib --extern serde_json=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libserde_json-38200e1bfcf588bf.rlib --extern teloxide=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libteloxide-803c910ebb7daec0.rlib --extern tempfile=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libtempfile-e39ad06f1c575a9d.rlib --extern thiserror=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libthiserror-623b5bd96f2878a9.rlib --extern tokio=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libtokio-87ff163b8d900c11.rlib --extern uuid=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/libuuid-0f427ad42de7d560.rlib -L native=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/build/libsqlite3-sys-6dbd936600260ecd/out -L native=/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/build/psm-3315b25b83038a6a/out`
+warning: unused import: `CommandLoggedOut`
+ --> meow/src/v1/models/buttons.rs:2:44
+  |
+2 | use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
+  |                                            ^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `PASSWORD_HANDLERS`
+ --> meow/src/v1/models/buttons.rs:4:25
+  |
+4 | use crate::v1::models::{PASSWORD_HANDLERS, log_in_state, password_handler::PasswordHandler};
+  |                         ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::error::Error`
+ --> meow/src/v1/models/buttons.rs:7:5
+  |
+7 | use std::error::Error;
+  |     ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `hex`
+ --> meow/src/v1/models/password_handler.rs:2:5
+  |
+2 | use hex;
+  |     ^^^
+
+warning: unused import: `CHAT_MESSAGE_IDS`
+ --> meow/src/v1/processors/callback_processor.rs:3:48
+  |
+3 | use crate::v1::processors::message_processor::{CHAT_MESSAGE_IDS, delete_all_messages};
+  |                                                ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `BotCommandScope` and `Message`
+ --> meow/src/v1/processors/callback_processor.rs:8:23
+  |
+8 | use teloxide::types::{BotCommandScope, MaybeInaccessibleMessage, Message};
+  |                       ^^^^^^^^^^^^^^^                            ^^^^^^^
+
+warning: unused import: `Result as SqlResult`
+ --> meow/src/v1/services/user_config_store.rs:1:47
+  |
+1 | use rusqlite::{Connection, OptionalExtension, Result as SqlResult, params};
+  |                                               ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `connect`
+ --> meow/src/main.rs:8:27
+  |
+8 | use nine_sdk::{Transport, connect};
+  |                           ^^^^^^^
+
+warning: unused import: `CommandLoggedIn`
+ --> meow/src/main.rs:9:20
+  |
+9 | use v1::commands::{CommandLoggedIn, CommandLoggedOut};
+  |                    ^^^^^^^^^^^^^^^
+
+warning: unused import: `message_handler`
+  --> meow/src/main.rs:10:38
+   |
+10 | use v1::handlers::{callback_handler, message_handler};
+   |                                      ^^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> meow/src/v1/handlers/message.rs:20:9
+   |
+20 |     use std::collections::HashMap;
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `ChatId`, `ChatKind`, `Chat`, `MessageId`, `MessageKind`, `UserId`, and `User`
+  --> meow/src/v1/handlers/message.rs:21:27
+   |
+21 |     use teloxide::types::{Chat, ChatId, ChatKind, MessageId, MessageKind, User, UserId};
+   |                           ^^^^  ^^^^^^  ^^^^^^^^  ^^^^^^^^^  ^^^^^^^^^^^  ^^^^  ^^^^^^
+
+warning: unused import: `CommandLoggedOut`
+ --> meow/src/v1/models/buttons.rs:2:44
+  |
+2 | use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
+  |                                            ^^^^^^^^^^^^^^^^
+
+warning: variable does not need to be mutable
+  --> meow/src/v1/models/password_handler.rs:42:13
+   |
+42 |         let mut key_manager = self.key_manager.lock().await;
+   |             ----^^^^^^^^^^^
+   |             |
+   |             help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` on by default
+
+warning: variable does not need to be mutable
+  --> meow/src/v1/models/password_handler.rs:61:13
+   |
+61 |         let mut key_manager = self.key_manager.lock().await;
+   |             ----^^^^^^^^^^^
+   |             |
+   |             help: remove this `mut`
+
+warning: unused variable: `key_manager`
+  --> meow/src/v1/models/password_handler.rs:80:13
+   |
+80 |         let key_manager = self.key_manager.lock().await;
+   |             ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_key_manager`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `key_manager`
+  --> meow/src/v1/models/password_handler.rs:89:13
+   |
+89 |         let key_manager = self.key_manager.lock().await;
+   |             ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_key_manager`
+
+warning: unused variable: `transport`
+  --> meow/src/main.rs:57:9
+   |
+57 |     let transport = determine_transport();
+   |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_transport`
+
+warning: function `log_callback_result` is never used
+  --> meow/src/v1/handlers/callback.rs:39:4
+   |
+39 | fn log_callback_result<T, E: std::fmt::Display>(result: &Result<T, E>) {
+   |    ^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: variant `InvalidState` is never constructed
+  --> meow/src/v1/models/password_handler.rs:14:5
+   |
+10 | pub enum PasswordError {
+   |          ------------- variant in this enum
+...
+14 |     InvalidState,
+   |     ^^^^^^^^^^^^
+   |
+   = note: `PasswordError` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: constant `TABLE_NAME` is never used
+ --> meow/src/v1/services/user_config_store.rs:8:7
+  |
+8 | const TABLE_NAME: &str = "user_configs";
+  |       ^^^^^^^^^^
+
+warning: method `config_exists` is never used
+  --> meow/src/v1/services/user_config_store.rs:67:18
+   |
+38 | impl UserConfigStore {
+   | -------------------- method in this implementation
+...
+67 |     pub async fn config_exists(&self, user_id: &str) -> Result<bool, UserConfigStoreError> {
+   |                  ^^^^^^^^^^^^^
+
+warning: unreachable pattern
+   --> meow/src/main.rs:143:13
+    |
+140 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+143 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+    |
+    = note: `#[warn(unreachable_patterns)]` on by default
+
+warning: unreachable pattern
+   --> meow/src/main.rs:160:13
+    |
+157 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+160 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: unreachable pattern
+   --> meow/src/main.rs:171:13
+    |
+168 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+171 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: unreachable pattern
+   --> meow/src/main.rs:187:13
+    |
+184 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+187 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: unreachable pattern
+   --> meow/src/main.rs:197:13
+    |
+194 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+197 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: struct `MockBot` is never constructed
+  --> meow/src/v1/handlers/message.rs:47:12
+   |
+47 |     struct MockBot;
+   |            ^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: struct `MockMessage` is never constructed
+  --> meow/src/v1/handlers/message.rs:48:12
+   |
+48 |     struct MockMessage;
+   |            ^^^^^^^^^^^
+
+warning: struct `MockUserConfigStore` is never constructed
+  --> meow/src/v1/handlers/message.rs:49:12
+   |
+49 |     struct MockUserConfigStore;
+   |            ^^^^^^^^^^^^^^^^^^^
+
+warning: `meow` (bin "meow" test) generated 26 warnings (15 duplicates) (run `cargo fix --bin "meow" --tests` to apply 3 suggestions)
+warning: `meow` (bin "meow") generated 19 warnings (run `cargo fix --bin "meow"` to apply 12 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.33s
+  Executable `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/meow-9c48ee44fefabeb0`
+  Executable `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/integration_tests-aafddfd38aab1803`
+  Executable `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/roundtrip-73225d3085b7c2be`
+
+*** result: Success
+
+*** /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo test --verbose --package=meow@0.1.0
+       Fresh unicode-ident v1.0.18
+       Fresh proc-macro2 v1.0.95
+       Fresh quote v1.0.40
+       Fresh syn v2.0.101
+       Fresh libc v0.2.172
+       Fresh cfg-if v1.0.0
+       Fresh autocfg v1.4.0
+       Fresh shlex v1.3.0
+       Fresh version_check v0.9.5
+       Fresh smallvec v1.15.1
+       Fresh synstructure v0.13.2
+       Fresh pin-project-lite v0.2.16
+       Fresh memchr v2.7.4
+       Fresh scopeguard v1.2.0
+       Fresh cc v1.2.26
+       Fresh zerofrom-derive v0.1.6
+       Fresh futures-core v0.3.31
+       Fresh yoke-derive v0.8.0
+       Fresh bytes v1.10.1
+       Fresh stable_deref_trait v1.2.0
+       Fresh zerofrom v0.1.6
+       Fresh pkg-config v0.3.32
+       Fresh vcpkg v0.2.15
+       Fresh getrandom v0.2.16
+       Fresh once_cell v1.21.3
+       Fresh yoke v0.8.0
+       Fresh fnv v1.0.7
+       Fresh typenum v1.18.0
+       Fresh lock_api v0.4.13
+       Fresh parking_lot_core v0.9.11
+       Fresh rand_core v0.6.4
+       Fresh zerovec-derive v0.11.1
+       Fresh futures-sink v0.3.31
+       Fresh generic-array v0.14.7
+       Fresh parking_lot v0.12.4
+       Fresh zerovec v0.11.2
+       Fresh socket2 v0.5.10
+       Fresh signal-hook-registry v1.4.5
+       Fresh mio v1.0.4
+       Fresh tokio-macros v2.5.0
+       Fresh displaydoc v0.2.5
+       Fresh itoa v1.0.15
+       Fresh tokio v1.45.1
+       Fresh futures-channel v0.3.31
+       Fresh slab v0.4.9
+       Fresh futures-macro v0.3.31
+       Fresh pin-utils v0.1.0
+       Fresh futures-task v0.3.31
+       Fresh futures-io v0.3.31
+       Fresh futures-util v0.3.31
+       Fresh bitflags v2.9.1
+       Fresh tinystr v0.8.1
+       Fresh crypto-common v0.1.6
+       Fresh litemap v0.8.0
+       Fresh writeable v0.6.1
+       Fresh icu_locale_core v2.0.0
+       Fresh zerotrie v0.2.2
+       Fresh http v1.3.1
+       Fresh potential_utf v0.1.2
+       Fresh serde_derive v1.0.219
+       Fresh zerocopy v0.8.25
+       Fresh http-body v1.0.1
+       Fresh icu_collections v2.0.0
+       Fresh icu_provider v2.0.0
+       Fresh serde v1.0.219
+       Fresh log v0.4.27
+       Fresh foreign-types-shared v0.1.1
+       Fresh subtle v2.6.1
+       Fresh zeroize v1.8.1
+       Fresh percent-encoding v2.3.1
+       Fresh icu_normalizer_data v2.0.0
+       Fresh icu_properties_data v2.0.1
+       Fresh foreign-types v0.3.2
+       Fresh openssl-sys v0.9.109
+       Fresh openssl-macros v0.1.1
+       Fresh tower-service v0.3.3
+       Fresh strsim v0.11.1
+       Fresh ident_case v1.0.1
+       Fresh try-lock v0.2.5
+       Fresh darling_core v0.20.11
+       Fresh icu_properties v2.0.1
+       Fresh openssl v0.10.73
+       Fresh want v0.3.1
+       Fresh icu_normalizer v2.0.0
+       Fresh httparse v1.10.1
+       Fresh tracing-core v0.1.34
+       Fresh ryu v1.0.20
+       Fresh unicase v2.8.1
+       Fresh openssl-probe v0.1.6
+       Fresh tracing v0.1.41
+       Fresh darling_macro v0.20.11
+       Fresh idna_adapter v1.2.1
+       Fresh hyper v1.6.0
+       Fresh native-tls v0.2.14
+       Fresh form_urlencoded v1.2.1
+       Fresh sync_wrapper v1.0.2
+       Fresh tower-layer v0.3.3
+       Fresh base64 v0.22.1
+       Fresh ipnet v2.11.0
+       Fresh utf8_iter v1.0.4
+       Fresh cpufeatures v0.2.17
+       Fresh idna v1.0.3
+       Fresh hyper-util v0.1.14
+       Fresh tower v0.5.2
+       Fresh serde_json v1.0.140
+       Fresh tokio-native-tls v0.3.1
+       Fresh darling v0.20.11
+       Fresh getrandom v0.3.3
+       Fresh http-body-util v0.1.3
+       Fresh futures-executor v0.3.31
+       Fresh block-buffer v0.10.4
+       Fresh inout v0.1.4
+       Fresh aho-corasick v1.1.3
+       Fresh thiserror-impl v2.0.12
+       Fresh mime v0.3.17
+       Fresh iri-string v0.7.8
+       Fresh regex-syntax v0.8.5
+       Fresh unicode-xid v0.2.6
+       Fresh futures v0.3.31
+       Fresh hyper-tls v0.6.0
+       Fresh cipher v0.4.4
+       Fresh digest v0.10.7
+       Fresh thiserror v2.0.12
+       Fresh regex-automata v0.4.9
+       Fresh derive_more-impl v1.0.0
+       Fresh tower-http v0.6.6
+       Fresh mime_guess v2.0.5
+       Fresh url v2.5.4
+       Fresh serde_with_macros v3.12.0
+       Fresh erasable v1.3.0
+       Fresh num-traits v0.2.19
+       Fresh psm v0.1.26
+       Fresh ahash v0.8.12
+       Fresh serde_urlencoded v0.7.1
+       Fresh universal-hash v0.5.1
+       Fresh rustls-pki-types v1.12.0
+       Fresh ppv-lite86 v0.2.21
+       Fresh tokio-util v0.7.15
+       Fresh pin-project-internal v1.1.10
+       Fresh include_dir_macros v0.7.4
+       Fresh proc-macro-error-attr2 v2.0.0
+       Fresh opaque-debug v0.3.1
+       Fresh bytemuck v1.23.1
+       Fresh base64ct v1.8.0
+       Fresh rand_chacha v0.3.1
+       Fresh hashbrown v0.14.5
+       Fresh reqwest v0.12.19
+       Fresh pin-project v1.1.10
+       Fresh rgb v0.8.50
+       Fresh poly1305 v0.8.0
+       Fresh itertools v0.10.5
+       Fresh proc-macro-error2 v2.0.1
+       Fresh password-hash v0.5.0
+       Fresh include_dir v0.7.4
+       Fresh chrono v0.4.41
+       Fresh regex v1.11.1
+       Fresh derive_more v1.0.0
+       Fresh rc-box v1.3.0
+       Fresh serde_with v3.12.0
+       Fresh stacker v0.1.21
+       Fresh blake2 v0.10.6
+       Fresh chacha20 v0.9.1
+       Fresh uuid v1.17.0
+       Fresh aead v0.5.2
+       Fresh is-terminal v0.4.16
+       Fresh termcolor v1.4.1
+       Fresh either v1.15.0
+       Fresh humantime v2.2.0
+       Fresh heck v0.5.0
+       Fresh takecell v0.1.1
+       Fresh take_mut v0.2.2
+       Fresh argon2 v0.5.3
+       Fresh chacha20poly1305 v0.10.1
+       Fresh teloxide-core v0.11.2
+       Fresh teloxide-macros v0.9.0
+       Fresh env_logger v0.10.2
+       Fresh libsqlite3-sys v0.28.0
+       Fresh aquamarine v0.6.0
+       Fresh rand v0.8.5
+       Fresh hashlink v0.9.1
+       Fresh dptree v0.3.0
+       Fresh tokio-stream v0.1.17
+       Fresh fallible-streaming-iterator v0.1.9
+       Fresh fallible-iterator v0.3.0
+       Fresh linux-raw-sys v0.9.4
+       Fresh hex v0.4.3
+       Fresh pretty_env_logger v0.5.0
+       Fresh fastrand v2.3.0
+       Fresh rusqlite v0.31.0
+       Fresh rustix v1.0.7
+       Fresh nine_sdk v0.1.0 (/tmp/cargo-mutants-workspace-191TZv.tmp/9sdk)
+warning: unused import: `AeadCore`
+ --> 9sdk/src/lib.rs:7:18
+  |
+7 |     aead::{Aead, AeadCore},
+  |                  ^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `CryptoRng` and `Rng`
+ --> 9sdk/src/lib.rs:9:12
+  |
+9 | use rand::{CryptoRng, Rng, RngCore, thread_rng};
+  |            ^^^^^^^^^  ^^^
+
+warning: function `encrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:160:4
+    |
+160 | fn encrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: function `decrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:175:4
+    |
+175 | fn decrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+
+       Fresh teloxide v0.15.0
+warning: `nine_sdk` (lib) generated 4 warnings (run `cargo fix --lib -p nine_sdk` to apply 2 suggestions)
+       Fresh tempfile v3.20.0
+warning: unused import: `CommandLoggedOut`
+ --> meow/src/v1/models/buttons.rs:2:44
+  |
+2 | use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
+  |                                            ^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `PASSWORD_HANDLERS`
+ --> meow/src/v1/models/buttons.rs:4:25
+  |
+4 | use crate::v1::models::{PASSWORD_HANDLERS, log_in_state, password_handler::PasswordHandler};
+  |                         ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::error::Error`
+ --> meow/src/v1/models/buttons.rs:7:5
+  |
+7 | use std::error::Error;
+  |     ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `hex`
+ --> meow/src/v1/models/password_handler.rs:2:5
+  |
+2 | use hex;
+  |     ^^^
+
+warning: unused import: `CHAT_MESSAGE_IDS`
+ --> meow/src/v1/processors/callback_processor.rs:3:48
+  |
+3 | use crate::v1::processors::message_processor::{CHAT_MESSAGE_IDS, delete_all_messages};
+  |                                                ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `BotCommandScope` and `Message`
+ --> meow/src/v1/processors/callback_processor.rs:8:23
+  |
+8 | use teloxide::types::{BotCommandScope, MaybeInaccessibleMessage, Message};
+  |                       ^^^^^^^^^^^^^^^                            ^^^^^^^
+
+warning: unused import: `Result as SqlResult`
+ --> meow/src/v1/services/user_config_store.rs:1:47
+  |
+1 | use rusqlite::{Connection, OptionalExtension, Result as SqlResult, params};
+  |                                               ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `connect`
+ --> meow/src/main.rs:8:27
+  |
+8 | use nine_sdk::{Transport, connect};
+  |                           ^^^^^^^
+
+warning: unused import: `CommandLoggedIn`
+ --> meow/src/main.rs:9:20
+  |
+9 | use v1::commands::{CommandLoggedIn, CommandLoggedOut};
+  |                    ^^^^^^^^^^^^^^^
+
+warning: unused import: `message_handler`
+  --> meow/src/main.rs:10:38
+   |
+10 | use v1::handlers::{callback_handler, message_handler};
+   |                                      ^^^^^^^^^^^^^^^
+
+warning: variable does not need to be mutable
+  --> meow/src/v1/models/password_handler.rs:42:13
+   |
+42 |         let mut key_manager = self.key_manager.lock().await;
+   |             ----^^^^^^^^^^^
+   |             |
+   |             help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` on by default
+
+warning: variable does not need to be mutable
+  --> meow/src/v1/models/password_handler.rs:61:13
+   |
+61 |         let mut key_manager = self.key_manager.lock().await;
+   |             ----^^^^^^^^^^^
+   |             |
+   |             help: remove this `mut`
+
+warning: unused variable: `key_manager`
+  --> meow/src/v1/models/password_handler.rs:80:13
+   |
+80 |         let key_manager = self.key_manager.lock().await;
+   |             ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_key_manager`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `key_manager`
+  --> meow/src/v1/models/password_handler.rs:89:13
+   |
+89 |         let key_manager = self.key_manager.lock().await;
+   |             ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_key_manager`
+
+warning: unused variable: `transport`
+  --> meow/src/main.rs:57:9
+   |
+57 |     let transport = determine_transport();
+   |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_transport`
+
+warning: function `log_callback_result` is never used
+  --> meow/src/v1/handlers/callback.rs:39:4
+   |
+39 | fn log_callback_result<T, E: std::fmt::Display>(result: &Result<T, E>) {
+   |    ^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: variant `InvalidState` is never constructed
+  --> meow/src/v1/models/password_handler.rs:14:5
+   |
+10 | pub enum PasswordError {
+   |          ------------- variant in this enum
+...
+14 |     InvalidState,
+   |     ^^^^^^^^^^^^
+   |
+   = note: `PasswordError` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: constant `TABLE_NAME` is never used
+ --> meow/src/v1/services/user_config_store.rs:8:7
+  |
+8 | const TABLE_NAME: &str = "user_configs";
+  |       ^^^^^^^^^^
+
+warning: method `config_exists` is never used
+  --> meow/src/v1/services/user_config_store.rs:67:18
+   |
+38 | impl UserConfigStore {
+   | -------------------- method in this implementation
+...
+67 |     pub async fn config_exists(&self, user_id: &str) -> Result<bool, UserConfigStoreError> {
+   |                  ^^^^^^^^^^^^^
+
+warning: `meow` (bin "meow") generated 19 warnings (run `cargo fix --bin "meow"` to apply 12 suggestions)
+warning: unused import: `Write`
+ --> meow/tests/roundtrip.rs:2:21
+  |
+2 | use std::io::{Read, Write};
+  |                     ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `Read`
+ --> meow/tests/roundtrip.rs:2:15
+  |
+2 | use std::io::{Read, Write};
+  |               ^^^^
+
+       Fresh meow v0.1.0 (/tmp/cargo-mutants-workspace-191TZv.tmp/meow)
+warning: unused import: `std::collections::HashMap`
+  --> meow/src/v1/handlers/message.rs:20:9
+   |
+20 |     use std::collections::HashMap;
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `ChatId`, `ChatKind`, `Chat`, `MessageId`, `MessageKind`, `UserId`, and `User`
+  --> meow/src/v1/handlers/message.rs:21:27
+   |
+21 |     use teloxide::types::{Chat, ChatId, ChatKind, MessageId, MessageKind, User, UserId};
+   |                           ^^^^  ^^^^^^  ^^^^^^^^  ^^^^^^^^^  ^^^^^^^^^^^  ^^^^  ^^^^^^
+
+warning: unused import: `CommandLoggedOut`
+ --> meow/src/v1/models/buttons.rs:2:44
+  |
+2 | use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
+  |                                            ^^^^^^^^^^^^^^^^
+
+warning: unreachable pattern
+   --> meow/src/main.rs:143:13
+    |
+140 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+143 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+    |
+    = note: `#[warn(unreachable_patterns)]` on by default
+
+warning: unreachable pattern
+   --> meow/src/main.rs:160:13
+    |
+157 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+160 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: unreachable pattern
+   --> meow/src/main.rs:171:13
+    |
+168 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+171 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: unreachable pattern
+   --> meow/src/main.rs:187:13
+    |
+184 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+187 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: unreachable pattern
+   --> meow/src/main.rs:197:13
+    |
+194 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+197 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: struct `MockBot` is never constructed
+  --> meow/src/v1/handlers/message.rs:47:12
+   |
+47 |     struct MockBot;
+   |            ^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: struct `MockMessage` is never constructed
+  --> meow/src/v1/handlers/message.rs:48:12
+   |
+48 |     struct MockMessage;
+   |            ^^^^^^^^^^^
+
+warning: struct `MockUserConfigStore` is never constructed
+  --> meow/src/v1/handlers/message.rs:49:12
+   |
+49 |     struct MockUserConfigStore;
+   |            ^^^^^^^^^^^^^^^^^^^
+
+warning: `meow` (test "roundtrip") generated 2 warnings
+warning: `meow` (bin "meow" test) generated 26 warnings (15 duplicates) (run `cargo fix --bin "meow" --tests` to apply 3 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/meow-9c48ee44fefabeb0`
+
+running 43 tests
+test tests::test_create_default_transport ... ok
+test tests::test_create_enclave_transport ... ok
+test keyboard::tests::test_logged_in_operations_not_default ... ok
+test keyboard::tests::test_logged_out_operations_structure ... ok
+test keyboard::tests::test_logged_in_operations_structure ... ok
+test tests::test_constants ... ok
+test tests::test_create_config_store ... ok
+test tests::test_create_tcp_transport ... ok
+test keyboard::tests::test_logged_out_operations_not_default ... ok
+test tests::test_determine_transport ... ok
+test tests::test_create_tcp_transport_invalid_address - should panic ... ok
+test v1::handlers::callback::tests::test_callback_handler_signature ... ok
+test tests::test_main_function_exists ... ok
+test v1::handlers::callback::tests::test_log_callback_result_custom_error ... ok
+test v1::handlers::callback::tests::test_log_callback_result_success ... ok
+test v1::handlers::callback::tests::test_log_callback_result_error ... ok
+test tests::test_is_enclave_mode ... ok
+test v1::handlers::message::tests::test_error_types ... ok
+test v1::handlers::callback::tests::test_callback_query_creation ... ok
+test v1::handlers::callback::tests::test_error_types ... ok
+test v1::handlers::message::tests::test_message_handler_signature ... ok
+test v1::models::buttons::test_button_partial_eq ... ok
+test v1::models::buttons::test_parse_logged_in_button_all_arms_required ... ok
+test v1::models::buttons::test_parse_logged_out_button_all_arms_required ... ok
+test v1::processors::message_processor::tests::test_public_functions_exist ... ok
+test v1::services::user_config_store::tests::test_database_constants ... ok
+test v1::services::user_config_store::tests::test_error_propagation ... ok
+test v1::services::user_config_store::tests::test_get_config_not_found ... ok
+test v1::services::user_config_store::tests::test_config_exists ... ok
+test v1::services::user_config_store::tests::test_new_store_with_invalid_path ... ok
+test v1::services::user_config_store::tests::test_helper_functions ... ok
+test v1::services::user_config_store::tests::test_empty_config_json ... ok
+test v1::services::user_config_store::tests::test_insert_and_get_config ... ok
+test v1::services::user_config_store::tests::test_user_config_store_error_display ... ok
+test v1::services::user_config_store::tests::test_user_config_struct ... ok
+test v1::services::user_config_store::tests::test_large_config_json ... ok
+test v1::services::user_config_store::tests::test_new_store_creates_database ... ok
+test v1::services::user_config_store::tests::test_multiple_users ... ok
+test v1::services::user_config_store::tests::test_very_long_user_id ... ok
+test v1::services::user_config_store::tests::test_special_characters_in_user_id ... ok
+test v1::services::user_config_store::tests::test_update_existing_config ... ok
+test v1::services::user_config_store::tests::test_sql_injection_safety ... ok
+test v1::services::user_config_store::tests::test_concurrent_access ... ok
+
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/integration_tests-aafddfd38aab1803`
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running `/tmp/cargo-mutants-workspace-191TZv.tmp/target/debug/deps/roundtrip-73225d3085b7c2be`
+
+running 1 test
+test test_enclave_roundtrip ... ignored, Requires nine-sdk-enclave binary from another package
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+*** result: Success

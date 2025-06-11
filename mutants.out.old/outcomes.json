@@ -1,0 +1,5443 @@
+{
+  "outcomes": [
+    {
+      "scenario": "Baseline",
+      "summary": "Success",
+      "log_path": "log/baseline.log",
+      "diff_path": null,
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 21.037839284,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.251271729,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/main.rs",
+          "function": {
+            "function_name": "is_enclave_mode",
+            "return_type": "-> bool",
+            "span": {
+              "start": {
+                "line": 19,
+                "column": 1
+              },
+              "end": {
+                "line": 21,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 77
+            }
+          },
+          "replacement": "true",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__main.rs_line_20_col_5.log",
+      "diff_path": "diff/meow__src__main.rs_line_20_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.65535837,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.20132167,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/main.rs",
+          "function": {
+            "function_name": "is_enclave_mode",
+            "return_type": "-> bool",
+            "span": {
+              "start": {
+                "line": 19,
+                "column": 1
+              },
+              "end": {
+                "line": 21,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 77
+            }
+          },
+          "replacement": "false",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__main.rs_line_20_col_5_001.log",
+      "diff_path": "diff/meow__src__main.rs_line_20_col_5_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.253583927,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.20114441,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/main.rs",
+          "function": {
+            "function_name": "is_enclave_mode",
+            "return_type": "-> bool",
+            "span": {
+              "start": {
+                "line": 19,
+                "column": 1
+              },
+              "end": {
+                "line": 21,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 20,
+              "column": 52
+            },
+            "end": {
+              "line": 20,
+              "column": 54
+            }
+          },
+          "replacement": "!=",
+          "genre": "BinaryOperator"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__main.rs_line_20_col_52.log",
+      "diff_path": "diff/meow__src__main.rs_line_20_col_52.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.703870518,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201210664,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/main.rs",
+          "function": {
+            "function_name": "create_tcp_transport",
+            "return_type": "-> Transport",
+            "span": {
+              "start": {
+                "line": 23,
+                "column": 1
+              },
+              "end": {
+                "line": 28,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 24,
+              "column": 5
+            },
+            "end": {
+              "line": 27,
+              "column": 6
+            }
+          },
+          "replacement": "Default::default()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__main.rs_line_24_col_5.log",
+      "diff_path": "diff/meow__src__main.rs_line_24_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.451726421,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/main.rs",
+          "function": {
+            "function_name": "create_default_transport",
+            "return_type": "-> Transport",
+            "span": {
+              "start": {
+                "line": 30,
+                "column": 1
+              },
+              "end": {
+                "line": 32,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 31,
+              "column": 5
+            },
+            "end": {
+              "line": 31,
+              "column": 46
+            }
+          },
+          "replacement": "Default::default()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__main.rs_line_31_col_5.log",
+      "diff_path": "diff/meow__src__main.rs_line_31_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.451881937,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/main.rs",
+          "function": {
+            "function_name": "create_enclave_transport",
+            "return_type": "-> Transport",
+            "span": {
+              "start": {
+                "line": 34,
+                "column": 1
+              },
+              "end": {
+                "line": 37,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 36,
+              "column": 5
+            },
+            "end": {
+              "line": 36,
+              "column": 46
+            }
+          },
+          "replacement": "Default::default()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__main.rs_line_36_col_5.log",
+      "diff_path": "diff/meow__src__main.rs_line_36_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.451765068,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/main.rs",
+          "function": {
+            "function_name": "determine_transport",
+            "return_type": "-> Transport",
+            "span": {
+              "start": {
+                "line": 39,
+                "column": 1
+              },
+              "end": {
+                "line": 45,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 40,
+              "column": 5
+            },
+            "end": {
+              "line": 44,
+              "column": 6
+            }
+          },
+          "replacement": "Default::default()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__main.rs_line_40_col_5.log",
+      "diff_path": "diff/meow__src__main.rs_line_40_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.451709846,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/main.rs",
+          "function": {
+            "function_name": "main",
+            "return_type": "-> Result<(), Box<dyn Error>>",
+            "span": {
+              "start": {
+                "line": 47,
+                "column": 1
+              },
+              "end": {
+                "line": 90,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 49,
+              "column": 5
+            },
+            "end": {
+              "line": 89,
+              "column": 11
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__main.rs_line_49_col_5.log",
+      "diff_path": "diff/meow__src__main.rs_line_49_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 2.7065665819999998,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201273782,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/keyboard.rs",
+          "function": {
+            "function_name": "logged_out_operations",
+            "return_type": "-> InlineKeyboardMarkup",
+            "span": {
+              "start": {
+                "line": 3,
+                "column": 1
+              },
+              "end": {
+                "line": 18,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 4,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 40
+            }
+          },
+          "replacement": "Default::default()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__keyboard.rs_line_4_col_5.log",
+      "diff_path": "diff/meow__src__keyboard.rs_line_4_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 3.507785756,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.20115337,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/keyboard.rs",
+          "function": {
+            "function_name": "logged_in_operations",
+            "return_type": "-> InlineKeyboardMarkup",
+            "span": {
+              "start": {
+                "line": 20,
+                "column": 1
+              },
+              "end": {
+                "line": 41,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 21,
+              "column": 5
+            },
+            "end": {
+              "line": 40,
+              "column": 40
+            }
+          },
+          "replacement": "Default::default()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__keyboard.rs_line_21_col_5.log",
+      "diff_path": "diff/meow__src__keyboard.rs_line_21_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.253464498,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201365674,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/handlers/callback.rs",
+          "function": {
+            "function_name": "callback_handler",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 8,
+                "column": 1
+              },
+              "end": {
+                "line": 37,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 13,
+              "column": 5
+            },
+            "end": {
+              "line": 36,
+              "column": 11
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__handlers__callback.rs_line_13_col_5.log",
+      "diff_path": "diff/meow__src__v1__handlers__callback.rs_line_13_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.754555351,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201298737,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/handlers/callback.rs",
+          "function": {
+            "function_name": "log_callback_result",
+            "return_type": "",
+            "span": {
+              "start": {
+                "line": 39,
+                "column": 1
+              },
+              "end": {
+                "line": 44,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 40,
+              "column": 5
+            },
+            "end": {
+              "line": 43,
+              "column": 6
+            }
+          },
+          "replacement": "()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__handlers__callback.rs_line_40_col_5.log",
+      "diff_path": "diff/meow__src__v1__handlers__callback.rs_line_40_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.809438036,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201489781,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/handlers/message.rs",
+          "function": {
+            "function_name": "message_handler",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 8,
+                "column": 1
+              },
+              "end": {
+                "line": 15,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 13,
+              "column": 5
+            },
+            "end": {
+              "line": 14,
+              "column": 54
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__handlers__message.rs_line_13_col_5.log",
+      "diff_path": "diff/meow__src__v1__handlers__message.rs_line_13_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.7541112399999998,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201309839,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::from_str",
+            "return_type": "-> Self",
+            "span": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 32,
+              "column": 9
+            },
+            "end": {
+              "line": 48,
+              "column": 10
+            }
+          },
+          "replacement": "Default::default()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_32_col_9.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_32_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.501835919,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::from_str",
+            "return_type": "-> Self",
+            "span": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 34,
+              "column": 17
+            },
+            "end": {
+              "line": 34,
+              "column": 38
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_34_col_17.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_34_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.9543562190000001,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201153081,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::from_str",
+            "return_type": "-> Self",
+            "span": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 35,
+              "column": 17
+            },
+            "end": {
+              "line": 35,
+              "column": 40
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_35_col_17.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_35_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.802872474,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201340308,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::from_str",
+            "return_type": "-> Self",
+            "span": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 36,
+              "column": 17
+            },
+            "end": {
+              "line": 36,
+              "column": 42
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_36_col_17.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_36_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.757119753,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201383148,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::from_str",
+            "return_type": "-> Self",
+            "span": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 37,
+              "column": 17
+            },
+            "end": {
+              "line": 37,
+              "column": 43
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_37_col_17.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_37_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.802950023,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201202662,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::from_str",
+            "return_type": "-> Self",
+            "span": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 38,
+              "column": 17
+            },
+            "end": {
+              "line": 38,
+              "column": 49
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_38_col_17.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_38_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.802558012,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201312707,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::from_str",
+            "return_type": "-> Self",
+            "span": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 43,
+              "column": 17
+            },
+            "end": {
+              "line": 43,
+              "column": 41
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_43_col_17.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_43_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.802507918,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201338656,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::from_str",
+            "return_type": "-> Self",
+            "span": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 44,
+              "column": 17
+            },
+            "end": {
+              "line": 44,
+              "column": 43
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_44_col_17.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_44_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.802354366,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201187202,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::from_str",
+            "return_type": "-> Self",
+            "span": {
+              "start": {
+                "line": 31,
+                "column": 5
+              },
+              "end": {
+                "line": 49,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 45,
+              "column": 17
+            },
+            "end": {
+              "line": 45,
+              "column": 36
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_45_col_17.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_45_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.802523866,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201361397,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::execute",
+            "return_type": "-> ResponseResult<()>",
+            "span": {
+              "start": {
+                "line": 51,
+                "column": 5
+              },
+              "end": {
+                "line": 207,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 58,
+              "column": 9
+            },
+            "end": {
+              "line": 206,
+              "column": 15
+            }
+          },
+          "replacement": "ResponseResult::new()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_58_col_9.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_58_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.451730616,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::execute",
+            "return_type": "-> ResponseResult<()>",
+            "span": {
+              "start": {
+                "line": 51,
+                "column": 5
+              },
+              "end": {
+                "line": 207,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 58,
+              "column": 9
+            },
+            "end": {
+              "line": 206,
+              "column": 15
+            }
+          },
+          "replacement": "ResponseResult::from_iter([()])",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_58_col_9_001.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_58_col_9_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.452046169,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::execute",
+            "return_type": "-> ResponseResult<()>",
+            "span": {
+              "start": {
+                "line": 51,
+                "column": 5
+              },
+              "end": {
+                "line": 207,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 58,
+              "column": 9
+            },
+            "end": {
+              "line": 206,
+              "column": 15
+            }
+          },
+          "replacement": "ResponseResult::new(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_58_col_9_002.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_58_col_9_002.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.451874697,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/buttons.rs",
+          "function": {
+            "function_name": "Button::execute",
+            "return_type": "-> ResponseResult<()>",
+            "span": {
+              "start": {
+                "line": 51,
+                "column": 5
+              },
+              "end": {
+                "line": 207,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 58,
+              "column": 9
+            },
+            "end": {
+              "line": 206,
+              "column": 15
+            }
+          },
+          "replacement": "ResponseResult::from(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__v1__models__buttons.rs_line_58_col_9_003.log",
+      "diff_path": "diff/meow__src__v1__models__buttons.rs_line_58_col_9_003.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.451718392,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::sign_up",
+            "return_type": "-> Result<String, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 37,
+                "column": 5
+              },
+              "end": {
+                "line": 51,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 42,
+              "column": 9
+            },
+            "end": {
+              "line": 50,
+              "column": 24
+            }
+          },
+          "replacement": "Ok(String::new())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_42_col_9.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_42_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.70389524,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201268467,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::sign_up",
+            "return_type": "-> Result<String, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 37,
+                "column": 5
+              },
+              "end": {
+                "line": 51,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 42,
+              "column": 9
+            },
+            "end": {
+              "line": 50,
+              "column": 24
+            }
+          },
+          "replacement": "Ok(\"xyzzy\".into())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_42_col_9_001.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_42_col_9_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.153841996,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201424402,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::login",
+            "return_type": "-> Result<bool, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 53,
+                "column": 5
+              },
+              "end": {
+                "line": 75,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 59,
+              "column": 9
+            },
+            "end": {
+              "line": 74,
+              "column": 10
+            }
+          },
+          "replacement": "Ok(true)",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_59_col_9.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_59_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.803810032,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201232741,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::login",
+            "return_type": "-> Result<bool, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 53,
+                "column": 5
+              },
+              "end": {
+                "line": 75,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 59,
+              "column": 9
+            },
+            "end": {
+              "line": 74,
+              "column": 10
+            }
+          },
+          "replacement": "Ok(false)",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_59_col_9_001.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_59_col_9_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.156340016,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201466924,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::get_private_key",
+            "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 77,
+                "column": 5
+              },
+              "end": {
+                "line": 84,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 80,
+              "column": 9
+            },
+            "end": {
+              "line": 83,
+              "column": 17
+            }
+          },
+          "replacement": "Ok(None)",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_80_col_9.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_80_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.853899612,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.20133042,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::get_private_key",
+            "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 77,
+                "column": 5
+              },
+              "end": {
+                "line": 84,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 80,
+              "column": 9
+            },
+            "end": {
+              "line": 83,
+              "column": 17
+            }
+          },
+          "replacement": "Ok(Some([0; 32]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_80_col_9_001.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_80_col_9_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.203032253,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201410876,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::get_private_key",
+            "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 77,
+                "column": 5
+              },
+              "end": {
+                "line": 84,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 80,
+              "column": 9
+            },
+            "end": {
+              "line": 83,
+              "column": 17
+            }
+          },
+          "replacement": "Ok(Some([1; 32]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_80_col_9_002.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_80_col_9_002.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.15302184,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201358628,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::get_public_key",
+            "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 86,
+                "column": 5
+              },
+              "end": {
+                "line": 93,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 89,
+              "column": 9
+            },
+            "end": {
+              "line": 92,
+              "column": 17
+            }
+          },
+          "replacement": "Ok(None)",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_89_col_9.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_89_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.253438767,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201373514,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::get_public_key",
+            "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 86,
+                "column": 5
+              },
+              "end": {
+                "line": 93,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 89,
+              "column": 9
+            },
+            "end": {
+              "line": 92,
+              "column": 17
+            }
+          },
+          "replacement": "Ok(Some([0; 32]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_89_col_9_001.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_89_col_9_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.152755158,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201672249,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/models/password_handler.rs",
+          "function": {
+            "function_name": "PasswordHandler::get_public_key",
+            "return_type": "-> Result<Option<[u8; 32]>, Box<dyn std::error::Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 86,
+                "column": 5
+              },
+              "end": {
+                "line": 93,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 89,
+              "column": 9
+            },
+            "end": {
+              "line": 92,
+              "column": 17
+            }
+          },
+          "replacement": "Ok(Some([1; 32]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__models__password_handler.rs_line_89_col_9_002.log",
+      "diff_path": "diff/meow__src__v1__models__password_handler.rs_line_89_col_9_002.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.103092461,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201329114,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/callback_processor.rs",
+          "function": {
+            "function_name": "process_callback",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 10,
+                "column": 1
+              },
+              "end": {
+                "line": 49,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 15,
+              "column": 5
+            },
+            "end": {
+              "line": 48,
+              "column": 11
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__callback_processor.rs_line_15_col_5.log",
+      "diff_path": "diff/meow__src__v1__processors__callback_processor.rs_line_15_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.703682841,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201373792,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "delete_all_messages",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 21,
+                "column": 1
+              },
+              "end": {
+                "line": 49,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 25,
+              "column": 5
+            },
+            "end": {
+              "line": 48,
+              "column": 11
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_25_col_5.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_25_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.9543190959999999,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.20142879,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "print_keys",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 51,
+                "column": 1
+              },
+              "end": {
+                "line": 104,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 52,
+              "column": 5
+            },
+            "end": {
+              "line": 103,
+              "column": 11
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_52_col_5.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_52_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.955093104,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201513577,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "print_keys",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 51,
+                "column": 1
+              },
+              "end": {
+                "line": 104,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 64,
+              "column": 17
+            },
+            "end": {
+              "line": 77,
+              "column": 18
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_64_col_17.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_64_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.8042677889999998,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201395537,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "logout",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 106,
+                "column": 1
+              },
+              "end": {
+                "line": 212,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 107,
+              "column": 5
+            },
+            "end": {
+              "line": 211,
+              "column": 11
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_107_col_5.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_107_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.755177607,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201345794,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "logout",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 106,
+                "column": 1
+              },
+              "end": {
+                "line": 212,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 115,
+              "column": 8
+            },
+            "end": {
+              "line": 115,
+              "column": 9
+            }
+          },
+          "replacement": "",
+          "genre": "UnaryOperator"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_115_col_8.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_115_col_8.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.8039916169999999,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201352645,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "process_message",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 214,
+                "column": 1
+              },
+              "end": {
+                "line": 774,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 220,
+              "column": 5
+            },
+            "end": {
+              "line": 773,
+              "column": 11
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_220_col_5.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_220_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.854253098,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201458859,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "process_message",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 214,
+                "column": 1
+              },
+              "end": {
+                "line": 774,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 228,
+              "column": 39
+            },
+            "end": {
+              "line": 228,
+              "column": 41
+            }
+          },
+          "replacement": "!=",
+          "genre": "BinaryOperator"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_228_col_39.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_228_col_39.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 2.104730278,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201342477,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "process_message",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 214,
+                "column": 1
+              },
+              "end": {
+                "line": 774,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 240,
+              "column": 16
+            },
+            "end": {
+              "line": 240,
+              "column": 17
+            }
+          },
+          "replacement": "",
+          "genre": "UnaryOperator"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_240_col_16.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_240_col_16.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.353289856,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201611558,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "process_message",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 214,
+                "column": 1
+              },
+              "end": {
+                "line": 774,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 335,
+              "column": 21
+            },
+            "end": {
+              "line": 377,
+              "column": 22
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_335_col_21.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_335_col_21.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.405404334,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201449363,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "process_message",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 214,
+                "column": 1
+              },
+              "end": {
+                "line": 774,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 378,
+              "column": 21
+            },
+            "end": {
+              "line": 422,
+              "column": 22
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_378_col_21.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_378_col_21.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.303252383,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201346122,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "process_message",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 214,
+                "column": 1
+              },
+              "end": {
+                "line": 774,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 491,
+              "column": 28
+            },
+            "end": {
+              "line": 491,
+              "column": 29
+            }
+          },
+          "replacement": "",
+          "genre": "UnaryOperator"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_491_col_28.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_491_col_28.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.403604327,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201663082,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "process_message",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 214,
+                "column": 1
+              },
+              "end": {
+                "line": 774,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 540,
+              "column": 17
+            },
+            "end": {
+              "line": 547,
+              "column": 18
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_540_col_17.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_540_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.40338993,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.20140449,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "process_message",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 214,
+                "column": 1
+              },
+              "end": {
+                "line": 774,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 549,
+              "column": 17
+            },
+            "end": {
+              "line": 604,
+              "column": 18
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_549_col_17.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_549_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.403716339,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201606663,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/processors/message_processor.rs",
+          "function": {
+            "function_name": "process_message",
+            "return_type": "-> Result<(), Box<dyn Error +Send +Sync>>",
+            "span": {
+              "start": {
+                "line": 214,
+                "column": 1
+              },
+              "end": {
+                "line": 774,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 605,
+              "column": 17
+            },
+            "end": {
+              "line": 673,
+              "column": 18
+            }
+          },
+          "replacement": "",
+          "genre": "MatchArm"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/meow__src__v1__processors__message_processor.rs_line_605_col_17.log",
+      "diff_path": "diff/meow__src__v1__processors__message_processor.rs_line_605_col_17.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.353775729,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201515486,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "UserConfigStore::insert_or_update_config",
+            "return_type": "-> Result<(), UserConfigStoreError>",
+            "span": {
+              "start": {
+                "line": 49,
+                "column": 5
+              },
+              "end": {
+                "line": 58,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 55,
+              "column": 9
+            },
+            "end": {
+              "line": 57,
+              "column": 15
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_55_col_9.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_55_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.905041152,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.151343957,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "UserConfigStore::get_config",
+            "return_type": "-> Result<String, UserConfigStoreError>",
+            "span": {
+              "start": {
+                "line": 60,
+                "column": 5
+              },
+              "end": {
+                "line": 64,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 62,
+              "column": 9
+            },
+            "end": {
+              "line": 63,
+              "column": 49
+            }
+          },
+          "replacement": "Ok(String::new())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_62_col_9.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_62_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.805058794,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201341387,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "UserConfigStore::get_config",
+            "return_type": "-> Result<String, UserConfigStoreError>",
+            "span": {
+              "start": {
+                "line": 60,
+                "column": 5
+              },
+              "end": {
+                "line": 64,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 62,
+              "column": 9
+            },
+            "end": {
+              "line": 63,
+              "column": 49
+            }
+          },
+          "replacement": "Ok(\"xyzzy\".into())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_62_col_9_001.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_62_col_9_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.25316177,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201415957,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "UserConfigStore::config_exists",
+            "return_type": "-> Result<bool, UserConfigStoreError>",
+            "span": {
+              "start": {
+                "line": 66,
+                "column": 5
+              },
+              "end": {
+                "line": 73,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 68,
+              "column": 9
+            },
+            "end": {
+              "line": 72,
+              "column": 10
+            }
+          },
+          "replacement": "Ok(true)",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_68_col_9.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_68_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.803995473,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.20160901,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "UserConfigStore::config_exists",
+            "return_type": "-> Result<bool, UserConfigStoreError>",
+            "span": {
+              "start": {
+                "line": 66,
+                "column": 5
+              },
+              "end": {
+                "line": 73,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 68,
+              "column": 9
+            },
+            "end": {
+              "line": 72,
+              "column": 10
+            }
+          },
+          "replacement": "Ok(false)",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_68_col_9_001.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_68_col_9_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.953544591,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.20137003,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "open_database",
+            "return_type": "-> Result<Connection, rusqlite::Error>",
+            "span": {
+              "start": {
+                "line": 78,
+                "column": 1
+              },
+              "end": {
+                "line": 80,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 79,
+              "column": 5
+            },
+            "end": {
+              "line": 79,
+              "column": 27
+            }
+          },
+          "replacement": "Ok(Default::default())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_79_col_5.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_79_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.401701238,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "initialize_database_schema",
+            "return_type": "-> Result<(), rusqlite::Error>",
+            "span": {
+              "start": {
+                "line": 82,
+                "column": 1
+              },
+              "end": {
+                "line": 85,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 83,
+              "column": 5
+            },
+            "end": {
+              "line": 84,
+              "column": 11
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_83_col_5.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_83_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.453978873,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.151465495,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "execute_insert_or_update",
+            "return_type": "-> Result<(), rusqlite::Error>",
+            "span": {
+              "start": {
+                "line": 87,
+                "column": 1
+              },
+              "end": {
+                "line": 94,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 92,
+              "column": 5
+            },
+            "end": {
+              "line": 93,
+              "column": 11
+            }
+          },
+          "replacement": "Ok(())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_92_col_5.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_92_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.303425949,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.151362677,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "query_user_config",
+            "return_type": "-> Result<String, UserConfigStoreError>",
+            "span": {
+              "start": {
+                "line": 96,
+                "column": 1
+              },
+              "end": {
+                "line": 105,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 100,
+              "column": 5
+            },
+            "end": {
+              "line": 104,
+              "column": 54
+            }
+          },
+          "replacement": "Ok(String::new())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_100_col_5.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_100_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.5538233460000002,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.201057894,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "meow",
+          "file": "meow/src/v1/services/user_config_store.rs",
+          "function": {
+            "function_name": "query_user_config",
+            "return_type": "-> Result<String, UserConfigStoreError>",
+            "span": {
+              "start": {
+                "line": 96,
+                "column": 1
+              },
+              "end": {
+                "line": 105,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 100,
+              "column": 5
+            },
+            "end": {
+              "line": 104,
+              "column": 54
+            }
+          },
+          "replacement": "Ok(\"xyzzy\".into())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "CaughtMutant",
+      "log_path": "log/meow__src__v1__services__user_config_store.rs_line_100_col_5_001.log",
+      "diff_path": "diff/meow__src__v1__services__user_config_store.rs_line_100_col_5_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 1.005468626,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.20156648,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=meow@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "KeyManager::setup_config",
+            "return_type": "-> Result<String, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 69,
+                "column": 5
+              },
+              "end": {
+                "line": 87,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 70,
+              "column": 9
+            },
+            "end": {
+              "line": 86,
+              "column": 24
+            }
+          },
+          "replacement": "Ok(String::new())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_70_col_9.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_70_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 5.111584314,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101322993,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "KeyManager::setup_config",
+            "return_type": "-> Result<String, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 69,
+                "column": 5
+              },
+              "end": {
+                "line": 87,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 70,
+              "column": 9
+            },
+            "end": {
+              "line": 86,
+              "column": 24
+            }
+          },
+          "replacement": "Ok(\"xyzzy\".into())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_70_col_9_001.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_70_col_9_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251141639,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101183288,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "KeyManager::verify_and_derive_keys",
+            "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 89,
+                "column": 5
+              },
+              "end": {
+                "line": 117,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 93,
+              "column": 9
+            },
+            "end": {
+              "line": 116,
+              "column": 25
+            }
+          },
+          "replacement": "Ok(([0; 32], [0; 32]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_93_col_9.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_93_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251127713,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101225744,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "KeyManager::verify_and_derive_keys",
+            "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 89,
+                "column": 5
+              },
+              "end": {
+                "line": 117,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 93,
+              "column": 9
+            },
+            "end": {
+              "line": 116,
+              "column": 25
+            }
+          },
+          "replacement": "Ok(([0; 32], [1; 32]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_93_col_9_001.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_93_col_9_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251336578,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101315116,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "KeyManager::verify_and_derive_keys",
+            "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 89,
+                "column": 5
+              },
+              "end": {
+                "line": 117,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 93,
+              "column": 9
+            },
+            "end": {
+              "line": 116,
+              "column": 25
+            }
+          },
+          "replacement": "Ok(([1; 32], [0; 32]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_93_col_9_002.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_93_col_9_002.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251302149,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101269694,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "KeyManager::verify_and_derive_keys",
+            "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 89,
+                "column": 5
+              },
+              "end": {
+                "line": 117,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 93,
+              "column": 9
+            },
+            "end": {
+              "line": 116,
+              "column": 25
+            }
+          },
+          "replacement": "Ok(([1; 32], [1; 32]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_93_col_9_003.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_93_col_9_003.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251507922,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101212811,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "KeyManager::verify_and_derive_keys",
+            "return_type": "-> Result<([u8; 32], [u8; 32]), KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 89,
+                "column": 5
+              },
+              "end": {
+                "line": 117,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 102,
+              "column": 12
+            },
+            "end": {
+              "line": 102,
+              "column": 13
+            }
+          },
+          "replacement": "",
+          "genre": "UnaryOperator"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_102_col_12.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_102_col_12.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.25142461,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101073742,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "KeyManager::set_config",
+            "return_type": "",
+            "span": {
+              "start": {
+                "line": 119,
+                "column": 5
+              },
+              "end": {
+                "line": 122,
+                "column": 6
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 120,
+              "column": 9
+            },
+            "end": {
+              "line": 121,
+              "column": 31
+            }
+          },
+          "replacement": "()",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_120_col_9.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_120_col_9.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251236803,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101363623,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "hash_password",
+            "return_type": "-> Result<String, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 125,
+                "column": 1
+              },
+              "end": {
+                "line": 135,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 127,
+              "column": 5
+            },
+            "end": {
+              "line": 134,
+              "column": 22
+            }
+          },
+          "replacement": "Ok(String::new())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_127_col_5.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_127_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251288191,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101348551,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "hash_password",
+            "return_type": "-> Result<String, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 125,
+                "column": 1
+              },
+              "end": {
+                "line": 135,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 127,
+              "column": 5
+            },
+            "end": {
+              "line": 134,
+              "column": 22
+            }
+          },
+          "replacement": "Ok(\"xyzzy\".into())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_127_col_5_001.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_127_col_5_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251501759,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.10129631,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "verify_password",
+            "return_type": "-> bool",
+            "span": {
+              "start": {
+                "line": 137,
+                "column": 1
+              },
+              "end": {
+                "line": 147,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 139,
+              "column": 5
+            },
+            "end": {
+              "line": 146,
+              "column": 17
+            }
+          },
+          "replacement": "true",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_139_col_5.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_139_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251228434,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101110459,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "verify_password",
+            "return_type": "-> bool",
+            "span": {
+              "start": {
+                "line": 137,
+                "column": 1
+              },
+              "end": {
+                "line": 147,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 139,
+              "column": 5
+            },
+            "end": {
+              "line": 146,
+              "column": 17
+            }
+          },
+          "replacement": "false",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_139_col_5_001.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_139_col_5_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251145078,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101193527,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "derive_key",
+            "return_type": "-> Result<[u8; 32], KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 149,
+                "column": 1
+              },
+              "end": {
+                "line": 157,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 151,
+              "column": 5
+            },
+            "end": {
+              "line": 156,
+              "column": 12
+            }
+          },
+          "replacement": "Ok([0; 32])",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_151_col_5.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_151_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251326547,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101374484,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "derive_key",
+            "return_type": "-> Result<[u8; 32], KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 149,
+                "column": 1
+              },
+              "end": {
+                "line": 157,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 151,
+              "column": 5
+            },
+            "end": {
+              "line": 156,
+              "column": 12
+            }
+          },
+          "replacement": "Ok([1; 32])",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_151_col_5_001.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_151_col_5_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251251017,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101472623,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "encrypt_chacha20",
+            "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 159,
+                "column": 1
+              },
+              "end": {
+                "line": 172,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 165,
+              "column": 5
+            },
+            "end": {
+              "line": 171,
+              "column": 19
+            }
+          },
+          "replacement": "Ok(vec![])",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_165_col_5.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_165_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251464947,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101277906,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "encrypt_chacha20",
+            "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 159,
+                "column": 1
+              },
+              "end": {
+                "line": 172,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 165,
+              "column": 5
+            },
+            "end": {
+              "line": 171,
+              "column": 19
+            }
+          },
+          "replacement": "Ok(vec![0])",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_165_col_5_001.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_165_col_5_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251354775,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101307619,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "encrypt_chacha20",
+            "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 159,
+                "column": 1
+              },
+              "end": {
+                "line": 172,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 165,
+              "column": 5
+            },
+            "end": {
+              "line": 171,
+              "column": 19
+            }
+          },
+          "replacement": "Ok(vec![1])",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_165_col_5_002.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_165_col_5_002.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251164363,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.100866167,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "decrypt_chacha20",
+            "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 174,
+                "column": 1
+              },
+              "end": {
+                "line": 187,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 180,
+              "column": 5
+            },
+            "end": {
+              "line": 186,
+              "column": 70
+            }
+          },
+          "replacement": "Ok(vec![])",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_180_col_5.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_180_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251437558,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101338768,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "decrypt_chacha20",
+            "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 174,
+                "column": 1
+              },
+              "end": {
+                "line": 187,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 180,
+              "column": 5
+            },
+            "end": {
+              "line": 186,
+              "column": 70
+            }
+          },
+          "replacement": "Ok(vec![0])",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_180_col_5_001.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_180_col_5_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.251171455,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.101413988,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/lib.rs",
+          "function": {
+            "function_name": "decrypt_chacha20",
+            "return_type": "-> Result<Vec<u8>, KeyManagerError>",
+            "span": {
+              "start": {
+                "line": 174,
+                "column": 1
+              },
+              "end": {
+                "line": 187,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 180,
+              "column": 5
+            },
+            "end": {
+              "line": 186,
+              "column": 70
+            }
+          },
+          "replacement": "Ok(vec![1])",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "MissedMutant",
+      "log_path": "log/9sdk__src__lib.rs_line_180_col_5_002.log",
+      "diff_path": "diff/9sdk__src__lib.rs_line_180_col_5_002.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.25148829,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        },
+        {
+          "phase": "Test",
+          "duration": 0.151626145,
+          "process_status": "Success",
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/transport.rs",
+          "function": {
+            "function_name": "connect",
+            "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+            "span": {
+              "start": {
+                "line": 24,
+                "column": 1
+              },
+              "end": {
+                "line": 36,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 25,
+              "column": 5
+            },
+            "end": {
+              "line": 35,
+              "column": 6
+            }
+          },
+          "replacement": "Ok(Pin::new())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/9sdk__src__transport.rs_line_25_col_5.log",
+      "diff_path": "diff/9sdk__src__transport.rs_line_25_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.201371081,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/transport.rs",
+          "function": {
+            "function_name": "connect",
+            "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+            "span": {
+              "start": {
+                "line": 24,
+                "column": 1
+              },
+              "end": {
+                "line": 36,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 25,
+              "column": 5
+            },
+            "end": {
+              "line": 35,
+              "column": 6
+            }
+          },
+          "replacement": "Ok(Pin::from_iter([Box::new(Default::default())]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/9sdk__src__transport.rs_line_25_col_5_001.log",
+      "diff_path": "diff/9sdk__src__transport.rs_line_25_col_5_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.201606351,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/transport.rs",
+          "function": {
+            "function_name": "connect",
+            "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+            "span": {
+              "start": {
+                "line": 24,
+                "column": 1
+              },
+              "end": {
+                "line": 36,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 25,
+              "column": 5
+            },
+            "end": {
+              "line": 35,
+              "column": 6
+            }
+          },
+          "replacement": "Ok(Pin::new(Box::new(Default::default())))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/9sdk__src__transport.rs_line_25_col_5_002.log",
+      "diff_path": "diff/9sdk__src__transport.rs_line_25_col_5_002.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.151254862,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/transport.rs",
+          "function": {
+            "function_name": "connect",
+            "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+            "span": {
+              "start": {
+                "line": 24,
+                "column": 1
+              },
+              "end": {
+                "line": 36,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 25,
+              "column": 5
+            },
+            "end": {
+              "line": 35,
+              "column": 6
+            }
+          },
+          "replacement": "Ok(Pin::from(Box::new(Default::default())))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/9sdk__src__transport.rs_line_25_col_5_003.log",
+      "diff_path": "diff/9sdk__src__transport.rs_line_25_col_5_003.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.201690018,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/transport.rs",
+          "function": {
+            "function_name": "listen",
+            "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+            "span": {
+              "start": {
+                "line": 38,
+                "column": 1
+              },
+              "end": {
+                "line": 52,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 39,
+              "column": 5
+            },
+            "end": {
+              "line": 51,
+              "column": 6
+            }
+          },
+          "replacement": "Ok(Pin::new())",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/9sdk__src__transport.rs_line_39_col_5.log",
+      "diff_path": "diff/9sdk__src__transport.rs_line_39_col_5.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.201582356,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/transport.rs",
+          "function": {
+            "function_name": "listen",
+            "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+            "span": {
+              "start": {
+                "line": 38,
+                "column": 1
+              },
+              "end": {
+                "line": 52,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 39,
+              "column": 5
+            },
+            "end": {
+              "line": 51,
+              "column": 6
+            }
+          },
+          "replacement": "Ok(Pin::from_iter([Box::new(Default::default())]))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/9sdk__src__transport.rs_line_39_col_5_001.log",
+      "diff_path": "diff/9sdk__src__transport.rs_line_39_col_5_001.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.201602634,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/transport.rs",
+          "function": {
+            "function_name": "listen",
+            "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+            "span": {
+              "start": {
+                "line": 38,
+                "column": 1
+              },
+              "end": {
+                "line": 52,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 39,
+              "column": 5
+            },
+            "end": {
+              "line": 51,
+              "column": 6
+            }
+          },
+          "replacement": "Ok(Pin::new(Box::new(Default::default())))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/9sdk__src__transport.rs_line_39_col_5_002.log",
+      "diff_path": "diff/9sdk__src__transport.rs_line_39_col_5_002.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.151370772,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "Mutant": {
+          "package": "nine_sdk",
+          "file": "9sdk/src/transport.rs",
+          "function": {
+            "function_name": "listen",
+            "return_type": "-> io::Result<Pin<Box<dyn TransportStream>>>",
+            "span": {
+              "start": {
+                "line": 38,
+                "column": 1
+              },
+              "end": {
+                "line": 52,
+                "column": 2
+              }
+            }
+          },
+          "span": {
+            "start": {
+              "line": 39,
+              "column": 5
+            },
+            "end": {
+              "line": 51,
+              "column": 6
+            }
+          },
+          "replacement": "Ok(Pin::from(Box::new(Default::default())))",
+          "genre": "FnValue"
+        }
+      },
+      "summary": "Unviable",
+      "log_path": "log/9sdk__src__transport.rs_line_39_col_5_003.log",
+      "diff_path": "diff/9sdk__src__transport.rs_line_39_col_5_003.diff",
+      "phase_results": [
+        {
+          "phase": "Build",
+          "duration": 0.151165095,
+          "process_status": {
+            "Failure": 101
+          },
+          "argv": [
+            "/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo",
+            "test",
+            "--no-run",
+            "--verbose",
+            "--package=nine_sdk@0.1.0"
+          ]
+        }
+      ]
+    }
+  ],
+  "total_mutants": 89,
+  "missed": 49,
+  "caught": 22,
+  "timeout": 0,
+  "unviable": 18,
+  "success": 0
+}

@@ -89,6 +89,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+## Nitro Enclave Build Artifacts
+/build/
+*.eif
+pcr-values.json
+enclave-info.json
+kms-proxy.pid
+
 ## Node
 node_modules
 package-lock.json

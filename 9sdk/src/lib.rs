@@ -2,14 +2,11 @@ use argon2::{
     Argon2,
     password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
 };
-use chacha20poly1305::{
-    ChaCha20Poly1305, KeyInit, Nonce,
-    aead::{Aead, AeadCore},
-};
-use rand::{CryptoRng, Rng, RngCore, thread_rng};
+use rand::{RngCore, thread_rng};
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
 use thiserror::Error;
+use chacha20poly1305::{ChaCha20Poly1305, Key, Nonce};
 
 pub mod transport;
 

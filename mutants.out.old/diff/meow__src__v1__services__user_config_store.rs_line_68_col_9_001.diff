@@ -1,0 +1,25 @@
+--- meow/src/v1/services/user_config_store.rs
++++ replace UserConfigStore::config_exists -> Result<bool, UserConfigStoreError> with Ok(false)
+@@ -60,21 +60,17 @@
+     /// Retrieves a user's configuration
+     pub async fn get_config(&self, user_id: &str) -> Result<String, UserConfigStoreError> {
+         let connection = self.connection.lock().await;
+         query_user_config(&*connection, user_id)
+     }
+     
+     /// Checks if a user configuration exists
+     pub async fn config_exists(&self, user_id: &str) -> Result<bool, UserConfigStoreError> {
+-        match self.get_config(user_id).await {
+-            Ok(_) => Ok(true),
+-            Err(UserConfigStoreError::NotFound) => Ok(false),
+-            Err(e) => Err(e),
+-        }
++        Ok(false) /* ~ changed by cargo-mutants ~ */
+     }
+ }
+ 
+ // Database operation helpers
+ 
+ fn open_database<P: AsRef<Path>>(path: P) -> Result<Connection, rusqlite::Error> {
+     Connection::open(path)
+ }
