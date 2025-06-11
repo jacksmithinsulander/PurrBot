@@ -16,7 +16,7 @@ COPY meow/assets meow/assets/
 
 # Build the meow binary
 WORKDIR /usr/src/purrbot/meow
-RUN cargo build --release
+RUN cargo build --release --features vsock
 
 # Runtime stage
 FROM --platform=linux/amd64 debian:bookworm-slim

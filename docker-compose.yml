@@ -8,10 +8,17 @@ services:
       - .env
     environment:
       - RUST_LOG=debug
+      # TCP mode by default for local development
+      - USE_VSOCK=${USE_VSOCK:-false}
+      - ENCLAVE_ADDRESS=${ENCLAVE_ADDRESS:-meow-enclave:5005}
+      - ENCLAVE_CID=${ENCLAVE_CID:-16}
+      - VSOCK_PORT=${VSOCK_PORT:-5005}
     ports:
       - "8080:8080"
     restart: unless-stopped
     stop_grace_period: 30s
+    depends_on:
+      - meow-enclave
 
   meow-enclave:
     platform: linux/arm64
@@ -21,12 +28,35 @@ services:
     env_file:
       - .env
     environment:
-      - ENCLAVE_MODE=enclave
       - RUST_LOG=info
+      # TCP mode for Docker, vsock mode for Nitro
+      - USE_VSOCK=${USE_VSOCK:-false}
+      - TCP_ADDRESS=0.0.0.0:5005
+      - VSOCK_CID=${VSOCK_CID:-16}
+      - VSOCK_PORT=${VSOCK_PORT:-5005}
     ports:
-      - "8081:8080"
+      - "5005:5005"
     restart: unless-stopped
     command: ["./enclave"]
+
+  # Development enclave with debug logging
+  meow-enclave-debug:
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: Dockerfile.enclave
+    env_file:
+      - .env
+    environment:
+      - RUST_LOG=debug
+      - USE_VSOCK=false
+      - TCP_ADDRESS=0.0.0.0:5005
+    ports:
+      - "5005:5005"
+    restart: unless-stopped
+    command: ["./enclave"]
+    profiles:
+      - debug
 
   test:
     build:

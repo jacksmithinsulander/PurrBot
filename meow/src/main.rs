@@ -19,12 +19,35 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Make it available globally if needed, or pass to handlers
 
     // Determine transport based on environment
-    let transport = if std::env::var("ENCLAVE_MODE").as_deref() == Ok("enclave") {
-        Transport::Tcp("127.0.0.1:5005".parse().unwrap()) // Use TCP for now
+    let transport = if std::env::var("USE_VSOCK").as_deref() == Ok("true") {
+        // Parent instance always has CID 3 in Nitro Enclaves
+        // The enclave will have a CID assigned (e.g., 16)
+        let enclave_cid = std::env::var("ENCLAVE_CID")
+            .unwrap_or_else(|_| "16".to_string())
+            .parse::<u32>()
+            .expect("Invalid ENCLAVE_CID");
+        let port = std::env::var("VSOCK_PORT")
+            .unwrap_or_else(|_| "5005".to_string())
+            .parse::<u32>()
+            .expect("Invalid VSOCK_PORT");
+        
+        log::info!("Using vsock transport to enclave: CID={}, Port={}", enclave_cid, port);
+        
+        #[cfg(feature = "vsock")]
+        {
+            Transport::Vsock { cid: enclave_cid, port }
+        }
+        #[cfg(not(feature = "vsock"))]
+        {
+            log::error!("vsock feature not enabled!");
+            return Err("vsock feature not enabled".into());
+        }
     } else {
-        Transport::Tcp("127.0.0.1:5005".parse().unwrap())
+        let addr = std::env::var("ENCLAVE_ADDRESS")
+            .unwrap_or_else(|_| "127.0.0.1:5005".to_string());
+        log::info!("Using TCP transport to enclave: {}", addr);
+        Transport::Tcp(addr.parse().unwrap())
     };
-    log::info!("Using TCP transport");
 
     let bot = Bot::from_env();
 

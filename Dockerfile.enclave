@@ -13,9 +13,9 @@ COPY 9sdk/src 9sdk/src/
 COPY 9sdk-enclave/Cargo.toml 9sdk-enclave/
 COPY 9sdk-enclave/src 9sdk-enclave/src/
 
-# Build the enclave binary
+# Build the enclave binary with vsock support
 WORKDIR /usr/src/purrbot/9sdk-enclave
-RUN cargo build --release
+RUN cargo build --release --features vsock
 
 # Runtime stage
 FROM --platform=linux/amd64 debian:bookworm-slim
@@ -23,6 +23,12 @@ RUN apt-get update && apt-get install -y ca-certificates libssl3 && rm -rf /var/
 
 # Copy the compiled binary
 COPY --from=builder /usr/src/purrbot/9sdk-enclave/target/release/nine_sdk_enclave /usr/local/bin/enclave
+
+# Set default environment variables for Nitro Enclave
+ENV USE_VSOCK=true
+ENV VSOCK_CID=16
+ENV VSOCK_PORT=5005
+ENV RUST_LOG=info
 
 WORKDIR /usr/local/bin
 CMD ["./enclave"] 

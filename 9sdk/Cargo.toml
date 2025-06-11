@@ -16,7 +16,8 @@ serde_json = "1.0.140"
 thiserror = "2.0.12"
 tokio = { version = "1.45.1", features = ["full"] }
 vsock = { version = "0.4", optional = true }
+libc = { version = "0.2", optional = true }
 
 [features]
 default = []
-vsock = ["dep:vsock"]
+vsock = ["dep:vsock", "dep:libc"]
