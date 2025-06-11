@@ -1,0 +1,22 @@
+--- meow/src/v1/services/user_config_store.rs
++++ replace initialize_database_schema -> Result<(), rusqlite::Error> with Ok(())
+@@ -75,18 +75,17 @@
+ 
+ // Database operation helpers
+ 
+ fn open_database<P: AsRef<Path>>(path: P) -> Result<Connection, rusqlite::Error> {
+     Connection::open(path)
+ }
+ 
+ fn initialize_database_schema(connection: &Connection) -> Result<(), rusqlite::Error> {
+-    connection.execute(CREATE_TABLE_SQL, [])?;
+-    Ok(())
++    Ok(()) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ fn execute_insert_or_update(
+     connection: &Connection,
+     user_id: &str,
+     config_json: &str,
+ ) -> Result<(), rusqlite::Error> {
+     connection.execute(INSERT_OR_UPDATE_SQL, params![user_id, config_json])?;

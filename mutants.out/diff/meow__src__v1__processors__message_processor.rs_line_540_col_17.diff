@@ -1,0 +1,28 @@
+--- meow/src/v1/processors/message_processor.rs
++++ delete match arm
+@@ -532,24 +532,17 @@
+             }
+         }
+ 
+         // Now try the rest of the logged-out commands if not already handled
+         log::debug!("Trying to parse as CommandLoggedOut: {}", text);
+         if let Ok(cmd) = CommandLoggedOut::parse(text, me.username()) {
+             log::info!("User {} parsed logged-out command: {:?}", user_id, cmd);
+             match cmd {
+-                CommandLoggedOut::Help => {
+-                    let message = bot
+-                        .send_message(msg.chat.id, CommandLoggedOut::descriptions().to_string())
+-                        .await?;
+-                    let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                    chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-                    return Ok(());
+-                }
++                 /* ~ changed by cargo-mutants ~ */
+                 // Start and LogOut are already handled above
+                 CommandLoggedOut::SignUp { password } => {
+                     // Check if already logged in
+                     if is_logged_in {
+                         log::info!("User {} tried to signup but is already logged in", user_id);
+                         let message = bot
+                             .send_message(msg.chat.id, "❌ You are already logged in! Please logout first.")
+                             .reply_markup(logged_in_operations())

@@ -1,0 +1,22 @@
+--- meow/src/v1/services/user_config_store.rs
++++ replace execute_insert_or_update -> Result<(), rusqlite::Error> with Ok(())
+@@ -84,18 +84,17 @@
+     Ok(())
+ }
+ 
+ fn execute_insert_or_update(
+     connection: &Connection,
+     user_id: &str,
+     config_json: &str,
+ ) -> Result<(), rusqlite::Error> {
+-    connection.execute(INSERT_OR_UPDATE_SQL, params![user_id, config_json])?;
+-    Ok(())
++    Ok(()) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ fn query_user_config(
+     connection: &Connection,
+     user_id: &str,
+ ) -> Result<String, UserConfigStoreError> {
+     let config_json: Option<String> = connection
+         .query_row(SELECT_CONFIG_SQL, params![user_id], |row| row.get(0))

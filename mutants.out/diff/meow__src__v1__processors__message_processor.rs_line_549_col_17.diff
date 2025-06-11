@@ -1,0 +1,76 @@
+--- meow/src/v1/processors/message_processor.rs
++++ delete match arm
+@@ -541,72 +541,17 @@
+                     let message = bot
+                         .send_message(msg.chat.id, CommandLoggedOut::descriptions().to_string())
+                         .await?;
+                     let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                     chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                     return Ok(());
+                 }
+                 // Start and LogOut are already handled above
+-                CommandLoggedOut::SignUp { password } => {
+-                    // Check if already logged in
+-                    if is_logged_in {
+-                        log::info!("User {} tried to signup but is already logged in", user_id);
+-                        let message = bot
+-                            .send_message(msg.chat.id, "❌ You are already logged in! Please logout first.")
+-                            .reply_markup(logged_in_operations())
+-                            .await?;
+-                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                        chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-                        return Ok(());
+-                    }
+-                    
+-                    let handler = PasswordHandler::new(config_store.clone())?;
+-                    let user_id = msg.chat.id.0.to_string();
+-                    match handler.sign_up(&user_id, &password).await {
+-                        Ok(config) => {
+-                            let message = bot.send_message(msg.chat.id, "Account created successfully! 🎉\nNow enter your password again to log in.").await?;
+-                            let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                            chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-                            log::info!(
+-                                "User {} created account with config: {}",
+-                                msg.chat.id.0,
+-                                config
+-                            );
+-                            {
+-                                let mut states = log_in_state::USER_STATES.lock().await;
+-                                states.insert(
+-                                    msg.chat.id.0,
+-                                    log_in_state::AwaitingState::AwaitingLoginPassword,
+-                                );
+-                            }
+-                            // Store the handler
+-                            {
+-                                let mut handler_lock = PASSWORD_HANDLERS.lock().await;
+-                                handler_lock.insert(msg.chat.id.0, Some(handler));
+-                            }
+-                        }
+-                        Err(e) => {
+-                            let message = bot
+-                                .send_message(
+-                                    msg.chat.id,
+-                                    format!("Failed to create account: {}", e),
+-                                )
+-                                .await?;
+-                            let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                            chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-                            log::error!(
+-                                "Failed to create account for user {}: {}",
+-                                msg.chat.id.0,
+-                                e
+-                            );
+-                        }
+-                    }
+-                    return Ok(());
+-                }
++                 /* ~ changed by cargo-mutants ~ */
+                 CommandLoggedOut::LogIn { password } => {
+                     // Check if already logged in
+                     if is_logged_in {
+                         log::info!("User {} tried to login but is already logged in", user_id);
+                         let message = bot
+                             .send_message(msg.chat.id, "❌ You are already logged in!")
+                             .reply_markup(logged_in_operations())
+                             .await?;

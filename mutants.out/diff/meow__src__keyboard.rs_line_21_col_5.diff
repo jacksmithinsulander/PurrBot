@@ -1,0 +1,40 @@
+--- meow/src/keyboard.rs
++++ replace logged_in_operations -> InlineKeyboardMarkup with Default::default()
+@@ -13,36 +13,17 @@
+                 .collect(),
+         );
+     }
+ 
+     InlineKeyboardMarkup::new(keyboard)
+ }
+ 
+ pub fn logged_in_operations() -> InlineKeyboardMarkup {
+-    let operations = [
+-        ("List", "List"),
+-        ("Trade", "Trade"),
+-        ("Create", "Create"),
+-        ("Log Out", "Log Out"),
+-        ("Print Keys", "Print Keys"),
+-    ];
+-    let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
+-
+-    for row in operations.chunks(3) {
+-        keyboard.push(
+-            row.iter()
+-                .map(|&(text, data)| {
+-                    InlineKeyboardButton::callback(text.to_owned(), data.to_owned())
+-                })
+-                .collect(),
+-        );
+-    }
+-
+-    InlineKeyboardMarkup::new(keyboard)
++    Default::default() /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+ 
+     #[test]
+     fn test_logged_out_operations_not_default() {

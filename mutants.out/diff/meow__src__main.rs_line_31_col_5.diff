@@ -1,0 +1,21 @@
+--- meow/src/main.rs
++++ replace create_default_transport -> Transport with Default::default()
+@@ -23,17 +23,17 @@
+ fn create_tcp_transport(address: &str) -> Transport {
+     match address.parse() {
+         Ok(addr) => Transport::Tcp(addr),
+         Err(_) => panic!("Invalid TCP address"),
+     }
+ }
+ 
+ fn create_default_transport() -> Transport {
+-    create_tcp_transport(DEFAULT_TCP_ADDRESS)
++    Default::default() /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ fn create_enclave_transport() -> Transport {
+     // For now, enclave transport is the same as default TCP transport
+     create_tcp_transport(DEFAULT_TCP_ADDRESS)
+ }
+ 
+ fn determine_transport() -> Transport {

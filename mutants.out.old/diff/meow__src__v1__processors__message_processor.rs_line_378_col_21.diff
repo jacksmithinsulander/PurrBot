@@ -1,0 +1,65 @@
+--- meow/src/v1/processors/message_processor.rs
++++ delete match arm
+@@ -370,61 +370,17 @@
+                             .await?;
+                         log::info!("Welcome message sent successfully to user {}", user_id);
+                         if std::env::var("TEST_MODE").is_err() {
+                             let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+                             chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+                         }
+                         return Ok(());
+                     }
+-                    CommandLoggedOut::LogOut => {
+-                        log::info!("Handling /logout command for user {}", user_id);
+-                        // Clear state first
+-                        {
+-                            let mut states = log_in_state::USER_STATES.lock().await;
+-                            states.insert(user_id, log_in_state::AwaitingState::None);
+-                            log::info!("Reset state to None for user {}", user_id);
+-                        }
+-                        // Clear any existing password handler
+-                        {
+-                            let mut handlers = PASSWORD_HANDLERS.lock().await;
+-                            handlers.remove(&user_id);
+-                            log::info!("Cleared password handler for user {}", user_id);
+-                        }
+-                        // Set logged-out commands
+-                        if let Err(e) = bot
+-                            .set_my_commands(CommandLoggedOut::bot_commands())
+-                            .scope(BotCommandScope::Chat {
+-                                chat_id: msg.chat.id.into(),
+-                            })
+-                            .await
+-                        {
+-                            log::warn!(
+-                                "Failed to set logged-out commands for user {}: {}",
+-                                user_id,
+-                                e
+-                            );
+-                        } else {
+-                            log::info!("Set logged-out commands for user {}", user_id);
+-                        }
+-                        // Send logout confirmation message
+-                        let message = bot
+-                            .send_message(msg.chat.id, "👋 You have been logged out successfully!")
+-                            .reply_markup(logged_out_operations())
+-                            .await?;
+-                        log::info!(
+-                            "Logout confirmation message sent successfully to user {}",
+-                            user_id
+-                        );
+-                        if std::env::var("TEST_MODE").is_err() {
+-                            let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                            chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
+-                        }
+-                        return Ok(());
+-                    }
++                     /* ~ changed by cargo-mutants ~ */
+                     _ => {
+                         log::debug!("Unhandled CommandLoggedOut variant: {:?}", cmd);
+                     }
+                 }
+             }
+             Err(e) => {
+                 log::warn!(
+                     "Failed to parse as CommandLoggedOut: '{}', error: {}",

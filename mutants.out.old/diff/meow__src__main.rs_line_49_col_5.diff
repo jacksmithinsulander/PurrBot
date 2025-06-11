@@ -1,0 +1,61 @@
+--- meow/src/main.rs
++++ replace main -> Result<(), Box<dyn Error>> with Ok(())
+@@ -41,57 +41,17 @@
+         create_enclave_transport()
+     } else {
+         create_default_transport()
+     }
+ }
+ 
+ #[tokio::main]
+ async fn main() -> Result<(), Box<dyn Error>> {
+-    pretty_env_logger::init();
+-    log::info!("PurrBot is purring...");
+-
+-    // Initialize the SQLite user config store
+-    let config_store = Arc::new(UserConfigStore::new(DEFAULT_DATABASE_PATH)?);
+-    // Make it available globally if needed, or pass to handlers
+-
+-    // Determine transport based on environment
+-    let transport = determine_transport();
+-    log::info!("Using TCP transport");
+-
+-    let bot = Bot::from_env();
+-
+-    // Register commands with Telegram
+-    bot.set_my_commands(CommandLoggedOut::bot_commands())
+-        .await?;
+-    log::info!("Commands registered successfully");
+-
+-    let handler = dptree::entry()
+-        .branch(Update::filter_message().branch(dptree::endpoint({
+-            let config_store = Arc::clone(&config_store);
+-            move |bot, msg| {
+-                let config_store = Arc::clone(&config_store);
+-                async move { v1::handlers::message_handler(bot, msg, config_store).await }
+-            }
+-        })))
+-        .branch(Update::filter_callback_query().branch(dptree::endpoint({
+-            let config_store = Arc::clone(&config_store);
+-            move |bot, q| {
+-                let config_store = Arc::clone(&config_store);
+-                async move { callback_handler(bot, q, config_store).await }
+-            }
+-        })));
+-    //.branch(Update::filter_inline_query().branch(dptree::endpoint(inline_query_handler)));
+-
+-    Dispatcher::builder(bot, handler)
+-        .enable_ctrlc_handler()
+-        .build()
+-        .dispatch()
+-        .await;
+-    Ok(())
++    Ok(()) /* ~ changed by cargo-mutants ~ */
+ }
+ 
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+     
+     #[test]
+     fn test_constants() {

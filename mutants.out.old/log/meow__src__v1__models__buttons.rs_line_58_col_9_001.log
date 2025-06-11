@@ -1,0 +1,644 @@
+
+*** meow/src/v1/models/buttons.rs:58:9: replace Button::execute -> ResponseResult<()> with ResponseResult::from_iter([()])
+
+*** mutation diff:
+--- meow/src/v1/models/buttons.rs
++++ replace Button::execute -> ResponseResult<()> with ResponseResult::from_iter([()])
+@@ -50,165 +50,17 @@
+ 
+     pub async fn execute(
+         &self,
+         bot: Bot,
+         chat_id: ChatId,
+         config_store: Arc<UserConfigStore>,
+         is_logged_in: bool,
+     ) -> ResponseResult<()> {
+-        log::debug!("Executing Button: {:?}", self);
+-        match self {
+-            // Logged in buttons
+-            Button::List => {
+-                log::debug!("Executing List button");
+-                let message = bot
+-                    .send_message(chat_id, "📋 Listing your items...")
+-                    .reply_markup(logged_in_operations())
+-                    .await?;
+-                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                chat_message_ids.insert(chat_id, vec![message.id]);
+-                log::debug!("List button execution completed");
+-            }
+-            Button::Trade => {
+-                log::debug!("Executing Trade button");
+-                let message = bot
+-                    .send_message(chat_id, "🔄 Trading interface coming soon...")
+-                    .reply_markup(logged_in_operations())
+-                    .await?;
+-                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                chat_message_ids.insert(chat_id, vec![message.id]);
+-                log::debug!("Trade button execution completed");
+-            }
+-            Button::Create => {
+-                log::debug!("Executing Create button");
+-                let message = bot
+-                    .send_message(chat_id, "✨ Create interface coming soon...")
+-                    .reply_markup(logged_in_operations())
+-                    .await?;
+-                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                chat_message_ids.insert(chat_id, vec![message.id]);
+-                log::debug!("Create button execution completed");
+-            }
+-            Button::LogOut => {
+-                log::info!("Button::LogOut pressed for chat_id={}", chat_id);
+-                log::debug!("Executing LogOut button");
+-                match logout(chat_id, &bot).await {
+-                    Ok(_) => {
+-                        log::debug!("Logout successful");
+-                        // Command scope is now set in the logout function
+-
+-                        // State is now properly reset in the logout function
+-
+-                        // Handler removal is now handled in the logout function
+-                    }
+-                    Err(e) => {
+-                        log::error!("Logout failed: {}", e);
+-                        let message = bot
+-                            .send_message(chat_id, format!("Failed to logout: {}", e))
+-                            .await?;
+-                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                        chat_message_ids.insert(chat_id, vec![message.id]);
+-                    }
+-                }
+-                log::info!("Button::LogOut completed for chat_id={}", chat_id);
+-                log::debug!("LogOut button execution completed");
+-            }
+-            Button::PrintKeys => {
+-                log::info!("Button::PrintKeys pressed for chat_id={}", chat_id);
+-                log::debug!("Executing PrintKeys button");
+-                match print_keys(chat_id, &bot).await {
+-                    Ok(_) => {
+-                        log::debug!("Print keys successful");
+-                        bot.set_my_commands(CommandLoggedIn::bot_commands())
+-                            .scope(BotCommandScope::Chat {
+-                                chat_id: chat_id.into(),
+-                            })
+-                            .await?;
+-                        // Show logged in keyboard after printing keys
+-                        let keyboard = logged_in_operations();
+-                        let message = bot
+-                            .send_message(
+-                                chat_id,
+-                                "🔑 Keys printed above. What else would you like to do?",
+-                            )
+-                            .reply_markup(keyboard)
+-                            .await?;
+-                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                        chat_message_ids.insert(chat_id, vec![message.id]);
+-                    }
+-                    Err(e) => {
+-                        log::error!("Print keys failed: {}", e);
+-                        let message = bot
+-                            .send_message(chat_id, format!("Failed to print keys: {}", e))
+-                            .await?;
+-                        let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                        chat_message_ids.insert(chat_id, vec![message.id]);
+-                    }
+-                }
+-                log::info!("Button::PrintKeys completed for chat_id={}", chat_id);
+-                log::debug!("PrintKeys button execution completed");
+-            }
+-            // Logged out buttons
+-            Button::Faq => {
+-                log::debug!("Executing FAQ button");
+-                let message = bot.send_message(chat_id, MAN_PAGE).await?;
+-                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                chat_message_ids.insert(chat_id, vec![message.id]);
+-                log::debug!("FAQ button execution completed");
+-            }
+-            Button::LogIn => {
+-                log::debug!("Executing LogIn button");
+-                let message = bot
+-                    .send_message(chat_id, "Please enter your password:")
+-                    .await?;
+-                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                chat_message_ids.insert(chat_id, vec![message.id]);
+-                log::debug!("LogIn button execution completed");
+-            }
+-            Button::SignUp => {
+-                log::debug!("Executing SignUp button");
+-                let message = bot.send_message(chat_id, "Choose your password:").await?;
+-                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                chat_message_ids.insert(chat_id, vec![message.id]);
+-
+-                if let Err(e) = PasswordHandler::new(config_store.clone()) {
+-                    log::error!("Failed to create password handler: {}", e);
+-                    let error_message = bot
+-                        .send_message(chat_id, "Failed to initialize password handler")
+-                        .await?;
+-                    let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                    chat_message_ids.insert(chat_id, vec![error_message.id]);
+-                    return Ok(());
+-                }
+-
+-                let mut states = log_in_state::USER_STATES.lock().await;
+-                states.insert(
+-                    chat_id.0,
+-                    log_in_state::AwaitingState::AwaitingSignUpPassword,
+-                );
+-                log::debug!("SignUp button execution completed");
+-            }
+-            Button::UnRecognized => {
+-                log::debug!("Executing unrecognized button");
+-                let message = bot
+-                    .send_message(chat_id, "❌ Not a valid command")
+-                    .reply_markup(if is_logged_in {
+-                        logged_in_operations()
+-                    } else {
+-                        logged_out_operations()
+-                    })
+-                    .await?;
+-                let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
+-                chat_message_ids.insert(chat_id, vec![message.id]);
+-                log::debug!("Unrecognized button execution completed");
+-            }
+-        }
+-        log::debug!("Button execution finished");
+-        Ok(())
++        ResponseResult::from_iter([()]) /* ~ changed by cargo-mutants ~ */
+     }
+ }
+ 
+ #[test]
+ fn test_button_partial_eq() {
+     // Test PartialEq implementation
+     assert_eq!(Button::List, Button::List);
+     assert_ne!(Button::List, Button::Trade);
+
+
+*** /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/cargo test --no-run --verbose --package=meow@0.1.0
+       Fresh unicode-ident v1.0.18
+       Fresh proc-macro2 v1.0.95
+       Fresh quote v1.0.40
+       Fresh syn v2.0.101
+       Fresh cfg-if v1.0.0
+       Fresh autocfg v1.4.0
+       Fresh shlex v1.3.0
+       Fresh version_check v0.9.5
+       Fresh smallvec v1.15.1
+       Fresh synstructure v0.13.2
+       Fresh memchr v2.7.4
+       Fresh pin-project-lite v0.2.16
+       Fresh scopeguard v1.2.0
+       Fresh futures-core v0.3.31
+       Fresh libc v0.2.172
+       Fresh cc v1.2.26
+       Fresh zerofrom-derive v0.1.6
+       Fresh yoke-derive v0.8.0
+       Fresh vcpkg v0.2.15
+       Fresh bytes v1.10.1
+       Fresh zerofrom v0.1.6
+       Fresh stable_deref_trait v1.2.0
+       Fresh pkg-config v0.3.32
+       Fresh getrandom v0.2.16
+       Fresh once_cell v1.21.3
+       Fresh yoke v0.8.0
+       Fresh fnv v1.0.7
+       Fresh parking_lot_core v0.9.11
+       Fresh typenum v1.18.0
+       Fresh rand_core v0.6.4
+       Fresh lock_api v0.4.13
+       Fresh zerovec-derive v0.11.1
+       Fresh futures-sink v0.3.31
+       Fresh parking_lot v0.12.4
+       Fresh generic-array v0.14.7
+       Fresh zerovec v0.11.2
+       Fresh socket2 v0.5.10
+       Fresh mio v1.0.4
+       Fresh signal-hook-registry v1.4.5
+       Fresh tokio-macros v2.5.0
+       Fresh displaydoc v0.2.5
+       Fresh itoa v1.0.15
+       Fresh slab v0.4.9
+       Fresh futures-channel v0.3.31
+       Fresh tokio v1.45.1
+       Fresh futures-macro v0.3.31
+       Fresh pin-utils v0.1.0
+       Fresh futures-io v0.3.31
+       Fresh futures-task v0.3.31
+       Fresh futures-util v0.3.31
+       Fresh bitflags v2.9.1
+       Fresh tinystr v0.8.1
+       Fresh crypto-common v0.1.6
+       Fresh writeable v0.6.1
+       Fresh litemap v0.8.0
+       Fresh icu_locale_core v2.0.0
+       Fresh http v1.3.1
+       Fresh zerotrie v0.2.2
+       Fresh potential_utf v0.1.2
+       Fresh serde_derive v1.0.219
+       Fresh icu_provider v2.0.0
+       Fresh zerocopy v0.8.25
+       Fresh http-body v1.0.1
+       Fresh serde v1.0.219
+       Fresh icu_collections v2.0.0
+       Fresh log v0.4.27
+       Fresh subtle v2.6.1
+       Fresh foreign-types-shared v0.1.1
+       Fresh percent-encoding v2.3.1
+       Fresh zeroize v1.8.1
+       Fresh icu_properties_data v2.0.1
+       Fresh openssl-sys v0.9.109
+       Fresh openssl-macros v0.1.1
+       Fresh icu_normalizer_data v2.0.0
+       Fresh foreign-types v0.3.2
+       Fresh strsim v0.11.1
+       Fresh try-lock v0.2.5
+       Fresh tower-service v0.3.3
+       Fresh ident_case v1.0.1
+       Fresh want v0.3.1
+       Fresh darling_core v0.20.11
+       Fresh openssl v0.10.73
+       Fresh httparse v1.10.1
+       Fresh icu_normalizer v2.0.0
+       Fresh icu_properties v2.0.1
+       Fresh tracing-core v0.1.34
+       Fresh openssl-probe v0.1.6
+       Fresh unicase v2.8.1
+       Fresh ryu v1.0.20
+       Fresh native-tls v0.2.14
+       Fresh hyper v1.6.0
+       Fresh darling_macro v0.20.11
+       Fresh idna_adapter v1.2.1
+       Fresh tracing v0.1.41
+       Fresh form_urlencoded v1.2.1
+       Fresh sync_wrapper v1.0.2
+       Fresh tower-layer v0.3.3
+       Fresh base64 v0.22.1
+       Fresh utf8_iter v1.0.4
+       Fresh cpufeatures v0.2.17
+       Fresh ipnet v2.11.0
+       Fresh hyper-util v0.1.14
+       Fresh tower v0.5.2
+       Fresh idna v1.0.3
+       Fresh serde_json v1.0.140
+       Fresh getrandom v0.3.3
+       Fresh tokio-native-tls v0.3.1
+       Fresh darling v0.20.11
+       Fresh http-body-util v0.1.3
+       Fresh futures-executor v0.3.31
+       Fresh inout v0.1.4
+       Fresh block-buffer v0.10.4
+       Fresh aho-corasick v1.1.3
+       Fresh thiserror-impl v2.0.12
+       Fresh regex-syntax v0.8.5
+       Fresh unicode-xid v0.2.6
+       Fresh mime v0.3.17
+       Fresh iri-string v0.7.8
+       Fresh digest v0.10.7
+       Fresh cipher v0.4.4
+       Fresh hyper-tls v0.6.0
+       Fresh thiserror v2.0.12
+       Fresh serde_with_macros v3.12.0
+       Fresh mime_guess v2.0.5
+       Fresh tower-http v0.6.6
+       Fresh derive_more-impl v1.0.0
+       Fresh regex-automata v0.4.9
+       Fresh futures v0.3.31
+       Fresh psm v0.1.26
+       Fresh ahash v0.8.12
+       Fresh url v2.5.4
+       Fresh erasable v1.3.0
+       Fresh num-traits v0.2.19
+       Fresh serde_urlencoded v0.7.1
+       Fresh rustls-pki-types v1.12.0
+       Fresh universal-hash v0.5.1
+       Fresh ppv-lite86 v0.2.21
+       Fresh tokio-util v0.7.15
+       Fresh pin-project-internal v1.1.10
+       Fresh include_dir_macros v0.7.4
+       Fresh proc-macro-error-attr2 v2.0.0
+       Fresh opaque-debug v0.3.1
+       Fresh base64ct v1.8.0
+       Fresh bytemuck v1.23.1
+       Fresh include_dir v0.7.4
+       Fresh chrono v0.4.41
+       Fresh pin-project v1.1.10
+       Fresh poly1305 v0.8.0
+       Fresh rgb v0.8.50
+       Fresh proc-macro-error2 v2.0.1
+       Fresh password-hash v0.5.0
+       Fresh itertools v0.10.5
+       Fresh reqwest v0.12.19
+       Fresh rand_chacha v0.3.1
+       Fresh regex v1.11.1
+       Fresh derive_more v1.0.0
+       Fresh hashbrown v0.14.5
+       Fresh stacker v0.1.21
+       Fresh rc-box v1.3.0
+       Fresh serde_with v3.12.0
+       Fresh blake2 v0.10.6
+       Fresh chacha20 v0.9.1
+       Fresh uuid v1.17.0
+       Fresh aead v0.5.2
+       Fresh is-terminal v0.4.16
+       Fresh heck v0.5.0
+       Fresh takecell v0.1.1
+       Fresh termcolor v1.4.1
+       Fresh either v1.15.0
+       Fresh humantime v2.2.0
+       Fresh take_mut v0.2.2
+       Fresh argon2 v0.5.3
+       Fresh chacha20poly1305 v0.10.1
+       Fresh env_logger v0.10.2
+       Fresh teloxide-macros v0.9.0
+       Fresh teloxide-core v0.11.2
+       Fresh hashlink v0.9.1
+       Fresh rand v0.8.5
+       Fresh aquamarine v0.6.0
+       Fresh libsqlite3-sys v0.28.0
+       Fresh dptree v0.3.0
+       Fresh tokio-stream v0.1.17
+       Fresh fallible-streaming-iterator v0.1.9
+       Fresh fallible-iterator v0.3.0
+       Fresh linux-raw-sys v0.9.4
+       Fresh hex v0.4.3
+       Fresh pretty_env_logger v0.5.0
+       Fresh fastrand v2.3.0
+       Fresh nine_sdk v0.1.0 (/tmp/cargo-mutants-workspace-ia1sSj.tmp/9sdk)
+warning: unused import: `AeadCore`
+ --> 9sdk/src/lib.rs:7:18
+  |
+7 |     aead::{Aead, AeadCore},
+  |                  ^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `CryptoRng` and `Rng`
+ --> 9sdk/src/lib.rs:9:12
+  |
+9 | use rand::{CryptoRng, Rng, RngCore, thread_rng};
+  |            ^^^^^^^^^  ^^^
+
+warning: function `encrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:160:4
+    |
+160 | fn encrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: function `decrypt_chacha20` is never used
+   --> 9sdk/src/lib.rs:175:4
+    |
+175 | fn decrypt_chacha20(
+    |    ^^^^^^^^^^^^^^^^
+
+       Fresh rusqlite v0.31.0
+       Fresh rustix v1.0.7
+       Fresh teloxide v0.15.0
+warning: `nine_sdk` (lib) generated 4 warnings (run `cargo fix --lib -p nine_sdk` to apply 2 suggestions)
+       Fresh tempfile v3.20.0
+       Dirty meow v0.1.0 (/tmp/cargo-mutants-workspace-ia1sSj.tmp/meow): stale, unknown reason
+   Compiling meow v0.1.0 (/tmp/cargo-mutants-workspace-ia1sSj.tmp/meow)
+warning: unused import: `Write`
+ --> meow/tests/roundtrip.rs:2:21
+  |
+2 | use std::io::{Read, Write};
+  |                     ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `Read`
+ --> meow/tests/roundtrip.rs:2:15
+  |
+2 | use std::io::{Read, Write};
+  |               ^^^^
+
+warning: `meow` (test "roundtrip") generated 2 warnings
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name meow --edition=2021 meow/src/main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type bin --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=91eb294dbbe64569 -C extra-filename=-f624b31761a7a8de --out-dir /tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps --extern hex=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern log=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/liblog-e4c872c580f67c43.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libnine_sdk-13130c9941aa6ee8.rlib --extern once_cell=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libonce_cell-6c5ecd365f058077.rlib --extern pretty_env_logger=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libpretty_env_logger-fd0c85adc5970ed9.rlib --extern rusqlite=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librusqlite-405dd0f26bcbaab7.rlib --extern serde=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde-4a228d781a67e5ef.rlib --extern serde_json=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde_json-38200e1bfcf588bf.rlib --extern teloxide=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libteloxide-803c910ebb7daec0.rlib --extern thiserror=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libthiserror-623b5bd96f2878a9.rlib --extern tokio=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtokio-87ff163b8d900c11.rlib --extern uuid=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libuuid-0f427ad42de7d560.rlib -L native=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/build/libsqlite3-sys-6dbd936600260ecd/out -L native=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/build/psm-3315b25b83038a6a/out`
+     Running `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name meow --edition=2021 meow/src/main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=38009e686cf190d0 -C extra-filename=-9c48ee44fefabeb0 --out-dir /tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps --extern hex=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern log=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/liblog-e4c872c580f67c43.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libnine_sdk-13130c9941aa6ee8.rlib --extern once_cell=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libonce_cell-6c5ecd365f058077.rlib --extern pretty_env_logger=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libpretty_env_logger-fd0c85adc5970ed9.rlib --extern rusqlite=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librusqlite-405dd0f26bcbaab7.rlib --extern serde=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde-4a228d781a67e5ef.rlib --extern serde_json=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde_json-38200e1bfcf588bf.rlib --extern teloxide=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libteloxide-803c910ebb7daec0.rlib --extern tempfile=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtempfile-e39ad06f1c575a9d.rlib --extern thiserror=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libthiserror-623b5bd96f2878a9.rlib --extern tokio=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtokio-87ff163b8d900c11.rlib --extern uuid=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libuuid-0f427ad42de7d560.rlib -L native=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/build/libsqlite3-sys-6dbd936600260ecd/out -L native=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/build/psm-3315b25b83038a6a/out`
+warning: unused imports: `logged_in_operations` and `logged_out_operations`
+ --> meow/src/v1/models/buttons.rs:1:23
+  |
+1 | use crate::keyboard::{logged_in_operations, logged_out_operations};
+  |                       ^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `CommandLoggedIn` and `CommandLoggedOut`
+ --> meow/src/v1/models/buttons.rs:2:27
+  |
+2 | use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
+  |                           ^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::v1::constants::MAN_PAGE`
+ --> meow/src/v1/models/buttons.rs:3:5
+  |
+3 | use crate::v1::constants::MAN_PAGE;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `PASSWORD_HANDLERS`, `log_in_state`, and `password_handler::PasswordHandler`
+ --> meow/src/v1/models/buttons.rs:4:25
+  |
+4 | use crate::v1::models::{PASSWORD_HANDLERS, log_in_state, password_handler::PasswordHandler};
+  |                         ^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `CHAT_MESSAGE_IDS`, `logout`, and `print_keys`
+ --> meow/src/v1/models/buttons.rs:5:48
+  |
+5 | use crate::v1::processors::message_processor::{CHAT_MESSAGE_IDS, logout, print_keys};
+  |                                                ^^^^^^^^^^^^^^^^  ^^^^^^  ^^^^^^^^^^
+
+warning: unused import: `std::error::Error`
+ --> meow/src/v1/models/buttons.rs:7:5
+  |
+7 | use std::error::Error;
+  |     ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `teloxide::types::BotCommandScope`
+  --> meow/src/v1/models/buttons.rs:11:5
+   |
+11 | use teloxide::types::BotCommandScope;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `teloxide::utils::command::BotCommands`
+  --> meow/src/v1/models/buttons.rs:12:5
+   |
+12 | use teloxide::utils::command::BotCommands;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `hex`
+ --> meow/src/v1/models/password_handler.rs:2:5
+  |
+2 | use hex;
+  |     ^^^
+
+warning: unused import: `CHAT_MESSAGE_IDS`
+ --> meow/src/v1/processors/callback_processor.rs:3:48
+  |
+3 | use crate::v1::processors::message_processor::{CHAT_MESSAGE_IDS, delete_all_messages};
+  |                                                ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `BotCommandScope` and `Message`
+ --> meow/src/v1/processors/callback_processor.rs:8:23
+  |
+8 | use teloxide::types::{BotCommandScope, MaybeInaccessibleMessage, Message};
+  |                       ^^^^^^^^^^^^^^^                            ^^^^^^^
+
+warning: unused import: `Result as SqlResult`
+ --> meow/src/v1/services/user_config_store.rs:1:47
+  |
+1 | use rusqlite::{Connection, OptionalExtension, Result as SqlResult, params};
+  |                                               ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `connect`
+ --> meow/src/main.rs:8:27
+  |
+8 | use nine_sdk::{Transport, connect};
+  |                           ^^^^^^^
+
+warning: unused import: `CommandLoggedIn`
+ --> meow/src/main.rs:9:20
+  |
+9 | use v1::commands::{CommandLoggedIn, CommandLoggedOut};
+  |                    ^^^^^^^^^^^^^^^
+
+warning: unused import: `message_handler`
+  --> meow/src/main.rs:10:38
+   |
+10 | use v1::handlers::{callback_handler, message_handler};
+   |                                      ^^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> meow/src/v1/handlers/message.rs:20:9
+   |
+20 |     use std::collections::HashMap;
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused imports: `ChatId`, `ChatKind`, `Chat`, `MessageId`, `MessageKind`, `UserId`, and `User`
+  --> meow/src/v1/handlers/message.rs:21:27
+   |
+21 |     use teloxide::types::{Chat, ChatId, ChatKind, MessageId, MessageKind, User, UserId};
+   |                           ^^^^  ^^^^^^  ^^^^^^^^  ^^^^^^^^^  ^^^^^^^^^^^  ^^^^  ^^^^^^
+
+warning: unused imports: `logged_in_operations` and `logged_out_operations`
+ --> meow/src/v1/models/buttons.rs:1:23
+  |
+1 | use crate::keyboard::{logged_in_operations, logged_out_operations};
+  |                       ^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^
+
+error[E0271]: type mismatch resolving `<[(); 1] as IntoIterator>::Item == Result<_, RequestError>`
+   --> meow/src/v1/models/buttons.rs:58:35
+    |
+58  |         ResponseResult::from_iter([()]) /* ~ changed by cargo-mutants ~ */
+    |         ------------------------- ^^^^ expected `Result<_, RequestError>`, found `()`
+    |         |
+    |         required by a bound introduced by this call
+    |
+    = note:   expected enum `Result<_, RequestError>`
+            found unit type `()`
+note: required by a bound in `std::iter::FromIterator::from_iter`
+   --> /usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/collect.rs:152:34
+    |
+152 |     fn from_iter<T: IntoIterator<Item = A>>(iter: T) -> Self;
+    |                                  ^^^^^^^^ required by this bound in `FromIterator::from_iter`
+
+warning: variable does not need to be mutable
+  --> meow/src/v1/models/password_handler.rs:42:13
+   |
+42 |         let mut key_manager = self.key_manager.lock().await;
+   |             ----^^^^^^^^^^^
+   |             |
+   |             help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` on by default
+
+warning: variable does not need to be mutable
+  --> meow/src/v1/models/password_handler.rs:61:13
+   |
+61 |         let mut key_manager = self.key_manager.lock().await;
+   |             ----^^^^^^^^^^^
+   |             |
+   |             help: remove this `mut`
+
+warning: unused variable: `key_manager`
+  --> meow/src/v1/models/password_handler.rs:80:13
+   |
+80 |         let key_manager = self.key_manager.lock().await;
+   |             ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_key_manager`
+   |
+   = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `key_manager`
+  --> meow/src/v1/models/password_handler.rs:89:13
+   |
+89 |         let key_manager = self.key_manager.lock().await;
+   |             ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_key_manager`
+
+warning: unused variable: `transport`
+  --> meow/src/main.rs:57:9
+   |
+57 |     let transport = determine_transport();
+   |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_transport`
+
+For more information about this error, try `rustc --explain E0271`.
+warning: `meow` (bin "meow") generated 20 warnings
+error: could not compile `meow` (bin "meow") due to 1 previous error; 20 warnings emitted
+
+Caused by:
+  process didn't exit successfully: `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name meow --edition=2021 meow/src/main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type bin --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=91eb294dbbe64569 -C extra-filename=-f624b31761a7a8de --out-dir /tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps --extern hex=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern log=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/liblog-e4c872c580f67c43.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libnine_sdk-13130c9941aa6ee8.rlib --extern once_cell=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libonce_cell-6c5ecd365f058077.rlib --extern pretty_env_logger=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libpretty_env_logger-fd0c85adc5970ed9.rlib --extern rusqlite=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librusqlite-405dd0f26bcbaab7.rlib --extern serde=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde-4a228d781a67e5ef.rlib --extern serde_json=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde_json-38200e1bfcf588bf.rlib --extern teloxide=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libteloxide-803c910ebb7daec0.rlib --extern thiserror=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libthiserror-623b5bd96f2878a9.rlib --extern tokio=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtokio-87ff163b8d900c11.rlib --extern uuid=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libuuid-0f427ad42de7d560.rlib -L native=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/build/libsqlite3-sys-6dbd936600260ecd/out -L native=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/build/psm-3315b25b83038a6a/out` (exit status: 1)
+warning: build failed, waiting for other jobs to finish...
+warning: unreachable pattern
+   --> meow/src/main.rs:143:13
+    |
+140 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+143 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+    |
+    = note: `#[warn(unreachable_patterns)]` on by default
+
+warning: unreachable pattern
+   --> meow/src/main.rs:160:13
+    |
+157 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+160 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: unreachable pattern
+   --> meow/src/main.rs:171:13
+    |
+168 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+171 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: unreachable pattern
+   --> meow/src/main.rs:187:13
+    |
+184 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+187 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: unreachable pattern
+   --> meow/src/main.rs:197:13
+    |
+194 |             Transport::Tcp(addr) => {
+    |             -------------------- matches all the relevant values
+...
+197 |             _ => panic!("Expected TCP transport"),
+    |             ^ no value can reach this
+
+warning: `meow` (bin "meow" test) generated 27 warnings (19 duplicates)
+error: could not compile `meow` (bin "meow" test) due to 1 previous error; 27 warnings emitted
+
+Caused by:
+  process didn't exit successfully: `/usr/local/rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustc --crate-name meow --edition=2021 meow/src/main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 --test --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "vsock"))' -C metadata=38009e686cf190d0 -C extra-filename=-9c48ee44fefabeb0 --out-dir /tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps -C incremental=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/incremental -L dependency=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps --extern hex=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libhex-20cdb627b9823e3e.rlib --extern log=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/liblog-e4c872c580f67c43.rlib --extern nine_sdk=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libnine_sdk-13130c9941aa6ee8.rlib --extern once_cell=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libonce_cell-6c5ecd365f058077.rlib --extern pretty_env_logger=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libpretty_env_logger-fd0c85adc5970ed9.rlib --extern rusqlite=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/librusqlite-405dd0f26bcbaab7.rlib --extern serde=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde-4a228d781a67e5ef.rlib --extern serde_json=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libserde_json-38200e1bfcf588bf.rlib --extern teloxide=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libteloxide-803c910ebb7daec0.rlib --extern tempfile=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtempfile-e39ad06f1c575a9d.rlib --extern thiserror=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libthiserror-623b5bd96f2878a9.rlib --extern tokio=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libtokio-87ff163b8d900c11.rlib --extern uuid=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/deps/libuuid-0f427ad42de7d560.rlib -L native=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/build/libsqlite3-sys-6dbd936600260ecd/out -L native=/tmp/cargo-mutants-workspace-ia1sSj.tmp/target/debug/build/psm-3315b25b83038a6a/out` (exit status: 1)
+
+*** result: Failure(101)
