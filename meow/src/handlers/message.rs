@@ -1,5 +1,5 @@
-use crate::v1::processors::message_processor::process_message;
-use crate::v1::services::user_config_store::UserConfigStore;
+use crate::processors::message_processor::process_message;
+use crate::services::user_config_store::UserConfigStore;
 use std::error::Error;
 use std::sync::Arc;
 use teloxide::prelude::*;

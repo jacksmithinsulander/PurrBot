@@ -1,6 +1,6 @@
-use crate::v1::processors::message_processor::{delete_all_messages, print_keys, logout, process_message};
-use crate::v1::models::{PASSWORD_HANDLERS, log_in_state};
-use crate::v1::services::user_config_store::UserConfigStore;
+use crate::processors::message_processor::{delete_all_messages, print_keys, logout, process_message};
+use crate::models::{PASSWORD_HANDLERS, log_in_state};
+use crate::services::user_config_store::UserConfigStore;
 use std::sync::Arc;
 use teloxide::{
     prelude::*,

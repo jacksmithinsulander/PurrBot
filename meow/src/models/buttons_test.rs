@@ -1,6 +1,6 @@
-use crate::v1::models::buttons::Button;
-use crate::v1::services::user_config_store::UserConfigStore;
-use crate::v1::models::{PASSWORD_HANDLERS, log_in_state};
+use crate::models::buttons::Button;
+use crate::services::user_config_store::UserConfigStore;
+use crate::models::{PASSWORD_HANDLERS, log_in_state};
 use std::sync::Arc;
 use teloxide::{
     prelude::*,
@@ -150,7 +150,7 @@ async fn test_button_execute_faq() {
 
     // Setup expectations
     mock_bot.expect_send_message()
-        .with(eq(chat_id), eq(crate::v1::constants::MAN_PAGE))
+        .with(eq(chat_id), eq(crate::constants::MAN_PAGE))
         .times(1)
         .returning(|_, text| Ok(create_response_message(chat_id, &text)));
 

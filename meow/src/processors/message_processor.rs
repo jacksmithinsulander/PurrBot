@@ -1,6 +1,6 @@
 use crate::keyboard::{logged_in_operations, logged_out_operations};
-use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
-use crate::v1::models::{PASSWORD_HANDLERS, log_in_state, password_handler::PasswordHandler};
+use crate::commands::{CommandLoggedIn, CommandLoggedOut};
+use crate::models::{PASSWORD_HANDLERS, log_in_state, password_handler::PasswordHandler};
 use hex;
 use std::error::Error;
 use teloxide::{
@@ -268,7 +268,7 @@ pub async fn process_message(
     bot: Bot,
     msg: Message,
     me: Me,
-    config_store: std::sync::Arc<crate::v1::services::user_config_store::UserConfigStore>,
+    config_store: std::sync::Arc<crate::services::user_config_store::UserConfigStore>,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
     if let Some(text) = msg.text() {
         log::info!(
