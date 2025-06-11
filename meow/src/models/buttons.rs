@@ -1,10 +1,9 @@
 use crate::keyboard::{logged_in_operations, logged_out_operations};
-use crate::v1::commands::{CommandLoggedIn, CommandLoggedOut};
-use crate::v1::constants::MAN_PAGE;
-use crate::v1::models::{PASSWORD_HANDLERS, log_in_state, password_handler::PasswordHandler};
-use crate::v1::processors::message_processor::{CHAT_MESSAGE_IDS, logout, print_keys};
-use crate::v1::services::user_config_store::UserConfigStore;
-use std::error::Error;
+use crate::commands::CommandLoggedIn;
+use crate::constants::MAN_PAGE;
+use crate::models::{log_in_state, password_handler::PasswordHandler};
+use crate::processors::message_processor::{CHAT_MESSAGE_IDS, logout, print_keys};
+use crate::services::user_config_store::UserConfigStore;
 use std::sync::Arc;
 use teloxide::prelude::ResponseResult;
 use teloxide::prelude::*;
