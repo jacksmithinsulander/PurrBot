@@ -73,3 +73,17 @@ services:
     depends_on:
       - meow
     # No default command - we'll specify it when running
+
+  cargo-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.meow
+      target: dev
+    env_file:
+      - .env
+    environment:
+      - RUST_LOG=debug
+    volumes:
+      - .:/usr/src/purrbot
+    working_dir: /usr/src/purrbot/meow
+    command: cargo test

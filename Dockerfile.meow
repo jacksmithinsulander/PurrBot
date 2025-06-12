@@ -18,6 +18,13 @@ COPY meow/assets meow/assets/
 WORKDIR /usr/src/purrbot/meow
 RUN cargo build --release --features vsock
 
+# Development stage for testing
+FROM --platform=linux/amd64 rust:1.85-slim-bookworm AS dev
+RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
+WORKDIR /usr/src/purrbot
+COPY . .
+WORKDIR /usr/src/purrbot/meow
+
 # Runtime stage
 FROM --platform=linux/amd64 debian:bookworm-slim
 RUN apt-get update && apt-get install -y ca-certificates libssl3 procps && rm -rf /var/lib/apt/lists/*

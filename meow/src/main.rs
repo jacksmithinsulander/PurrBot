@@ -1,20 +1,20 @@
+use nine_sdk::Transport;
 use std::error::Error;
 use teloxide::{prelude::*, utils::command::BotCommands};
-use nine_sdk::Transport;
-mod keyboard;
 mod commands;
 mod constants;
 mod handlers;
+mod keyboard;
 mod models;
 mod processors;
 mod services;
-use std::sync::Arc;
-use services::user_config_store::UserConfigStore;
-use teloxide::Bot;
-use teloxide::dispatching::{Dispatcher, UpdateFilterExt};
-use teloxide::dptree;
 use commands::CommandLoggedOut;
 use handlers::callback_handler;
+use services::user_config_store::UserConfigStore;
+use std::sync::Arc;
+use teloxide::dispatching::{Dispatcher, UpdateFilterExt};
+use teloxide::dptree;
+use teloxide::Bot;
 
 // Constants
 const DEFAULT_DATABASE_PATH: &str = "purrbot.sqlite";
@@ -72,12 +72,19 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .unwrap_or_else(|_| "5005".to_string())
             .parse::<u32>()
             .expect("Invalid VSOCK_PORT");
-        
-        log::info!("Using vsock transport to enclave: CID={}, Port={}", enclave_cid, port);
-        
+
+        log::info!(
+            "Using vsock transport to enclave: CID={}, Port={}",
+            enclave_cid,
+            port
+        );
+
         #[cfg(feature = "vsock")]
         {
-            Transport::Vsock { cid: enclave_cid, port }
+            Transport::Vsock {
+                cid: enclave_cid,
+                port,
+            }
         }
         #[cfg(not(feature = "vsock"))]
         {
@@ -125,7 +132,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_constants() {
         assert_eq!(DEFAULT_DATABASE_PATH, "purrbot.sqlite");
@@ -133,116 +140,111 @@ mod tests {
         assert_eq!(ENCLAVE_MODE_ENV_VAR, "ENCLAVE_MODE");
         assert_eq!(ENCLAVE_MODE_VALUE, "enclave");
     }
-    
+
     #[test]
     fn test_is_enclave_mode() {
         // Save original env
         let original = std::env::var(ENCLAVE_MODE_ENV_VAR).ok();
-        
+
         // Test when env var is not set
         std::env::remove_var(ENCLAVE_MODE_ENV_VAR);
         assert!(!is_enclave_mode());
-        
+
         // Test when env var is set to "enclave"
         std::env::set_var(ENCLAVE_MODE_ENV_VAR, "enclave");
         assert!(is_enclave_mode());
-        
+
         // Test when env var is set to something else
         std::env::set_var(ENCLAVE_MODE_ENV_VAR, "not_enclave");
         assert!(!is_enclave_mode());
-        
+
         // Test when env var is set to empty string
         std::env::set_var(ENCLAVE_MODE_ENV_VAR, "");
         assert!(!is_enclave_mode());
-        
+
         // Test case sensitivity
         std::env::set_var(ENCLAVE_MODE_ENV_VAR, "ENCLAVE");
         assert!(!is_enclave_mode());
-        
+
         // Restore original state
         match original {
             Some(val) => std::env::set_var(ENCLAVE_MODE_ENV_VAR, val),
             None => std::env::remove_var(ENCLAVE_MODE_ENV_VAR),
         }
     }
-    
+
     #[test]
     fn test_create_tcp_transport() {
         let transport = create_tcp_transport("127.0.0.1:5005");
-        match transport {
-            Transport::Tcp(addr) => {
-                assert_eq!(addr.to_string(), "127.0.0.1:5005");
-            }
-            _ => panic!("Expected TCP transport"),
+        if let Transport::Tcp(addr) = transport {
+            assert_eq!(addr.to_string(), "127.0.0.1:5005");
+        } else {
+            panic!("Expected TCP transport");
         }
     }
-    
+
     #[test]
     #[should_panic(expected = "Invalid TCP address")]
     fn test_create_tcp_transport_invalid_address() {
         create_tcp_transport("invalid:address:format");
     }
-    
+
     #[test]
     fn test_create_default_transport() {
         let transport = create_default_transport();
-        match transport {
-            Transport::Tcp(addr) => {
-                assert_eq!(addr.to_string(), DEFAULT_TCP_ADDRESS);
-            }
-            _ => panic!("Expected TCP transport"),
+        if let Transport::Tcp(addr) = transport {
+            assert_eq!(addr.to_string(), DEFAULT_TCP_ADDRESS);
+        } else {
+            panic!("Expected TCP transport");
         }
     }
-    
+
     #[test]
     fn test_create_enclave_transport() {
         let transport = create_enclave_transport();
-        match transport {
-            Transport::Tcp(addr) => {
-                assert_eq!(addr.to_string(), DEFAULT_TCP_ADDRESS);
-            }
-            _ => panic!("Expected TCP transport"),
+        if let Transport::Tcp(addr) = transport {
+            assert_eq!(addr.to_string(), DEFAULT_TCP_ADDRESS);
+        } else {
+            panic!("Expected TCP transport");
         }
     }
-    
+
     #[test]
     fn test_determine_transport() {
         // Save original env
         let original = std::env::var(ENCLAVE_MODE_ENV_VAR).ok();
-        
+
         // Test non-enclave mode
         std::env::remove_var(ENCLAVE_MODE_ENV_VAR);
         let transport = determine_transport();
-        match transport {
-            Transport::Tcp(addr) => {
-                assert_eq!(addr.to_string(), DEFAULT_TCP_ADDRESS);
-            }
-            _ => panic!("Expected TCP transport"),
+        if let Transport::Tcp(addr) = transport {
+            assert_eq!(addr.to_string(), DEFAULT_TCP_ADDRESS);
+        } else {
+            panic!("Expected TCP transport");
         }
-        
+
         // Test enclave mode
         std::env::set_var(ENCLAVE_MODE_ENV_VAR, "enclave");
         let transport = determine_transport();
-        match transport {
-            Transport::Tcp(addr) => {
-                assert_eq!(addr.to_string(), DEFAULT_TCP_ADDRESS);
-            }
-            _ => panic!("Expected TCP transport"),
+        if let Transport::Tcp(addr) = transport {
+            assert_eq!(addr.to_string(), DEFAULT_TCP_ADDRESS);
+        } else {
+            panic!("Expected TCP transport");
         }
-        
+
         // Restore original state
         match original {
             Some(val) => std::env::set_var(ENCLAVE_MODE_ENV_VAR, val),
             None => std::env::remove_var(ENCLAVE_MODE_ENV_VAR),
         }
     }
-    
+
     #[test]
     fn test_create_config_store() {
         let config_store = UserConfigStore::new(DEFAULT_DATABASE_PATH).unwrap();
         assert_eq!(config_store.get_database_path(), DEFAULT_DATABASE_PATH);
     }
-    
+
     #[test]
     fn test_main_function_exists() {
         // This is a simple test to ensure the main function exists

@@ -1,8 +1,8 @@
-use crate::keyboard::{logged_in_operations, logged_out_operations};
 use crate::commands::CommandLoggedIn;
 use crate::constants::MAN_PAGE;
+use crate::keyboard::{logged_in_operations, logged_out_operations};
 use crate::models::{log_in_state, password_handler::PasswordHandler};
-use crate::processors::message_processor::{CHAT_MESSAGE_IDS, logout, print_keys};
+use crate::processors::message_processor::{logout, print_keys, CHAT_MESSAGE_IDS};
 use crate::services::user_config_store::UserConfigStore;
 use std::sync::Arc;
 use teloxide::prelude::ResponseResult;
@@ -58,7 +58,7 @@ impl Button {
         is_logged_in: bool,
     ) -> ResponseResult<()> {
         log::debug!("Executing Button: {:?}", self);
-        
+
         match self {
             // Logged in buttons
             Button::List => handle_list_button(bot, chat_id).await,
@@ -115,7 +115,7 @@ async fn handle_create_button(bot: Bot, chat_id: ChatId) -> ResponseResult<()> {
 async fn handle_logout_button(bot: Bot, chat_id: ChatId) -> ResponseResult<()> {
     log::info!("Button::LogOut pressed for chat_id={}", chat_id);
     log::debug!("Executing LogOut button");
-    
+
     match logout(chat_id, &bot).await {
         Ok(_) => {
             log::debug!("Logout successful");
@@ -129,7 +129,7 @@ async fn handle_logout_button(bot: Bot, chat_id: ChatId) -> ResponseResult<()> {
             store_message_id(chat_id, message.id).await;
         }
     }
-    
+
     log::info!("Button::LogOut completed for chat_id={}", chat_id);
     log::debug!("LogOut button execution completed");
     Ok(())
@@ -139,7 +139,7 @@ async fn handle_logout_button(bot: Bot, chat_id: ChatId) -> ResponseResult<()> {
 async fn handle_print_keys_button(bot: Bot, chat_id: ChatId) -> ResponseResult<()> {
     log::info!("Button::PrintKeys pressed for chat_id={}", chat_id);
     log::debug!("Executing PrintKeys button");
-    
+
     match print_keys(chat_id, &bot).await {
         Ok(_) => {
             log::debug!("Print keys successful");
@@ -148,7 +148,7 @@ async fn handle_print_keys_button(bot: Bot, chat_id: ChatId) -> ResponseResult<(
                     chat_id: chat_id.into(),
                 })
                 .await?;
-            
+
             let keyboard = logged_in_operations();
             let message = bot
                 .send_message(
@@ -168,7 +168,7 @@ async fn handle_print_keys_button(bot: Bot, chat_id: ChatId) -> ResponseResult<(
             store_message_id(chat_id, message.id).await;
         }
     }
-    
+
     log::info!("Button::PrintKeys completed for chat_id={}", chat_id);
     log::debug!("PrintKeys button execution completed");
     Ok(())

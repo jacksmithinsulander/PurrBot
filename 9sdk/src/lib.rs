@@ -1,16 +1,17 @@
 use argon2::{
-    Argon2,
     password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
+    Argon2,
 };
-use rand::{RngCore, thread_rng};
+use chacha20poly1305::aead::Aead;
+use chacha20poly1305::{ChaCha20Poly1305, Key, KeyInit, Nonce};
+use rand::{thread_rng, RngCore};
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
 use thiserror::Error;
-use chacha20poly1305::{ChaCha20Poly1305, Key, Nonce};
 
 pub mod transport;
 
-pub use transport::{Transport, connect, listen};
+pub use transport::{connect, listen, Transport};
 
 #[derive(Error, Debug)]
 pub enum KeyManagerError {

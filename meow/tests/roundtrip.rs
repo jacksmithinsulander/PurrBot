@@ -1,10 +1,10 @@
+use nine_sdk::{KeyManager, Transport};
 use serde_json::json;
 use std::io::{Read, Write};
-use std::process::{Command, Child};
+use std::process::{Child, Command};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::time::{sleep, Duration};
-use nine_sdk::{KeyManager, Transport};
 
 // Constants for better maintainability
 const ENCLAVE_ADDRESS: &str = "127.0.0.1:5005";
@@ -16,26 +16,26 @@ const MESSAGE_LENGTH_SIZE: usize = 4;
 #[ignore = "Requires nine-sdk-enclave binary from another package"]
 async fn test_enclave_roundtrip() -> Result<(), Box<dyn std::error::Error>> {
     let mut enclave_process = start_enclave_process()?;
-    
+
     // Ensure cleanup happens even if test fails
     let result = run_enclave_test().await;
-    
+
     cleanup_enclave_process(&mut enclave_process)?;
-    
+
     result
 }
 
 async fn run_enclave_test() -> Result<(), Box<dyn std::error::Error>> {
     wait_for_enclave_startup().await;
-    
+
     let mut connection = connect_to_enclave().await?;
-    
+
     send_setup_config_request(&mut connection, TEST_PASSWORD).await?;
-    
+
     let response = read_enclave_response(&mut connection).await?;
-    
+
     verify_config_setup_response(&response)?;
-    
+
     Ok(())
 }
 
@@ -54,7 +54,9 @@ async fn wait_for_enclave_startup() {
 }
 
 fn cleanup_enclave_process(process: &mut Child) -> Result<(), Box<dyn std::error::Error>> {
-    process.kill().map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
+    process
+        .kill()
+        .map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
 }
 
 // Network communication functions
@@ -90,8 +92,7 @@ async fn send_request(
 }
 
 fn serialize_request(request: &serde_json::Value) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-    serde_json::to_vec(request)
-        .map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
+    serde_json::to_vec(request).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
 }
 
 async fn write_message_with_length(
@@ -99,10 +100,10 @@ async fn write_message_with_length(
     data: &[u8],
 ) -> Result<(), Box<dyn std::error::Error>> {
     let length_bytes = encode_message_length(data.len());
-    
+
     stream.write_all(&length_bytes).await?;
     stream.write_all(data).await?;
-    
+
     Ok(())
 }
 
@@ -140,13 +141,14 @@ async fn read_message_body(
 }
 
 fn deserialize_response(data: &[u8]) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
-    serde_json::from_slice(data)
-        .map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
+    serde_json::from_slice(data).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)
 }
 
 // Verification functions
 
-fn verify_config_setup_response(response: &serde_json::Value) -> Result<(), Box<dyn std::error::Error>> {
+fn verify_config_setup_response(
+    response: &serde_json::Value,
+) -> Result<(), Box<dyn std::error::Error>> {
     if response.get("ConfigSetup").is_some() {
         Ok(())
     } else {

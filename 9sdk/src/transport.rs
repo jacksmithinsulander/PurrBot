@@ -5,14 +5,17 @@ use tokio::io::{AsyncRead, AsyncWrite};
 use tokio::net::{TcpListener, TcpStream};
 
 #[cfg(feature = "vsock")]
-use vsock::{VsockListener, VsockStream, VsockAddr};
+use vsock::{VsockAddr, VsockListener, VsockStream};
 
 /// Transport configuration for different connection types
 #[derive(Clone)]
 pub enum Transport {
     Tcp(SocketAddr),
     #[cfg(feature = "vsock")]
-    Vsock { cid: u32, port: u32 },
+    Vsock {
+        cid: u32,
+        port: u32,
+    },
 }
 
 /// Trait for unified stream handling across transport types
@@ -118,18 +121,18 @@ async fn listen_tcp(addr: SocketAddr) -> io::Result<Pin<Box<dyn TransportStream>
 #[cfg(feature = "vsock")]
 async fn connect_vsock(cid: u32, port: u32) -> io::Result<Pin<Box<dyn TransportStream>>> {
     use std::os::unix::io::AsRawFd;
-    
+
     // Create VsockAddr and connect
     let addr = VsockAddr::new(cid, port);
     let stream = VsockStream::connect(&addr)?;
-    
+
     // Set non-blocking mode for async operation
     let fd = stream.as_raw_fd();
     unsafe {
         let flags = libc::fcntl(fd, libc::F_GETFL, 0);
         libc::fcntl(fd, libc::F_SETFL, flags | libc::O_NONBLOCK);
     }
-    
+
     let async_stream = AsyncVsockStream { inner: stream };
     Ok(Box::pin(async_stream))
 }
@@ -137,19 +140,19 @@ async fn connect_vsock(cid: u32, port: u32) -> io::Result<Pin<Box<dyn TransportS
 #[cfg(feature = "vsock")]
 async fn listen_vsock(cid: u32, port: u32) -> io::Result<Pin<Box<dyn TransportStream>>> {
     use std::os::unix::io::AsRawFd;
-    
+
     // Create VsockAddr and bind listener
     let addr = VsockAddr::new(cid, port);
     let listener = VsockListener::bind(&addr)?;
     let (stream, _) = listener.accept()?;
-    
+
     // Set non-blocking mode for async operation
     let fd = stream.as_raw_fd();
     unsafe {
         let flags = libc::fcntl(fd, libc::F_GETFL, 0);
         libc::fcntl(fd, libc::F_SETFL, flags | libc::O_NONBLOCK);
     }
-    
+
     let async_stream = AsyncVsockStream { inner: stream };
     Ok(Box::pin(async_stream))
 }
@@ -172,7 +175,7 @@ mod tests {
     fn test_create_tcp_transport() {
         let addr = SocketAddr::new(LOCALHOST_V4, TEST_PORT);
         let transport = Transport::Tcp(addr);
-        
+
         match transport {
             Transport::Tcp(socket_addr) => {
                 assert_eq!(socket_addr, addr);
@@ -188,7 +191,7 @@ mod tests {
     fn test_create_tcp_transport_ipv6() {
         let addr = SocketAddr::new(LOCALHOST_V6, TEST_PORT);
         let transport = Transport::Tcp(addr);
-        
+
         match transport {
             Transport::Tcp(socket_addr) => {
                 assert_eq!(socket_addr.ip(), LOCALHOST_V6);
@@ -204,7 +207,7 @@ mod tests {
         let addr = SocketAddr::new(LOCALHOST_V4, TEST_PORT);
         let transport1 = Transport::Tcp(addr);
         let transport2 = transport1.clone();
-        
+
         match (transport1, transport2) {
             (Transport::Tcp(addr1), Transport::Tcp(addr2)) => {
                 assert_eq!(addr1, addr2);
@@ -220,7 +223,7 @@ mod tests {
         let cid = 3;
         let port = 5000;
         let transport = Transport::Vsock { cid, port };
-        
+
         match transport {
             Transport::Vsock { cid: c, port: p } => {
                 assert_eq!(c, cid);
@@ -236,7 +239,7 @@ mod tests {
     async fn test_tcp_connect_to_invalid_address() {
         let addr = SocketAddr::new(LOCALHOST_V4, 1); // Port 1 should be unavailable
         let transport = Transport::Tcp(addr);
-        
+
         let result = connect(transport).await;
         assert!(result.is_err());
     }
@@ -245,10 +248,10 @@ mod tests {
     async fn test_tcp_listen_on_available_port() {
         let addr = SocketAddr::new(LOCALHOST_V4, 0); // Port 0 = any available port
         let transport = Transport::Tcp(addr);
-        
+
         // Should succeed as port 0 lets the OS assign an available port
         let result = timeout(Duration::from_secs(1), listen(transport)).await;
-        
+
         // Timeout is expected since no one connects
         assert!(result.is_err());
     }
@@ -256,40 +259,40 @@ mod tests {
     #[tokio::test]
     async fn test_tcp_connection_lifecycle() {
         use tokio::io::{AsyncReadExt, AsyncWriteExt};
-        
+
         // Use port 0 to get an available port
         let listener_addr = SocketAddr::new(LOCALHOST_V4, 0);
         let listener = TcpListener::bind(listener_addr).await.unwrap();
         let actual_addr = listener.local_addr().unwrap();
-        
+
         // Spawn listener task
         let listener_task = tokio::spawn(async move {
             let (mut stream, _) = listener.accept().await.unwrap();
-            
+
             // Read data
             let mut buf = [0u8; 5];
             stream.read_exact(&mut buf).await.unwrap();
             assert_eq!(&buf, b"Hello");
-            
+
             // Write response
             stream.write_all(b"World").await.unwrap();
         });
-        
+
         // Give listener time to start
         tokio::time::sleep(Duration::from_millis(10)).await;
-        
+
         // Connect to listener
         let transport = Transport::Tcp(actual_addr);
         let mut stream = connect(transport).await.unwrap();
-        
+
         // Write data
         stream.write_all(b"Hello").await.unwrap();
-        
+
         // Read response
         let mut buf = [0u8; 5];
         stream.read_exact(&mut buf).await.unwrap();
         assert_eq!(&buf, b"World");
-        
+
         // Wait for listener task
         listener_task.await.unwrap();
     }
@@ -308,7 +311,10 @@ mod tests {
     #[cfg(feature = "vsock")]
     #[tokio::test]
     async fn test_vsock_connect_invalid() {
-        let transport = Transport::Vsock { cid: 999999, port: 12345 };
+        let transport = Transport::Vsock {
+            cid: 999999,
+            port: 12345,
+        };
         let result = connect(transport).await;
         assert!(result.is_err());
     }
@@ -318,7 +324,7 @@ mod tests {
     fn test_vsock_transport_clone() {
         let transport1 = Transport::Vsock { cid: 3, port: 5000 };
         let transport2 = transport1.clone();
-        
+
         match (transport1, transport2) {
             (Transport::Vsock { cid: c1, port: p1 }, Transport::Vsock { cid: c2, port: p2 }) => {
                 assert_eq!(c1, c2);
@@ -333,20 +339,20 @@ mod tests {
     #[tokio::test]
     async fn test_transport_stream_trait_implementation() {
         use tokio::io::{AsyncReadExt, AsyncWriteExt};
-        
+
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let addr = listener.local_addr().unwrap();
-        
+
         tokio::spawn(async move {
             let (mut stream, _) = listener.accept().await.unwrap();
             let mut buf = vec![0; 4];
             stream.read_exact(&mut buf).await.unwrap();
             stream.write_all(&buf).await.unwrap();
         });
-        
+
         let transport = Transport::Tcp(addr);
         let mut stream: Pin<Box<dyn TransportStream>> = connect(transport).await.unwrap();
-        
+
         // Test that TransportStream trait works correctly
         stream.write_all(b"test").await.unwrap();
         let mut buf = vec![0; 4];

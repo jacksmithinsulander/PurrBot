@@ -1,13 +1,13 @@
 use crate::services::user_config_store::{UserConfigStore, UserConfigStoreError};
+use alloy_primitives::{Address, B256};
+use alloy_signer_local::{LocalSigner, PrivateKeySigner};
 use nine_sdk::{EncryptedKeyConfig, KeyManager};
+use rand;
+use serde::{Deserialize, Serialize};
 use serde_json;
 use std::sync::Arc;
 use thiserror::Error;
 use tokio::sync::Mutex;
-use alloy_signer_local::{PrivateKeySigner, LocalSigner};
-use alloy_primitives::{Address, B256};
-use serde::{Deserialize, Serialize};
-use rand;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct UserWalletConfig {
@@ -60,38 +60,42 @@ impl PasswordHandler {
         let config_json = key_manager.setup_config(password).await.map_err(|e| {
             Box::new(PasswordError::KeyManagerError(e)) as Box<dyn std::error::Error + Send + Sync>
         })?;
-        
+
         let encrypted_key_config: EncryptedKeyConfig = serde_json::from_str(&config_json)?;
-        
+
         // Derive encryption keys to encrypt the Ethereum private key
-        let (key1, _key2) = key_manager.verify_and_derive_keys(password).await.map_err(|e| {
-            Box::new(PasswordError::KeyManagerError(e)) as Box<dyn std::error::Error + Send + Sync>
-        })?;
-        
+        let (key1, _key2) = key_manager
+            .verify_and_derive_keys(password)
+            .await
+            .map_err(|e| {
+                Box::new(PasswordError::KeyManagerError(e))
+                    as Box<dyn std::error::Error + Send + Sync>
+            })?;
+
         // Generate Ethereum wallet
         let wallet = PrivateKeySigner::random();
         let ethereum_private_key = hex::encode(wallet.to_bytes());
         let ethereum_public_key = hex::encode(wallet.address().as_slice());
         let ethereum_address = format!("{:?}", wallet.address());
-        
+
         // Store wallet in memory
         {
             let mut eth_wallet = self.ethereum_wallet.lock().await;
             *eth_wallet = Some(wallet);
         }
-        
+
         // Encrypt the private key using ChaCha20Poly1305
         let mut nonce = [0u8; 12];
         rand::Rng::fill(&mut rand::thread_rng(), &mut nonce);
-        
-        let encrypted_private_key = nine_sdk::encrypt_chacha20(
-            &key1,
-            ethereum_private_key.as_bytes(),
-            &nonce
-        ).map_err(|e| {
-            Box::new(PasswordError::EncryptionError(e.to_string())) as Box<dyn std::error::Error + Send + Sync>
-        })?;
-        
+
+        let encrypted_private_key =
+            nine_sdk::encrypt_chacha20(&key1, ethereum_private_key.as_bytes(), &nonce).map_err(
+                |e| {
+                    Box::new(PasswordError::EncryptionError(e.to_string()))
+                        as Box<dyn std::error::Error + Send + Sync>
+                },
+            )?;
+
         // Create wallet config
         let wallet_config = UserWalletConfig {
             encrypted_key_config,
@@ -100,14 +104,14 @@ impl PasswordHandler {
             ethereum_address,
             nonce: hex::encode(&nonce),
         };
-        
+
         let wallet_config_json = serde_json::to_string_pretty(&wallet_config)?;
-        
+
         // Persist config JSON to DB
         self.config_store
             .insert_or_update_config(user_id, &wallet_config_json)
             .await?;
-        
+
         Ok(wallet_config_json)
     }
 
@@ -119,52 +123,61 @@ impl PasswordHandler {
         // Load config from DB
         let config_json: String = self.config_store.get_config(user_id).await?;
         let wallet_config: UserWalletConfig = serde_json::from_str(&config_json)?;
-        
+
         let mut key_manager = self.key_manager.lock().await;
         // Set config in KeyManager
         key_manager.set_config(wallet_config.encrypted_key_config.clone());
-        
+
         // Attempt to verify and derive keys
         match key_manager.verify_and_derive_keys(password).await {
             Ok((key1, _key2)) => {
                 // Decrypt the Ethereum private key
-                let nonce_bytes = hex::decode(&wallet_config.nonce)
-                    .map_err(|e| Box::new(PasswordError::EncryptionError(e.to_string())) as Box<dyn std::error::Error + Send + Sync>)?;
+                let nonce_bytes = hex::decode(&wallet_config.nonce).map_err(|e| {
+                    Box::new(PasswordError::EncryptionError(e.to_string()))
+                        as Box<dyn std::error::Error + Send + Sync>
+                })?;
                 let mut nonce = [0u8; 12];
                 nonce.copy_from_slice(&nonce_bytes[..12]);
-                
-                let encrypted_key_bytes = hex::decode(&wallet_config.encrypted_ethereum_private_key)
-                    .map_err(|e| Box::new(PasswordError::EncryptionError(e.to_string())) as Box<dyn std::error::Error + Send + Sync>)?;
-                
-                let decrypted_key = nine_sdk::decrypt_chacha20(
-                    &key1,
-                    &encrypted_key_bytes,
-                    &nonce
-                ).map_err(|e| {
-                    Box::new(PasswordError::EncryptionError(e.to_string())) as Box<dyn std::error::Error + Send + Sync>
+
+                let encrypted_key_bytes =
+                    hex::decode(&wallet_config.encrypted_ethereum_private_key).map_err(|e| {
+                        Box::new(PasswordError::EncryptionError(e.to_string()))
+                            as Box<dyn std::error::Error + Send + Sync>
+                    })?;
+
+                let decrypted_key = nine_sdk::decrypt_chacha20(&key1, &encrypted_key_bytes, &nonce)
+                    .map_err(|e| {
+                        Box::new(PasswordError::EncryptionError(e.to_string()))
+                            as Box<dyn std::error::Error + Send + Sync>
+                    })?;
+
+                let private_key_hex = String::from_utf8(decrypted_key).map_err(|e| {
+                    Box::new(PasswordError::EncryptionError(e.to_string()))
+                        as Box<dyn std::error::Error + Send + Sync>
                 })?;
-                
-                let private_key_hex = String::from_utf8(decrypted_key)
-                    .map_err(|e| Box::new(PasswordError::EncryptionError(e.to_string())) as Box<dyn std::error::Error + Send + Sync>)?;
-                
-                let private_key_bytes = hex::decode(&private_key_hex)
-                    .map_err(|e| Box::new(PasswordError::EncryptionError(e.to_string())) as Box<dyn std::error::Error + Send + Sync>)?;
-                
+
+                let private_key_bytes = hex::decode(&private_key_hex).map_err(|e| {
+                    Box::new(PasswordError::EncryptionError(e.to_string()))
+                        as Box<dyn std::error::Error + Send + Sync>
+                })?;
+
                 // Convert to B256 for alloy
                 let mut key_array = [0u8; 32];
                 key_array.copy_from_slice(&private_key_bytes[..32]);
                 let b256_key = B256::from(key_array);
-                
+
                 // Reconstruct the wallet from the private key
-                let wallet = PrivateKeySigner::from_bytes(&b256_key)
-                    .map_err(|e| Box::new(PasswordError::WalletError(e.to_string())) as Box<dyn std::error::Error + Send + Sync>)?;
-                
+                let wallet = PrivateKeySigner::from_bytes(&b256_key).map_err(|e| {
+                    Box::new(PasswordError::WalletError(e.to_string()))
+                        as Box<dyn std::error::Error + Send + Sync>
+                })?;
+
                 // Store wallet in memory
                 {
                     let mut eth_wallet = self.ethereum_wallet.lock().await;
                     *eth_wallet = Some(wallet);
                 }
-                
+
                 Ok(true)
             }
             Err(e) => {
@@ -204,26 +217,26 @@ impl PasswordHandler {
 mod tests {
     use super::*;
     use tempfile::NamedTempFile;
-    
+
     #[tokio::test]
     async fn test_ethereum_key_generation_and_recovery() {
         // Create a temporary database
         let temp_file = NamedTempFile::new().unwrap();
         let db_path = temp_file.path().to_str().unwrap();
-        
+
         // Create user config store
         let config_store = Arc::new(UserConfigStore::new(db_path).unwrap());
-        
+
         // Create password handler
         let handler = PasswordHandler::new(config_store.clone()).unwrap();
-        
+
         // Test user credentials
         let user_id = "test_user_123";
         let password = "strong_password_123!";
-        
+
         // Sign up (generates Ethereum wallet)
         let config_json = handler.sign_up(user_id, password).await.unwrap();
-        
+
         // Parse the config to verify it has the expected fields
         let wallet_config: UserWalletConfig = serde_json::from_str(&config_json).unwrap();
         assert!(!wallet_config.encrypted_ethereum_private_key.is_empty());

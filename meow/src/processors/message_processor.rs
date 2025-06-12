@@ -1,6 +1,6 @@
-use crate::keyboard::{logged_in_operations, logged_out_operations};
 use crate::commands::{CommandLoggedIn, CommandLoggedOut};
-use crate::models::{PASSWORD_HANDLERS, log_in_state, password_handler::PasswordHandler};
+use crate::keyboard::{logged_in_operations, logged_out_operations};
+use crate::models::{log_in_state, password_handler::PasswordHandler, PASSWORD_HANDLERS};
 use hex;
 use std::error::Error;
 use teloxide::{
@@ -20,11 +20,11 @@ pub static CHAT_MESSAGE_IDS: Lazy<Mutex<HashMap<ChatId, Vec<MessageId>>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));
 
 /// Deletes all messages for a given chat
-/// 
+///
 /// # Arguments
 /// * `chat_id` - The chat ID to delete messages for
 /// * `bot` - The bot instance to use for deletion
-/// 
+///
 /// # Returns
 /// * `Result<(), Box<dyn Error + Send + Sync>>` - Result indicating success or failure
 pub async fn delete_all_messages(
@@ -33,7 +33,7 @@ pub async fn delete_all_messages(
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
     log::debug!("Attempting to delete messages for chat_id={}", chat_id);
     let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
-    
+
     if let Some(ids) = chat_message_ids.get(&chat_id) {
         log::debug!(
             "Found {} messages to delete for chat_id={}",
@@ -44,7 +44,7 @@ pub async fn delete_all_messages(
     } else {
         log::debug!("No messages found to delete for chat_id={}", chat_id);
     }
-    
+
     chat_message_ids.remove(&chat_id);
     log::debug!("Message deletion completed for chat_id={}", chat_id);
     Ok(())
@@ -70,11 +70,11 @@ async fn delete_messages_for_chat(
 }
 
 /// Prints the user's keys if they are logged in
-/// 
+///
 /// # Arguments
 /// * `chat_id` - The chat ID to print keys for
 /// * `bot` - The bot instance to use for sending messages
-/// 
+///
 /// # Returns
 /// * `Result<(), Box<dyn Error + Send + Sync>>` - Result indicating success or failure
 pub async fn print_keys(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -83,7 +83,7 @@ pub async fn print_keys(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error 
 
     let handler = PASSWORD_HANDLERS.lock().await;
     let keys_result = get_user_keys(&handler, chat_id).await;
-    
+
     match keys_result {
         Ok((private_key, public_key)) => {
             send_keys_message(bot, chat_id, private_key, public_key).await?;
@@ -140,7 +140,10 @@ async fn send_keys_message(
 }
 
 /// Helper function to send no keys message
-async fn send_no_keys_message(bot: &Bot, chat_id: ChatId) -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn send_no_keys_message(
+    bot: &Bot,
+    chat_id: ChatId,
+) -> Result<(), Box<dyn Error + Send + Sync>> {
     let msg = bot
         .send_message(chat_id, "❌ No keys available. Please log in first.")
         .await?;
@@ -155,11 +158,11 @@ async fn store_message_id(chat_id: ChatId, message_id: MessageId) {
 }
 
 /// Logs out a user and cleans up their state
-/// 
+///
 /// # Arguments
 /// * `chat_id` - The chat ID to logout
 /// * `bot` - The bot instance to use for sending messages
-/// 
+///
 /// # Returns
 /// * `Result<(), Box<dyn Error + Send + Sync>>` - Result indicating success or failure
 pub async fn logout(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -174,7 +177,10 @@ pub async fn logout(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Error + Se
     send_logout_confirmation(bot, chat_id).await?;
     cleanup_messages(chat_id, bot).await?;
 
-    log::info!("Logout process completed successfully for chat_id={}", chat_id);
+    log::info!(
+        "Logout process completed successfully for chat_id={}",
+        chat_id
+    );
     Ok(())
 }
 
@@ -194,11 +200,11 @@ async fn handle_not_logged_in_logout(
         .send_message(chat_id, "❌ You are not logged in!")
         .reply_markup(logged_out_operations())
         .await?;
-    
+
     if std::env::var("TEST_MODE").is_err() {
         store_message_id(chat_id, message.id).await;
     }
-    
+
     Ok(())
 }
 
@@ -206,15 +212,18 @@ async fn handle_not_logged_in_logout(
 async fn cleanup_user_state(chat_id: ChatId) {
     let mut states = log_in_state::USER_STATES.lock().await;
     states.insert(chat_id.0, log_in_state::AwaitingState::None);
-    
+
     let mut handler = PASSWORD_HANDLERS.lock().await;
     handler.remove(&chat_id.0);
-    
+
     log::info!("User state cleaned up for chat_id={}", chat_id);
 }
 
 /// Helper function to update bot commands
-async fn update_bot_commands(bot: &Bot, chat_id: ChatId) -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn update_bot_commands(
+    bot: &Bot,
+    chat_id: ChatId,
+) -> Result<(), Box<dyn Error + Send + Sync>> {
     if let Err(e) = bot
         .set_my_commands(CommandLoggedOut::bot_commands())
         .scope(BotCommandScope::Chat {
@@ -230,16 +239,19 @@ async fn update_bot_commands(bot: &Bot, chat_id: ChatId) -> Result<(), Box<dyn E
 }
 
 /// Helper function to send logout confirmation
-async fn send_logout_confirmation(bot: &Bot, chat_id: ChatId) -> Result<(), Box<dyn Error + Send + Sync>> {
+async fn send_logout_confirmation(
+    bot: &Bot,
+    chat_id: ChatId,
+) -> Result<(), Box<dyn Error + Send + Sync>> {
     let message = bot
         .send_message(chat_id, "👋 You have been logged out successfully!")
         .reply_markup(logged_out_operations())
         .await?;
-    
+
     if std::env::var("TEST_MODE").is_err() {
         store_message_id(chat_id, message.id).await;
     }
-    
+
     Ok(())
 }
 
@@ -255,13 +267,13 @@ async fn cleanup_messages(chat_id: ChatId, bot: &Bot) -> Result<(), Box<dyn Erro
 }
 
 /// Processes incoming messages and handles commands
-/// 
+///
 /// # Arguments
 /// * `bot` - The bot instance
 /// * `msg` - The message to process
 /// * `me` - Bot information
 /// * `config_store` - User configuration store
-/// 
+///
 /// # Returns
 /// * `Result<(), Box<dyn Error + Send + Sync>>` - Result indicating success or failure
 pub async fn process_message(
@@ -290,17 +302,17 @@ async fn handle_logout_command(bot: Bot, msg: Message) -> Result<(), Box<dyn Err
         "Handling /logout command directly for user {}",
         msg.chat.id.0
     );
-    
+
     if !is_user_logged_in(msg.chat.id).await {
         let message = bot
             .send_message(msg.chat.id, "❌ You are not logged in!")
             .reply_markup(logged_out_operations())
             .await?;
-        
+
         let mut chat_message_ids = CHAT_MESSAGE_IDS.lock().await;
         chat_message_ids.insert(msg.chat.id, vec![msg.id, message.id]);
         return Ok(());
     }
-    
+
     logout(msg.chat.id, &bot).await
 }

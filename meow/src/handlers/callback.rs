@@ -47,7 +47,7 @@ fn log_callback_result<T, E: std::fmt::Display>(result: &Result<T, E>) {
 mod tests {
     use super::*;
     use teloxide::types::{CallbackQuery, User, UserId};
-    
+
     // Helper function to create a test user
     fn create_test_user() -> User {
         User {
@@ -61,7 +61,7 @@ mod tests {
             added_to_attachment_menu: false,
         }
     }
-    
+
     // Helper function to create a test callback query
     fn create_test_callback_query(data: Option<String>) -> CallbackQuery {
         CallbackQuery {
@@ -74,33 +74,41 @@ mod tests {
             game_short_name: None,
         }
     }
-    
+
     #[test]
     fn test_callback_handler_signature() {
         // Verify that the function exists and has the correct signature
         fn _check_signature(
-            _handler: fn(Bot, CallbackQuery, Arc<UserConfigStore>) -> 
-                std::pin::Pin<Box<dyn std::future::Future<Output = Result<(), Box<dyn Error + Send + Sync>>> + Send>>
-        ) {}
-        
+            _handler: fn(
+                Bot,
+                CallbackQuery,
+                Arc<UserConfigStore>,
+            ) -> std::pin::Pin<
+                Box<
+                    dyn std::future::Future<Output = Result<(), Box<dyn Error + Send + Sync>>>
+                        + Send,
+                >,
+            >,
+        ) {
+        }
+
         _check_signature(|bot, query, store| Box::pin(callback_handler(bot, query, store)));
     }
-    
+
     #[test]
     fn test_log_callback_result_success() {
         let result: Result<(), Box<dyn Error + Send + Sync>> = Ok(());
         // This test verifies the function doesn't panic
         log_callback_result(&result);
     }
-    
+
     #[test]
     fn test_log_callback_result_error() {
-        let result: Result<(), Box<dyn Error + Send + Sync>> = 
-            Err("Test error".into());
+        let result: Result<(), Box<dyn Error + Send + Sync>> = Err("Test error".into());
         // This test verifies the function doesn't panic
         log_callback_result(&result);
     }
-    
+
     #[test]
     fn test_log_callback_result_custom_error() {
         #[derive(Debug)]
@@ -111,27 +119,26 @@ mod tests {
             }
         }
         impl Error for CustomError {}
-        
-        let result: Result<(), Box<dyn Error + Send + Sync>> = 
-            Err(Box::new(CustomError));
+
+        let result: Result<(), Box<dyn Error + Send + Sync>> = Err(Box::new(CustomError));
         // This test verifies the function doesn't panic
         log_callback_result(&result);
     }
-    
+
     #[test]
     fn test_error_types() {
         // Verify that the error type is Send + Sync
         fn assert_send_sync<T: Send + Sync>() {}
         assert_send_sync::<Box<dyn Error + Send + Sync>>();
     }
-    
+
     #[test]
     fn test_callback_query_creation() {
         let query_with_data = create_test_callback_query(Some("test_data".to_string()));
         assert_eq!(query_with_data.data, Some("test_data".to_string()));
         assert_eq!(query_with_data.id, "test_callback_123");
         assert_eq!(query_with_data.from.id, UserId(12345));
-        
+
         let query_without_data = create_test_callback_query(None);
         assert_eq!(query_without_data.data, None);
     }
