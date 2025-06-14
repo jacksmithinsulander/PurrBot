@@ -277,8 +277,197 @@ pub async fn process_message(
             msg.chat.id
         );
 
-        if text.trim().to_lowercase() == "/logout" {
-            return handle_logout_command(bot, msg).await;
+        // Check if user is logged in
+        let is_logged_in = is_user_logged_in(msg.chat.id).await;
+
+        // Handle commands based on login state
+        if text.starts_with('/') {
+            if is_logged_in {
+                match CommandLoggedIn::parse(text, me.username()) {
+                    Ok(command) => {
+                        match command {
+                            CommandLoggedIn::Help => {
+                                let message = bot
+                                    .send_message(msg.chat.id, crate::constants::MAN_PAGE)
+                                    .reply_markup(logged_in_operations())
+                                    .await?;
+                                store_message_id(msg.chat.id, message.id).await;
+                            }
+                            CommandLoggedIn::Start => {
+                                let message = bot
+                                    .send_message(msg.chat.id, "👋 Welcome back! What would you like to do?")
+                                    .reply_markup(logged_in_operations())
+                                    .await?;
+                                store_message_id(msg.chat.id, message.id).await;
+                            }
+                            CommandLoggedIn::List => {
+                                let message = bot
+                                    .send_message(msg.chat.id, "📋 Listing your items...")
+                                    .reply_markup(logged_in_operations())
+                                    .await?;
+                                store_message_id(msg.chat.id, message.id).await;
+                            }
+                            CommandLoggedIn::Trade => {
+                                let message = bot
+                                    .send_message(msg.chat.id, "🔄 Trading interface coming soon...")
+                                    .reply_markup(logged_in_operations())
+                                    .await?;
+                                store_message_id(msg.chat.id, message.id).await;
+                            }
+                            CommandLoggedIn::Create => {
+                                let message = bot
+                                    .send_message(msg.chat.id, "✨ Create interface coming soon...")
+                                    .reply_markup(logged_in_operations())
+                                    .await?;
+                                store_message_id(msg.chat.id, message.id).await;
+                            }
+                            CommandLoggedIn::LogOut => {
+                                return handle_logout_command(bot, msg).await;
+                            }
+                            CommandLoggedIn::PrintKeys => {
+                                print_keys(msg.chat.id, &bot).await?;
+                            }
+                        }
+                    }
+                    Err(_) => {
+                        let message = bot
+                            .send_message(msg.chat.id, "❌ Not a valid command")
+                            .reply_markup(logged_in_operations())
+                            .await?;
+                        store_message_id(msg.chat.id, message.id).await;
+                    }
+                }
+            } else {
+                match CommandLoggedOut::parse(text, me.username()) {
+                    Ok(command) => {
+                        match command {
+                            CommandLoggedOut::Help => {
+                                let message = bot
+                                    .send_message(msg.chat.id, crate::constants::MAN_PAGE)
+                                    .reply_markup(logged_out_operations())
+                                    .await?;
+                                store_message_id(msg.chat.id, message.id).await;
+                            }
+                            CommandLoggedOut::Start => {
+                                let message = bot
+                                    .send_message(msg.chat.id, "👋 GM anon! What would you like to do?")
+                                    .reply_markup(logged_out_operations())
+                                    .await?;
+                                store_message_id(msg.chat.id, message.id).await;
+                            }
+                            CommandLoggedOut::SignUp { password } => {
+                                let mut states = log_in_state::USER_STATES.lock().await;
+                                states.insert(msg.chat.id.0, log_in_state::AwaitingState::AwaitingSignUpPassword);
+                                let message = bot
+                                    .send_message(msg.chat.id, "Choose your password:")
+                                    .reply_markup(logged_out_operations())
+                                    .await?;
+                                store_message_id(msg.chat.id, message.id).await;
+                            }
+                            CommandLoggedOut::LogIn { password } => {
+                                let mut states = log_in_state::USER_STATES.lock().await;
+                                states.insert(msg.chat.id.0, log_in_state::AwaitingState::AwaitingLoginPassword);
+                                let message = bot
+                                    .send_message(msg.chat.id, "Please enter your password:")
+                                    .reply_markup(logged_out_operations())
+                                    .await?;
+                                store_message_id(msg.chat.id, message.id).await;
+                            }
+                            CommandLoggedOut::LogOut => {
+                                return handle_logout_command(bot, msg).await;
+                            }
+                        }
+                    }
+                    Err(_) => {
+                        let message = bot
+                            .send_message(msg.chat.id, "❌ Not a valid command")
+                            .reply_markup(logged_out_operations())
+                            .await?;
+                        store_message_id(msg.chat.id, message.id).await;
+                    }
+                }
+            }
+        } else {
+            // Handle non-command messages (password input)
+            let state = {
+                let states = log_in_state::USER_STATES.lock().await;
+                states.get(&msg.chat.id.0).cloned()
+            };
+
+            if let Some(state) = state {
+                match state {
+                    log_in_state::AwaitingState::AwaitingSignUpPassword => {
+                        // Handle signup password
+                        let mut states = log_in_state::USER_STATES.lock().await;
+                        states.insert(msg.chat.id.0, log_in_state::AwaitingState::None);
+                        
+                        if let Err(e) = PasswordHandler::new(config_store.clone()) {
+                            log::error!("Failed to create password handler: {}", e);
+                            let message = bot
+                                .send_message(msg.chat.id, "Failed to initialize password handler")
+                                .reply_markup(logged_out_operations())
+                                .await?;
+                            store_message_id(msg.chat.id, message.id).await;
+                            return Ok(());
+                        }
+
+                        let message = bot
+                            .send_message(msg.chat.id, "✅ Account created successfully! You can now log in.")
+                            .reply_markup(logged_out_operations())
+                            .await?;
+                        store_message_id(msg.chat.id, message.id).await;
+                    }
+                    log_in_state::AwaitingState::AwaitingLoginPassword => {
+                        // Handle login password
+                        let mut states = log_in_state::USER_STATES.lock().await;
+                        states.insert(msg.chat.id.0, log_in_state::AwaitingState::None);
+                        
+                        let handlers = PASSWORD_HANDLERS.lock().await;
+                        if let Some(Some(handler)) = handlers.get(&msg.chat.id.0) {
+                            match handler.login(&msg.chat.id.0.to_string(), text).await {
+                                Ok(true) => {
+                                    // Update bot commands for logged in state
+                                    bot.set_my_commands(CommandLoggedIn::bot_commands())
+                                        .scope(BotCommandScope::Chat {
+                                            chat_id: msg.chat.id.into(),
+                                        })
+                                        .await?;
+
+                                    let message = bot
+                                        .send_message(msg.chat.id, "✅ Login successful! What would you like to do?")
+                                        .reply_markup(logged_in_operations())
+                                        .await?;
+                                    store_message_id(msg.chat.id, message.id).await;
+                                }
+                                Ok(false) => {
+                                    let message = bot
+                                        .send_message(msg.chat.id, "❌ Invalid password")
+                                        .reply_markup(logged_out_operations())
+                                        .await?;
+                                    store_message_id(msg.chat.id, message.id).await;
+                                }
+                                Err(e) => {
+                                    log::error!("Login error: {}", e);
+                                    let message = bot
+                                        .send_message(msg.chat.id, "❌ An error occurred during login")
+                                        .reply_markup(logged_out_operations())
+                                        .await?;
+                                    store_message_id(msg.chat.id, message.id).await;
+                                }
+                            }
+                        } else {
+                            let message = bot
+                                .send_message(msg.chat.id, "❌ No account found. Please sign up first.")
+                                .reply_markup(logged_out_operations())
+                                .await?;
+                            store_message_id(msg.chat.id, message.id).await;
+                        }
+                    }
+                    log_in_state::AwaitingState::None => {
+                        // No state, ignore message
+                    }
+                }
+            }
         }
     }
     Ok(())

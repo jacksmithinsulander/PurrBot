@@ -33,6 +33,8 @@ pub async fn process_callback(
                         msg.chat.id.0,
                         is_logged_in
                     );
+                    // Delete all previous messages before executing the button action
+                    delete_all_messages(msg.chat.id, &bot).await?;
                     let button = Button::from_str(data, is_logged_in);
                     button
                         .execute(bot, msg.chat.id, config_store, is_logged_in)
